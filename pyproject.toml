@@ -1,0 +1,89 @@
+[tool.poetry]
+    name = "raider"
+    version = "0.1.0"
+    description = "Authentication testing tool"
+    authors = ["Daniel Neagaru <daniel@digeex.de>"]
+
+[tool.poetry.scripts]
+    raider = "raider.cli:main"
+
+[tool.poetry.dependencies]
+    python = "^3.9"
+    hy = "^0.20.0"
+    requests = "^2.25.1"
+    importlib-metadata = "^4.6.1"
+types-requests = "^2.25.0"
+
+[tool.poetry.dev-dependencies]
+    pytest = "^5.2"
+    pytest-cov = "^2.12.1"
+    pre-commit = "^2.13.0"
+    flake8 = "^3.9.2"
+    pylint = "^2.9.3"
+    black = {version = "^21.6b0", allow-prereleases = true}
+    isort = "^5.9.1"
+
+[build-system]
+    requires = ["poetry-core>=1.0.0"]
+    build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+    line-length = 79
+    target-version = ['py39']
+    include = '\.pyi?$'
+    exclude = '''
+    (
+      /(
+        | \.git
+        | \.tox
+        | dist
+      )/
+    )
+    '''
+
+[tool.isort]
+    multi_line_output = 3
+    include_trailing_comma = true
+    force_grid_wrap = 0
+    use_parentheses = true
+    line_length = 79
+
+
+[tool.pylint.MASTER]
+    ignore-patterns = '''
+        \.git
+        |\.pytest_cache
+        |\.tox
+        |dist
+        |conf.py
+    '''
+
+[tool.pylint.message_control]
+    disable = '''
+    import-error,
+    duplicate-code,
+    missing-function-docstring,
+    missing-class-docstring,
+    missing-module-docstring,
+    too-few-public-methods,
+    '''
+
+
+[tool.mypy]
+    exclude = "/docs/source/conf.py"
+    python_version = "3.9"
+    follow_imports = "silent"
+    strict_optional = true
+    warn_redundant_casts = true
+    warn_unused_ignores = true
+    disallow_any_generics = true
+    check_untyped_defs = true
+    no_implicit_reexport = true
+    disallow_untyped_defs = true
+    overrides = [
+
+    # TODO
+    # something doesn't work with requests types in the virtual environment
+    { module = "requests.*", ignore_missing_imports = true },
+
+    ]

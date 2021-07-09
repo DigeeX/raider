@@ -1,0 +1,24 @@
+## Python
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Unit test / coverage reports
+.tox/
+.pytest_cache/
+
+# mypy
+.mypy_cache
+
+## Emacs
+*~
+\#*\#
+.\#*

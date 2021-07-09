@@ -1,0 +1,76 @@
+import logging
+import os
+import sys
+from typing import Any
+
+from raider.utils import (
+    create_hy_expression,
+    default_user_agent,
+    eval_file,
+    eval_project_file,
+    get_config_file,
+    get_project_dir,
+    list_apps,
+)
+
+
+class Config:
+    def __init__(self) -> None:
+        filename = get_config_file("common.hy")
+        if os.path.isfile(filename):
+            output = eval_file(filename)
+        else:
+            output = {}
+
+        self.proxy = output.get("proxy", None)
+        self.verify = output.get("verify", False)
+        self.loglevel = output.get("loglevel", "WARNING")
+        self.user_agent = output.get("user_agent", default_user_agent())
+        self.active_project = output.get("active_project", None)
+        self.project_config: dict[str, Any] = {}
+
+        self.logger = logging.getLogger()
+        self.logger.setLevel(self.loglevel)
+
+        if not list_apps():
+            self.logger.critical(
+                "No application have been configured. Cannot run."
+            )
+            sys.exit()
+
+    def load_project(self, project: str = None) -> dict[str, Any]:
+        if not project:
+            active_project = self.active_project
+        else:
+            active_project = project
+
+        hyfiles = sorted(os.listdir(get_project_dir(active_project)))
+        shared_locals: dict[str, Any]
+        shared_locals = {}
+        for confile in hyfiles:
+            if confile.endswith(".hy"):
+                shared_locals.update(
+                    eval_project_file(active_project, confile, shared_locals)
+                )
+        self.project_config = shared_locals
+        return shared_locals
+
+    def write_config_file(self) -> None:
+        filename = get_config_file("common.hy")
+        data = ""
+        with open(filename, "w") as conf_file:
+            data += create_hy_expression("proxy", self.proxy)
+            data += create_hy_expression("user_agent", self.user_agent)
+            data += create_hy_expression("loglevel", self.loglevel)
+            data += create_hy_expression("verify", self.verify)
+            data += create_hy_expression("active_project", self.active_project)
+            self.logger.debug("Writing to config file %s", filename)
+            self.logger.debug("data = %s", str(data))
+            conf_file.write(data)
+
+    def print_config(self) -> None:
+        print("proxy: " + self.proxy)
+        print("verify: " + str(self.verify))
+        print("loglevel: " + self.loglevel)
+        print("user_agent: " + self.user_agent)
+        print("active_project: " + self.active_project)
