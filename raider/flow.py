@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+"""Flow class holding the information exchanged between server and client.
+"""
 
 import logging
 from typing import Optional, Union

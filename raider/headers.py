@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+"""Classes used for handling headers.
+"""
 
 from base64 import b64encode
 from typing import Any, Optional, Union

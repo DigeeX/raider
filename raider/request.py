@@ -13,9 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 # pylint: disable=E1101
 # false positive with urllib3 library
+
+"""Request class used to handle HTTP.
+"""
 
 import logging
 import sys
