@@ -82,7 +82,7 @@ class Authentication:
             for item in stage.outputs:
                 if isinstance(item, Cookie):
                     user.set_cookies(item)
-                if isinstance(item, Header):
+                elif isinstance(item, Header):
                     user.set_headers(item)
                 elif type(item) in [Regex, Html, Json]:
                     user.set_data(item)
