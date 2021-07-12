@@ -22,19 +22,51 @@ from typing import Optional, Union
 import requests
 
 from raider.config import Config
-from raider.cookies import Cookie
-from raider.headers import Header
-from raider.modules import Html, Json, Regex
 from raider.operations import Error, Grep, Http, NextStage, Print
+from raider.plugins import Cookie, Header, Html, Json, Plugin, Regex
 from raider.request import Request
 from raider.user import User
 
 
 class Flow:
+    """Class dealing with the information exchange from HTTP.
+
+    A Flow object in Raider defines all the information about one single
+    HTTP information exchange. It has a name, contains one request, the
+    response, the outputs that needs to be extracted from the response,
+    and a list of operations to be run when the exchange is over.
+
+    Flow objects are used as states in the Authentication class to
+    define the authentication process as a finite state machine.
+
+    It's also used in the Functions class to run arbitrary actions when
+    it doesn't affect the authentication state.
+
+    Attributes:
+      name:
+        A string used as a unique identifier for the defined Flow.
+      request:
+        A Request object detailing the HTTP request with its elements.
+      response:
+        A requests.model.Response object. It's empty until the request
+        is sent. When the HTTP response arrives, it's stored here.
+      outputs:
+        A list of Plugin objects detailing the pieces of information to
+        be extracted from the response. Those will be later available
+        for other Flow objects.
+      operations:
+        A list of Operation objects to be executed after the response is
+        received and outputs are extracted. Should contain a NextStage
+        operation if another Flow is expected.
+      logger:
+        A logging.RootLogger object used for debugging.
+
+    """
+
     def __init__(
         self,
-        request: Request,
         name: str,
+        request: Request,
         outputs: list[Union[Regex, Html, Json]] = None,
         operations: list[Union[Error, Grep, Http, NextStage, Print]] = None,
     ) -> None:
@@ -79,7 +111,7 @@ class Flow:
                     )
                 else:
                     self.logger.warning("Header %s not found", output.name)
-            elif isinstance(output, (Html, Regex, Json)):
+            elif isinstance(output, Plugin):
                 result = output.get_value(self.response.text)
                 if not result:
                     self.logger.warning(

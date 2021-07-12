@@ -18,8 +18,10 @@
 
 import logging
 import os
+import re
 from typing import Any, Union
 
+import bs4
 import hy
 
 from raider.__version__ import __version__
@@ -34,6 +36,15 @@ def get_config_dir() -> str:
     raider_conf = os.path.join(confdir, "raider")
     os.makedirs(raider_conf, exist_ok=True)
     return raider_conf
+
+
+def match_tag(html_tag: bs4.element.Tag, attributes: dict[str, str]) -> bool:
+    for key, value in attributes.items():
+        if not (key in html_tag.attrs) or not (
+            re.match(value, html_tag.attrs[key])
+        ):
+            return False
+    return True
 
 
 def get_config_file(filename: str) -> str:
@@ -56,9 +67,7 @@ def get_project_file(project_name: str, filename: str) -> str:
 
 def import_raider_objects() -> dict[str, Any]:
     hy_imports = {
-        "modules": "Variable Prompt Regex Html Json",
-        "cookies": "Cookie",
-        "headers": "Header Basicauth Bearerauth",
+        "plugins": "Variable Prompt Regex Html Json Cookie Header",
         "flow": "Flow",
         "request": "Request",
         "operations": "Http Grep Print Error NextStage",

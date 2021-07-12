@@ -20,14 +20,38 @@ from typing import Union
 
 import hy
 
-from raider.cookies import Cookie, CookieStore
-from raider.headers import Header, HeaderStore
-from raider.modules import Html, Json, Regex
-from raider.structures import DataStore
+from raider.plugins import Cookie, Header, Html, Json, Regex
+from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.utils import hy_dict_to_python
 
 
 class User:
+    """Class holding user related information.
+
+    User objects are created inside the UserStore. Each User object
+    contains at least the username and the password. Every time a Plugin
+    generates an output, it is saved in the User object. If the Plugin
+    is a Cookie or a Header, the output will be stored in the the
+    "cookies" and "headers" attributes respectively. Otherwise they'll
+    be saved inside "data".
+
+    Attributes:
+      username:
+        A string containing the user's email or username used to log in.
+      password:
+        A string containing the user's password.
+      cookies:
+        A CookieStore object containing all of the collected cookies for
+        this user. The Cookie plugin only writes here.
+      headers:
+        A HeaderStore object containing all of the collected headers for
+        this user. The Header plugin only writes here.
+      data:
+        A DataStore object containing the rest of the data collected
+        from plugins for this user.
+
+    """
+
     def __init__(
         self,
         username: str,
@@ -42,13 +66,13 @@ class User:
         self.headers = HeaderStore.from_dict(kwargs.get("headers"))
         self.data = DataStore(kwargs.get("data"))
 
-    def set_cookies(self, cookie: Cookie) -> None:
+    def set_cookie(self, cookie: Cookie) -> None:
         if cookie.value:
-            self.cookies.update({cookie.name: cookie.value})
+            self.cookies.set(cookie)
 
-    def set_headers(self, header: Header) -> None:
+    def set_header(self, header: Header) -> None:
         if header.value:
-            self.headers.update({header.name: header.value})
+            self.headers.set(header)
 
     def set_data(self, data: Union[Regex, Html, Json]) -> None:
         if data.value:
@@ -65,6 +89,22 @@ class User:
 
 
 class UserStore(DataStore):
+    """Class holding all the users of the Application.
+
+    UserStore inherits from DataStore, and contains the users set up in
+    the "_users" variable from the hy configuration file. Each user is
+    an User object. The data from a UserStore object can be accessed
+    same way like from the DataStore.
+
+    If "_active_user" is set up in the configuration file, this will be
+    the default user. Otherwise, the first user will be the active one.
+
+    Attributes:
+      active_user:
+        A string with the currently active user.
+
+    """
+
     def __init__(
         self, users: list[dict[hy.HyKeyword, str]], active_user: str = None
     ) -> None:

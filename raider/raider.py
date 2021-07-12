@@ -20,6 +20,25 @@ from raider.application import Application
 
 
 class Raider:
+    """Main class used as the point of entry.
+
+    The Raider class should be used to access everything else inside
+    Raider. For now it's still not doing much, but for the future this
+    is where all of the features available to the end user should be.
+
+    Attributes:
+      application:
+        An Application object with the currently active project.
+      config:
+        A Config object containing all of the necessary settings.
+      user:
+        A User object containing the active user of the active project.
+      functions:
+        A Functions object containing the defined functions of the
+        active project.
+
+    """
+
     def __init__(self, name: str) -> None:
         self.application = Application(name)
         self.config = self.application.config

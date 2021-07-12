@@ -21,14 +21,23 @@ import sys
 from typing import Optional, Union
 
 from raider.config import Config
-from raider.cookies import Cookie
 from raider.flow import Flow
-from raider.headers import Header
-from raider.modules import Html, Json, Regex
+from raider.plugins import Cookie, Header, Html, Json, Regex
 from raider.user import User
 
 
 class Authentication:
+    """Class holding authentication stages.
+
+    This class shouldn't be used directly by the user, instead the
+    Raider class should be used to deal with Authentication internally.
+
+    Attributes:
+      stages:
+        A list of Flow objects relevant to the authentication process.
+
+    """
+
     def __init__(self, stages: list[Flow]) -> None:
         self.stages = stages
         self._current_stage = 0
@@ -81,10 +90,10 @@ class Authentication:
         if stage.outputs:
             for item in stage.outputs:
                 if isinstance(item, Cookie):
-                    user.set_cookies(item)
+                    user.set_cookie(item)
                 elif isinstance(item, Header):
-                    user.set_headers(item)
-                elif type(item) in [Regex, Html, Json]:
+                    user.set_header(item)
+                elif isinstance(item, (Regex, Html, Json)):
                     user.set_data(item)
 
         next_stage = stage.run_operations()

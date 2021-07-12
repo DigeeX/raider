@@ -22,10 +22,28 @@ from typing import Any, Union
 
 import requests
 
-from raider.modules import Html, Json, Regex, Variable
+from raider.plugins import Html, Json, Regex, Variable
 
 
 class Http:
+    """Operation that runs actions depending on the HTTP status code.
+
+    A Http object will check if the HTTP response status code matches
+    the code defined in its "status" attribute, and run the Operation
+    inside "action" if it matches or the one inside "otherwise" if not
+    matching.
+
+    Attributes:
+      status:
+        An integer with the HTTP status code to be checked.
+      action:
+        An Operation that will be executed if the status code matches.
+      otherwise:
+        An Operation that will be executed if the status code doesn't
+        match.
+
+    """
+
     def __init__(
         self,
         status: int,
@@ -51,6 +69,24 @@ class Http:
 
 
 class Grep:
+    """Operation that runs actions depending on Regex matches.
+
+    A Grep object will check if the HTTP response body matches the regex
+    defined in its "regex" attribute, and run the Operation inside
+    "action" if it matches or the one inside "otherwise" if not
+    matching.
+
+    Attributes:
+      regex:
+        A string with the regular expression to be checked.
+      action:
+        An Operation that will be executed if the status code matches.
+      otherwise:
+        An Operation that will be executed if the status code doesn't
+        match.
+
+    """
+
     def __init__(self, regex: str, **kwargs: Any) -> None:
         self.regex = regex
         self.action = kwargs.get("action")
@@ -71,6 +107,18 @@ class Grep:
 
 
 class Print:
+    """Operation that prints desired information.
+
+    When this Operation is executed, it will print each of its elements
+    in a new line.
+
+    Attributes:
+      *args:
+        A list of Plugins and/or strings. The plugin's extracted values
+        will be printed.
+
+    """
+
     def __init__(self, *args: Union[str, Variable, Regex, Html, Json]):
         self.args = args
 
@@ -86,6 +134,13 @@ class Print:
 
 
 class Error:
+    """Operation that will exit Raider and print the error message.
+
+    Attributes:
+      message:
+        A string with the error message to be printed.
+    """
+
     def __init__(self, message: str) -> None:
         self.message = message
 
@@ -96,7 +151,21 @@ class Error:
         return "Error:" + str(self.message)
 
 
+# pylint: disable=too-few-public-methods
 class NextStage:
+    """Operation defining the next stage.
+
+    Inside the Authentication object NextStage is used to define the
+    next step of the authentication process. It can also be used inside
+    "action" attributes of the other Operations to allow conditional
+    decision making.
+
+    Attributes:
+      stage:
+        A string with the name of the next stage to be executed.
+
+    """
+
     def __init__(self, stage: str) -> None:
         self.stage = stage
 

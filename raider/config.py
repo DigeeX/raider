@@ -33,6 +33,35 @@ from raider.utils import (
 
 
 class Config:
+    """Class dealing with global Raider configuration.
+
+    A Config object will contain all the information necessary to run
+    Raider. It will define global configurations like the web proxy and
+    the logging level, but also the data defined in the active project
+    configuration files.
+
+    Attributes:
+      proxy:
+        An optional string to define the web proxy to relay the traffic
+        through.
+      verify:
+        A boolean flag which will let the requests library know whether
+        to check the SSL certificate or ignore it.
+      loglevel:
+        A string used by the logging library to define the desired
+        logging level.
+      user_agent:
+        A string which will be used as the user agent in HTTP requests.
+      active_project:
+        A string defining the current active project.
+      project_config:
+        A dictionary containing all of the local variables defined in
+        the active project's hy configuration files.
+      logger:
+        A logging.RootLogger object used for debugging.
+
+    """
+
     def __init__(self) -> None:
         filename = get_config_file("common.hy")
         if os.path.isfile(filename):

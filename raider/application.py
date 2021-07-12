@@ -29,6 +29,38 @@ from raider.utils import create_hy_expression, get_project_file
 
 
 class Application:
+    """Class holding all the project related data.
+
+    This class isn't supposed to be used directly by the user, instead
+    the Raider class should be used, which will deal with the
+    Application class internally.
+
+    Attributes:
+      name:
+        A string with the name of the application.
+      base_url:
+        A string with the base URL of the application.
+      config:
+        A Config object with Raider global configuration plus the
+        variables defined in hy configuration files related to the
+        Application.
+      users:
+        A UserStore object generated from the "_users" variable set in
+        the hy configuration files for the project.
+      active_user:
+        A User object pointing to the active user inside the "users"
+        object.
+      authentication:
+        An Authentication object containing all the Flows relevant to
+        the authentication process. It's created out of the
+        "_authentication" variable from the hy configuration files.
+      functions:
+        A Functions object with all Flows that don't affect the
+        authentication process. This object is being created out of the
+        "_functions" variable from the hy configuration files.
+
+    """
+
     def __init__(self, name: str = None) -> None:
         self.config = Config()
 

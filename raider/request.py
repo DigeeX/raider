@@ -13,8 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# pylint: disable=E1101
-# false positive with urllib3 library
 
 """Request class used to handle HTTP.
 """
@@ -28,10 +26,8 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 
 from raider.config import Config
-from raider.cookies import Cookie, CookieStore
-from raider.headers import Basicauth, Bearerauth, Header, HeaderStore
-from raider.modules import Html, Json, Prompt, Regex, Variable
-from raider.structures import DataStore
+from raider.plugins import Cookie, Header, Html, Json, Prompt, Regex, Variable
+from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
 
 
@@ -51,6 +47,41 @@ def get_module_value(
 
 # pylint: disable=too-many-arguments
 class Request:
+    """Class holding the elements of the HTTP request.
+
+    When a Flow object is created, it defines a Request object with the
+    information necessary to create a HTTP request. The "method"
+    attribute is required. One and only one of "url" and "path" is
+    required too. Everything else is optional.
+
+    The Request object can contain Plugins which will be evaluated and
+    its value replaced in the HTTP request.
+
+    Attributes:
+      method:
+        A string with the HTTP request method. Only GET and POST is
+        supported for now.
+      url:
+        A string with the URL of the HTTP request. Cannot be used if
+        "path" is used.
+      path:
+        A string with the path of the HTTP request. The base URL is
+        defined in the "_base_url" variable from the hy configuration
+        files of the project. If "path" is defined "url" cannot be used.
+      cookies:
+        A list of Cookie objects to be sent with the HTTP request.
+      headers:
+        A list of Header objects to be sent with the HTTP request.
+      data:
+        A dictionary of Any objects. Can contain strings and
+        Plugins. When a key or a value of the dictionary is a Plugin, it
+        will be evaluated and its value will be used in the HTTP
+        request. If the "method" is GET those values will be put inside
+        the URL parameters, and if the "method" is POST they will be
+        inside the POST request body.
+
+    """
+
     def __init__(
         self,
         method: str,
@@ -100,15 +131,14 @@ class Request:
                 cookies.pop(key)
 
         for key in self.headers:
-            if isinstance(self.headers[key], Basicauth):
-                value = self.headers[key].value
-                headers.update({key: value})
-            elif isinstance(self.headers[key], Bearerauth):
-                self.headers[key].load_token()
-                value = self.headers[key].value
-                headers.update({key: value})
-            else:
-                headers.update({key: userdata[key]})
+            value = self.headers[key].get_value()
+            headers.update({key: value})
+            # elif isinstance(self.headers[key], Bearerauth):
+            #     self.headers[key].load_token()
+            #     value = self.headers[key].value
+            #     headers.update({key: value})
+            # else:
+            #     headers.update({key: userdata[key]})
 
         for key in list(httpdata):
             value = httpdata[key]
@@ -129,6 +159,7 @@ class Request:
     ) -> Optional[requests.models.Response]:
         verify = config.verify
         if not verify:
+            # pylint: disable=no-member
             requests.packages.urllib3.disable_warnings(
                 category=InsecureRequestWarning
             )

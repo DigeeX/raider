@@ -18,8 +18,17 @@
 
 from typing import Any, Iterator, Optional
 
+from raider.plugins import Cookie, Header
+
 
 class DataStore:
+    """Class defining a dictionary-like data structure.
+
+    This class was created to hold information relevant to Raider in a
+    structure similar to Python dictionaries.
+
+    """
+
     def __init__(self, data: Optional[dict[Any, Any]]) -> None:
         self._index = -1
         if data:
@@ -65,3 +74,65 @@ class DataStore:
 
     def to_dict(self) -> dict[Any, Any]:
         return self._store
+
+
+class HeaderStore(DataStore):
+    """Class storing the HTTP headers.
+
+    This class inherits from DataStore, and converts the values into
+    Header objects.
+
+    """
+
+    def __init__(self, data: Optional[list[Header]]) -> None:
+        values = {}
+        if data:
+            for header in data:
+                values[header.name] = header
+        super().__init__(values)
+
+    def set(self, header: Header) -> None:
+        super().update({header.name: header})
+
+    @classmethod
+    def from_dict(cls, data: Optional[dict[str, str]]) -> "HeaderStore":
+        headerlist = []
+        if data:
+            for name, value in data.items():
+                header = Header(name, value)
+                headerlist.append(header)
+        return cls(headerlist)
+
+
+class CookieStore(DataStore):
+    """Class storing the HTTP cookies.
+
+    This class inherits from DataStore, and converts the values into
+    Cookie objects.
+
+    """
+
+    def __init__(self, data: Optional[list[Cookie]]) -> None:
+        values = {}
+        if data:
+            for cookie in data:
+                values[cookie.name] = cookie
+        super().__init__(values)
+
+    def to_dict(self) -> dict[str, str]:
+        data = {}
+        for key in self:
+            data[key] = self[key].value
+        return data
+
+    def set(self, cookie: Cookie) -> None:
+        super().update({cookie.name: cookie})
+
+    @classmethod
+    def from_dict(cls, data: Optional[dict[str, str]]) -> "CookieStore":
+        cookielist = []
+        if data:
+            for name, value in data.items():
+                cookie = Cookie(name, value)
+                cookielist.append(cookie)
+        return cls(cookielist)

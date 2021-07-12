@@ -13,6 +13,7 @@
     requests = "^2.25.1"
     importlib-metadata = "^4.6.1"
 types-requests = "^2.25.0"
+bs4 = "^0.0.1"
 
 [tool.poetry.dev-dependencies]
     pytest = "^5.2"
@@ -61,10 +62,7 @@ types-requests = "^2.25.0"
 [tool.pylint.message_control]
     disable = '''
     import-error,
-    duplicate-code,
     missing-function-docstring,
-    missing-class-docstring,
-    too-few-public-methods,
     '''
 
 

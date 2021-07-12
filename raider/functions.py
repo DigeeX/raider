@@ -27,6 +27,18 @@ from raider.user import User
 
 
 class Functions:
+    """Class holding all Flows that don't affect the authentication.
+
+    This class shouldn't be used directly by the user, instead the
+    Raider class should be used which will deal with Functions
+    internally.
+
+    Attributes:
+      functions:
+        A list of Flow objects with all available functions.
+
+    """
+
     def __init__(self, functions: list[Flow]) -> None:
         self.functions = functions
 
