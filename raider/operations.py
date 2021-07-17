@@ -16,16 +16,164 @@
 """Operations performed on Flows after the response is received.
 """
 
+import logging
 import re
 import sys
-from typing import Any, Union
+from typing import Any, Callable, Optional, Union
 
 import requests
 
 from raider.plugins import Html, Json, Regex, Variable
 
+# Operation flags
+IS_CONDITIONAL = 0x01
+NEEDS_RESPONSE = 0x02
 
-class Http:
+
+def execute_actions(
+    operations: Union["Operation", list["Operation"]],
+    response: requests.models.Response,
+) -> Optional[str]:
+    """Run an Operation or a list of Operations.
+
+    In order to allow multiple Operations to be run inside the "action"
+    and "otherwise" attributes lists of Operations are accepted. The
+    execution will stop if one of the Operations returns a string, to
+    indicate the next stage has been decided.
+
+    Args:
+      operations:
+        An Operation object or a list of Operations to be executed.
+      response:
+        A requests.models.Response object with the HTTP response that
+        might be needed to run the Operation.
+
+    Returns:
+      A string with the name of the next stage to be run, or None.
+
+    """
+    if isinstance(operations, Operation):
+        if operations.is_conditional:
+            return operations.run_conditional(response)
+        return operations.run(response)
+
+    if isinstance(operations, list):
+        for item in operations:
+            output = item.run(response)
+            if output:
+                return output
+
+    return None
+
+
+class Operation:
+    """Parent class for all operations.
+
+    Each Operation class inherits from here.
+
+    Attributes:
+      function:
+        A callable function to be executed when the operation is run.
+      flags:
+        An integer with the flags which define the behaviour of the
+        Operation. For now only two flags are allowed: NEEDS_RESPONSE
+        and IS_CONDITIONAL. If NEEDS_RESPONSE is set, the HTTP response
+        will be sent to the "function" for further processing. If
+        IS_CONDITIONAL is set, the function should return a boolean, and
+        if the return value is True the Operation inside "action" will
+        be run next, if it's False, the one from the "otherwise" will be
+        run.
+      action:
+        An Operation object that will be run if the function returns
+        True. Will only be used if the flag IS_CONDITIONAL is set.
+      otherwise:
+        An Operation object that will be run if the function returns
+        False. Will only be used if the flag IS_CONDITIONAL is set.
+
+    """
+
+    def __init__(
+        self,
+        function: Callable[..., Any],
+        flags: int,
+        action: Optional[Union["Operation", list["Operation"]]] = None,
+        otherwise: Optional[Union["Operation", list["Operation"]]] = None,
+    ):
+        """Initializes the Operation object.
+
+        Args:
+          function:
+            A callable function to be executed when the operation is run.
+          flags:
+            An integer with the flags that define the behaviour of this
+            Operation.
+          action:
+            An Operation object that will be run when the function
+            returns True.
+          otherwise:
+            An Operation object that will be run when the function
+            returns False.
+
+        """
+        self.function = function
+        self.needs_response = bool(flags & NEEDS_RESPONSE)
+        self.is_conditional = bool(flags & IS_CONDITIONAL)
+        self.action = action
+        self.otherwise = otherwise
+
+    def run(self, response: requests.models.Response) -> Optional[str]:
+        """Runs the Operation.
+
+        Runs the defined Operation, considering the "flags" set.
+
+        Args:
+          response:
+            A requests.models.Response object with the HTTP response to
+            be passed to the operation's "function".
+
+        Returns:
+          An optional string with the name of the next stage.
+
+        """
+        logging.debug("Running operation %s", str(self))
+        if self.is_conditional:
+            return self.run_conditional(response)
+        if self.needs_response:
+            return self.function(response)
+        return self.function()
+
+    def run_conditional(
+        self, response: requests.models.Response
+    ) -> Optional[str]:
+        """Runs a conditional operation.
+
+        If the IS_CONDITIONAL flag is set, run the Operation's
+        "function" and if True runs the "action" next, if it's False
+        runs the "otherwise" Operation instead.
+
+        Args:
+          response:
+            A requests.models.Response object with the HTTP response to
+            be passed to the operation's "function".
+
+        Returns:
+          An optional string with the name of the next stage.
+
+        """
+        if self.needs_response:
+            check = self.function(response)
+        else:
+            check = self.function()
+
+        if check and self.action:
+            return execute_actions(self.action, response)
+        if self.otherwise:
+            return execute_actions(self.otherwise, response)
+
+        return None
+
+
+class Http(Operation):
     """Operation that runs actions depending on the HTTP status code.
 
     A Http object will check if the HTTP response status code matches
@@ -47,28 +195,48 @@ class Http:
     def __init__(
         self,
         status: int,
-        **kwargs: Any,
+        action: Optional[Union[Operation, list[Operation]]],
+        otherwise: Optional[Union[Operation, list[Operation]]] = None,
     ) -> None:
+        """Initializes the Http Operation.
 
+        Args:
+          status:
+            An integer with the HTTP response status code.
+          action:
+            An Operation object to be run if the defined status matches
+            the response status code.
+          otherwise:
+            An Operation object to be run if the defined status doesn't
+            match the response status code.
+
+        """
         self.status = status
-        self.action = kwargs.get("action")
-        self.otherwise = kwargs.get("otherwise")
+        super().__init__(
+            function=self.match_status_code,
+            action=action,
+            otherwise=otherwise,
+            flags=IS_CONDITIONAL | NEEDS_RESPONSE,
+        )
 
-    def run(self, response: requests.models.Response) -> Any:
-        match = False
-        if self.status == response.status_code:
-            match = True
-
-        if match:
-            return self.action
-
-        return self.otherwise
+    def match_status_code(self, response: requests.models.Response) -> bool:
+        """Check if the defined status matches the response status code."""
+        return self.status == response.status_code
 
     def __str__(self) -> str:
-        return "Http:" + str(self.status) + ":" + str(self.action.__str__())
+        """Returns a string representation of the Operation."""
+        return (
+            "(Http:"
+            + str(self.status)
+            + "="
+            + str(self.action)
+            + "/"
+            + str(self.otherwise)
+            + ")"
+        )
 
 
-class Grep:
+class Grep(Operation):
     """Operation that runs actions depending on Regex matches.
 
     A Grep object will check if the HTTP response body matches the regex
@@ -87,26 +255,51 @@ class Grep:
 
     """
 
-    def __init__(self, regex: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        regex: str,
+        action: Operation,
+        otherwise: Optional[Operation] = None,
+    ) -> None:
+        """Initializes the Grep Operation.
+
+        Args:
+          regex:
+            A string with the regular expression to be checked.
+          action:
+            An Operation object to be run if the defined regex matches
+            the response body.
+          otherwise:
+            An Operation object to be run if the defined regex doesn't
+            match the response body.
+
+        """
         self.regex = regex
-        self.action = kwargs.get("action")
-        self.otherwise = kwargs.get("otherwise")
+        super().__init__(
+            function=self.match_response,
+            action=action,
+            otherwise=otherwise,
+            flags=IS_CONDITIONAL | NEEDS_RESPONSE,
+        )
 
-    def run(self, response: requests.models.Response) -> Any:
-        match = False
-        if re.search(self.regex, response.text):
-            match = True
-
-        if match:
-            return self.action
-
-        return self.otherwise
+    def match_response(self, response: requests.models.Response) -> bool:
+        """Checks if the response body contains the defined regex."""
+        return bool(re.search(self.regex, response.text))
 
     def __str__(self) -> str:
-        return "Grep:" + str(self.regex) + ":" + str(self.action.__str__())
+        """Returns a string representation of the Operation."""
+        return (
+            "(Grep:"
+            + str(self.regex)
+            + "="
+            + str(self.action)
+            + "/"
+            + str(self.otherwise)
+            + ")"
+        )
 
 
-class Print:
+class Print(Operation):
     """Operation that prints desired information.
 
     When this Operation is executed, it will print each of its elements
@@ -120,9 +313,20 @@ class Print:
     """
 
     def __init__(self, *args: Union[str, Variable, Regex, Html, Json]):
-        self.args = args
+        """Initializes the Print Operation.
 
-    def run(self) -> None:
+        Args:
+          *args:
+            Strings or Plugin objects to be printed.
+        """
+        self.args = args
+        super().__init__(
+            function=self.print_items,
+            flags=0,
+        )
+
+    def print_items(self) -> None:
+        """Prints the defined items."""
         for item in self.args:
             if isinstance(item, str):
                 print(item)
@@ -130,10 +334,11 @@ class Print:
                 print(item.name + " = " + str(item.value))
 
     def __str__(self) -> str:
-        return "Print:" + str(self.args)
+        """Returns a string representation of the Print Operation."""
+        return "(Print:" + str(self.args) + ")"
 
 
-class Error:
+class Error(Operation):
     """Operation that will exit Raider and print the error message.
 
     Attributes:
@@ -142,17 +347,24 @@ class Error:
     """
 
     def __init__(self, message: str) -> None:
-        self.message = message
+        """Initializes the Error Operation.
 
-    def run(self) -> None:
-        sys.exit(self.message)
+        Args:
+          message:
+            A string with the error message to be displayed.
+        """
+        self.message = message
+        super().__init__(
+            function=lambda: sys.exit(self.message),
+            flags=0,
+        )
 
     def __str__(self) -> str:
-        return "Error:" + str(self.message)
+        """Returns a string representation of the Operation."""
+        return "(Error:" + str(self.message) + ")"
 
 
-# pylint: disable=too-few-public-methods
-class NextStage:
+class NextStage(Operation):
     """Operation defining the next stage.
 
     Inside the Authentication object NextStage is used to define the
@@ -161,16 +373,24 @@ class NextStage:
     decision making.
 
     Attributes:
-      stage:
+      next_stage:
         A string with the name of the next stage to be executed.
 
     """
 
-    def __init__(self, stage: str) -> None:
-        self.stage = stage
+    def __init__(self, next_stage: str) -> None:
+        """Initializes the NextStage Operation.
+
+        Args:
+          next_stage:
+            A string with the name of the next stage.
+        """
+        self.next_stage = next_stage
+        super().__init__(
+            function=lambda: self.next_stage,
+            flags=0,
+        )
 
     def __str__(self) -> str:
-        if self.stage:
-            return "NextStage:" + self.stage
-
-        return "Authentication complete"
+        """Returns a string representation of the Operation."""
+        return "(NextStage:" + self.next_stage + ")"

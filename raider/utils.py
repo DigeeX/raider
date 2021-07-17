@@ -28,44 +28,107 @@ from raider.__version__ import __version__
 
 
 def default_user_agent() -> str:
+    """Gets the default user agent.
+
+    Gets the current version of Raider and creates the user agent
+    string.
+
+    Returns:
+      A string with the user agent.
+
+    """
     return "digeex_raider/" + __version__
 
 
 def get_config_dir() -> str:
+    """Gets the configuration directory.
+
+    Returns the path of the directory with the Raider configuration
+    files.
+
+    Returns:
+      A string with the path of the configuration directory.
+
+    """
     confdir = os.path.expanduser("~/.config")
     raider_conf = os.path.join(confdir, "raider")
     os.makedirs(raider_conf, exist_ok=True)
     return raider_conf
 
 
-def match_tag(html_tag: bs4.element.Tag, attributes: dict[str, str]) -> bool:
-    for key, value in attributes.items():
-        if not (key in html_tag.attrs) or not (
-            re.match(value, html_tag.attrs[key])
-        ):
-            return False
-    return True
-
-
 def get_config_file(filename: str) -> str:
-    dir_path = get_config_dir()
-    file_path = os.path.join(dir_path, filename)
+    """Gets the configuration file.
+
+    Given the file name, it returns the path of this file in the Raider
+    configuration directory.
+
+    Args:
+      filename:
+        A string with the name of the file to look up for in the main
+        configuration directory.
+
+    Returns:
+      A string with the path of the file.
+
+    """
+    confdir = get_config_dir()
+    file_path = os.path.join(confdir, filename)
     return file_path
 
 
-def get_project_dir(project_name: str) -> str:
-    dir_path = get_config_dir()
-    file_path = os.path.join(dir_path, "apps", project_name)
-    return file_path
+def get_project_dir(project: str) -> str:
+    """Gets the directory of the project.
+
+    Given the name of the project, returns the path to the directory
+    containing the configuration files for this project.
+
+    Args:
+      project:
+        A string with the name of the project.
+
+    Returns:
+      A string with the path of the directory where the config files for
+      the project are located.
+
+    """
+    confdir = get_config_dir()
+    project_conf = os.path.join(confdir, "apps", project)
+    return project_conf
 
 
-def get_project_file(project_name: str, filename: str) -> str:
-    app_path = get_project_dir(project_name)
-    file_path = os.path.join(app_path, filename)
+def get_project_file(project: str, filename: str) -> str:
+    """Gets a file from a project.
+
+    Given the project name and the file name, it returns the path to
+    that file.
+
+    Args:
+      project:
+        A string with the name of the project.
+      filename:
+        A string with the file name.
+
+    Returns:
+      The path of the file in the project directory.
+
+    """
+    project_conf = get_project_dir(project)
+    file_path = os.path.join(project_conf, filename)
     return file_path
 
 
 def import_raider_objects() -> dict[str, Any]:
+    """Imports Raider objects to use inside hy configuration files.
+
+    To make Raider objects visible inside hy files without using
+    separate imports, this function does the imports and returns the
+    locals() which is later used when evaluating hy files.
+
+    Returns:
+       A dictionary with the locals() containing all the Raider objects
+       that can be used in hy files.
+
+    """
     hy_imports = {
         "plugins": "Variable Prompt Regex Html Json Cookie Header",
         "flow": "Flow",
@@ -84,6 +147,22 @@ def import_raider_objects() -> dict[str, Any]:
 
 
 def hy_dict_to_python(hy_dict: dict[hy.HyKeyword, Any]) -> dict[str, Any]:
+    """Converts a hy dictionary to a python dictionary.
+
+    When creating dictionaries in hylang using :parameters they become
+    hy.HyKeyword objects. This function converts them to normal python
+    dictionaries.
+
+    Args:
+      hy_dict:
+        A dictionary created in hy, which uses hy.HyKeyword instead of
+        simple strings as keys.
+
+    Returns:
+      A dictionary with the same elements only with hy.HyKeyword keys
+      converted into normal strings.
+
+    """
     data = {}
     for hy_key in hy_dict:
         key = hy_key.name
@@ -95,7 +174,20 @@ def hy_dict_to_python(hy_dict: dict[hy.HyKeyword, Any]) -> dict[str, Any]:
 def py_dict_to_hy_list(
     data: dict[str, Any]
 ) -> list[Union[hy.HyString, hy.HyDict, hy.HySymbol]]:
+    """Converts a python dictionary to a hylang list.
 
+    In hy, dictionaries are created out of lists, and this function
+    converts a normal python dictionary to a list made out of hy symbols
+    that will be later used to create the hy dictionary.
+
+    Args:
+      data:
+        A python dictionary with the data to convert.
+
+    Returns:
+      A list with hy objects that can be used to create a hy dictionary.
+
+    """
     value = []
     for key in data:
         if isinstance(key, str):
@@ -113,6 +205,20 @@ def py_dict_to_hy_list(
 def create_hy_expression(
     variable: str, value: Union[str, dict[Any, Any], list[Any]]
 ) -> str:
+    """Creates a hy expression.
+
+    Raider configuration is saved in hy format, and this function
+    creates the assignments in this format.
+
+    Args:
+      variable:
+        A string with the name of the variable to be created.
+      value:
+        The value of the variable.
+
+    Returns:
+      A string with the valid hy expression.
+    """
     data = []
     data.append(hy.HySymbol("setv"))
     data.append(hy.HySymbol(variable))
@@ -140,7 +246,19 @@ def serialize_hy(
         hy.models.HyString,
     ]
 ) -> str:
+    """Serializes hy expression.
 
+    This function serializes the supplied hy expression and returns it
+    in a string format, so that it can be later saved in a file.
+
+    Args:
+      form:
+        A hy expression to convert to a string.
+
+    Returns:
+      A string with the serialized form.
+
+    """
     if isinstance(form, hy.models.HyExpression):
         hystring = "(" + " ".join([serialize_hy(x) for x in form]) + ")"
     elif isinstance(form, hy.models.HyDict):
@@ -164,7 +282,24 @@ def serialize_hy(
 def eval_file(
     filename: str, shared_locals: dict[str, Any] = None
 ) -> dict[str, Any]:
+    """Evaluate hy file.
 
+    This function evaluates all the content inside the supplied hy file,
+    and returns the created locals() so that it can be later used for
+    other files.
+
+    Args:
+      filename:
+        A string with the file name to be evaluated.
+      shared_locals:
+        A dictionary with the locals() that will be considered when
+        evaluating the file.
+
+    Returns:
+      A dictionary with the updated locals() after evaluating the hy
+      file.
+
+    """
     if shared_locals:
         locals().update(shared_locals)
 
@@ -185,7 +320,24 @@ def eval_file(
 def eval_project_file(
     project: str, filename: str, shared_locals: dict[str, Any]
 ) -> dict[str, Any]:
+    """Evaluate a hy file from a project.
 
+    This function evaluates the specified file inside the project and
+    returns the locals() which are updated after evaluating the file.
+
+    Args:
+      project:
+        A string with the name of the project.
+      filename:
+        A string with the file name to be evaluated.
+      shared_locals:
+        A dictionary of locals() to be included when evaluating the
+        file.
+
+    Returns:
+      A dictionary of locals() updated after evaluating the file.
+
+    """
     raider_objects = import_raider_objects()
     locals().update(raider_objects)
     if shared_locals:
@@ -197,6 +349,16 @@ def eval_project_file(
 
 
 def list_apps() -> list[str]:
+    """List existing applications.
+
+    This function returns the list of applications that have been
+    configured in Raider.
+
+    Returns:
+      A list with the strings of the applications found in the
+      configuration directory.
+
+    """
     apps = []
     appdir = os.path.join(get_config_dir(), "apps")
     os.makedirs(appdir, exist_ok=True)
@@ -204,3 +366,29 @@ def list_apps() -> list[str]:
         if not filename[0] == "_":
             apps.append(filename)
     return apps
+
+
+def match_tag(html_tag: bs4.element.Tag, attributes: dict[str, str]) -> bool:
+    """Tells if a tag matches the search.
+
+    This function checks whether the supplied tag matches the
+    attributes. The attributes is a dictionary, and the values are
+    treated as a regular expression, to allow checking for tags that
+    don't have a static value.
+
+    Args:
+      html_tag:
+        A bs4.element.Tag object with the tag to be checked.
+      attributes:
+        A dictionary of attributes to check whether they match with the tag.
+
+    Returns:
+      A boolean saying whether the tag matched with the attributes or not.
+
+    """
+    for key, value in attributes.items():
+        if not (key in html_tag.attrs) or not (
+            re.match(value, html_tag.attrs[key])
+        ):
+            return False
+    return True

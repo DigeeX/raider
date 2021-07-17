@@ -58,6 +58,21 @@ class User:
         password: str,
         **kwargs: dict[str, str],
     ) -> None:
+        """Initializes a User object.
+
+        Creates an object for easy access to user specific
+        information. It's used to store the username, password, cookies,
+        headers, and other data extracted from the Plugin objects.
+
+        Args:
+          username:
+            A string with the username used for the login process.
+          password:
+            A string with the password used for the login process.
+          **kwargs:
+            A dictionary with additional data about the user.
+
+        """
 
         self.username = username
         self.password = password
@@ -67,18 +82,49 @@ class User:
         self.data = DataStore(kwargs.get("data"))
 
     def set_cookie(self, cookie: Cookie) -> None:
+        """Sets the cookie for the user.
+
+        Given a Cookie object, update the user's "cookies" attribute to
+        include this cookie.
+
+        Args:
+          cookie:
+            A Cookie Plugin object with the data to be added.
+
+        """
         if cookie.value:
             self.cookies.set(cookie)
 
     def set_header(self, header: Header) -> None:
+        """Sets the header for the user.
+
+        Given a Header object, update the user's "headers" attribute to
+        include this header.
+
+        Args:
+          header:
+            A Header Plugin object with the data to be added.
+
+        """
         if header.value:
             self.headers.set(header)
 
     def set_data(self, data: Union[Regex, Html, Json]) -> None:
+        """Sets the data for the user.
+
+        Given a Plugin, update the user's data attribute to include this
+        data.
+
+        Args:
+          data:
+            A Plugin object with the data to be added.
+
+        """
         if data.value:
             self.data.update({data.name: data.value})
 
     def to_dict(self) -> dict[str, str]:
+        """Returns this object's data in a dictionary format."""
         data = {}
         data["username"] = self.username
         data["password"] = self.password
@@ -108,6 +154,19 @@ class UserStore(DataStore):
     def __init__(
         self, users: list[dict[hy.HyKeyword, str]], active_user: str = None
     ) -> None:
+        """Initializes the UserStore object.
+
+        Given a list of dictionaries, map them to a User object and
+        store them in this UserStore object.
+
+        Args:
+          users:
+            A list of dictionaries. Dictionary's data is mapped to a
+            User object.
+          active_user:
+            An optional string specifying the active user to be set.
+
+        """
         if active_user:
             self.active_user = active_user
         else:
@@ -123,6 +182,7 @@ class UserStore(DataStore):
         super().__init__(values)
 
     def to_dict(self) -> dict[str, str]:
+        """Returns the UserStore data in dictionary format."""
         data = {}
         for username in self:
             data[username] = self[username].to_dict()
@@ -131,4 +191,5 @@ class UserStore(DataStore):
 
     @property
     def active(self) -> User:
+        """Returns the active user as an User object."""
         return self[self.active_user]

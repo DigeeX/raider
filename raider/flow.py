@@ -70,6 +70,24 @@ class Flow:
         outputs: list[Union[Regex, Html, Json]] = None,
         operations: list[Union[Error, Grep, Http, NextStage, Print]] = None,
     ) -> None:
+        """Initializes the Flow object.
+
+        Creates the Flow object with the associated Request, the outputs
+        to be extracted, and the operations to be run upon completion.
+
+        Args:
+          name:
+            A string with a unique identifier for this Flow.
+          request:
+            A Request object associated with this Flow.
+          outputs:
+            A list of Plugins to be used for extracting data from the
+            response.
+          operations:
+            A list of Operations to be run after the response is
+            received.
+
+        """
         self.name = name
 
         self.outputs = outputs
@@ -81,10 +99,30 @@ class Flow:
         self.logger = logging.getLogger(self.name)
 
     def execute(self, user: User, config: Config) -> None:
+        """Sends the request and extracts the outputs.
+
+        Given the user in context and the global Raider configuration,
+        sends the HTTP request and extracts the defined outputs.
+
+        Args:
+          user:
+            A User object containing all the user specific data relevant
+            for this action.
+          config:
+            A Config object with the global Raider configuration.
+
+        """
         self.response = self.request.send(user, config)
         self.get_outputs()
 
     def get_outputs(self) -> None:
+        """Extract the outputs from the HTTP response.
+
+        Iterates through the defined outputs in the Flow object, and
+        extracts the data from the HTTP response, saving it in the
+        respective Plugin object.
+
+        """
         if not self.outputs:
             return
 
@@ -119,20 +157,23 @@ class Flow:
                     )
 
     def run_operations(self) -> Optional[str]:
+        """Runs the defined operations.
+
+        Iterates through the defined operations and executes them one by
+        one. Iteration stops when the first NextStage operations is
+        encountered.
+
+        Returns:
+          Optionally, it returns a string with the name of the next
+          stage to run.
+
+        """
         next_stage = None
 
         if self.operations:
             for item in self.operations:
-                operation = item
-                while operation:
-                    self.logger.debug("Running operation %s", str(operation))
-                    if isinstance(operation, (Http, Grep)):
-                        operation = operation.run(self.response)
-                    elif isinstance(operation, (Error, Print)):
-                        operation.run()
-                        break
-                    elif isinstance(operation, NextStage):
-                        next_stage = operation.stage
-                        break
+                next_stage = item.run(self.response)
+                if next_stage:
+                    break
 
         return next_stage

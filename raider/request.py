@@ -19,22 +19,43 @@
 
 import logging
 import sys
-from typing import Any, Optional, Union
+from typing import Any, Optional
 from urllib import parse
 
 import requests
 from urllib3.exceptions import InsecureRequestWarning
 
 from raider.config import Config
-from raider.plugins import Cookie, Header, Html, Json, Prompt, Regex, Variable
+from raider.plugins import (
+    Cookie,
+    Header,
+    Html,
+    Json,
+    Plugin,
+    Prompt,
+    Regex,
+    Variable,
+)
 from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
 
 
-def get_module_value(
-    item: Union[Variable, Prompt, Regex, Html, Json], data: dict[str, str]
-) -> Optional[str]:
+def get_module_value(item: Plugin, data: dict[str, str]) -> Optional[str]:
+    """Gets the value from the Plugin.
 
+    Given a Plugin, extract the value from it, depending on the Plugin
+    type.
+
+    Args:
+      item:
+        A Plugin object from where the value should be extracted.
+      data:
+        A dictionary containing the previously extracted data.
+
+    Returns:
+      A string with the extracted value. None if nothing was found.
+
+    """
     if isinstance(item, Variable):
         value = item.get_value(data)
     elif isinstance(item, Prompt):
@@ -91,7 +112,33 @@ class Request:
         headers: list[Header] = None,
         data: dict[Any, Any] = None,
     ) -> None:
+        """Initializes the Request object.
 
+        Args:
+          method:
+            A string with the HTTP method. Can be either "GET" or "POST".
+          url:
+            A string with the full URL of the Request. Cannot be defined
+            together with "path" argument.
+          path:
+            A string with the partial path pointing to the endpoint the
+            Request needs to be sent. This value will be prepended by
+            the "_base_url" variable set up in hy configuration files to
+            create the full URL. If "path" is defined, the "url"
+            argument cannot be defined.
+          cookies:
+            A list of Cookie Plugins. Its values will be calculated and
+            inserted into the HTTP Request on runtime.
+          headers:
+            A list of Header Plugins. Its values will be calculated and
+            inserted into the HTTP Request on runtime.
+          data:
+            A dictionary with values to be inserted into the HTTP GET
+            parameters or POST body. Both keys and values of the
+            dictionary can be Plugins. Those values will be inserted
+            into the Request on runtime.
+
+        """
         self.method = method
         if not self.method:
             logging.critical("Required :method parameter, can't run without")
@@ -112,6 +159,23 @@ class Request:
     def process_inputs(
         self, user: User, config: Config
     ) -> dict[str, dict[str, str]]:
+        """Process the Request inputs.
+
+        Uses the supplied user data to replace the Plugins in the inputs
+        with their actual value. Returns those values.
+
+        Args:
+          user:
+            A User object containing the user specific data to be used
+            when processing the inputs.
+          config:
+            A Config object with the global Raider configuration.
+
+        Returns:
+          A dictionary with the cookies, headers, and other data created
+          from processing the inputs.
+
+        """
         userdata = user.to_dict()
 
         cookies = self.cookies.to_dict().copy()
@@ -133,12 +197,6 @@ class Request:
         for key in self.headers:
             value = self.headers[key].get_value()
             headers.update({key: value})
-            # elif isinstance(self.headers[key], Bearerauth):
-            #     self.headers[key].load_token()
-            #     value = self.headers[key].value
-            #     headers.update({key: value})
-            # else:
-            #     headers.update({key: userdata[key]})
 
         for key in list(httpdata):
             value = httpdata[key]
@@ -157,6 +215,23 @@ class Request:
     def send(
         self, user: User, config: Config
     ) -> Optional[requests.models.Response]:
+        """Sends the HTTP request.
+
+        With the given user information, replaces the input plugins with
+        their values, and sends the HTTP request. Returns the response.
+
+        Args:
+          user:
+            A User object with the user specific data to be used when
+            processing inputs.
+          config:
+            A Config object with the global Raider configuration.
+
+        Returns:
+          A requests.models.Response object with the HTTP response
+          received after sending the generated request.
+
+        """
         verify = config.verify
         if not verify:
             # pylint: disable=no-member

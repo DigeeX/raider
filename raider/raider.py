@@ -16,6 +16,8 @@
 """Main object used to perform common actions.
 """
 
+from typing import Optional
+
 from raider.application import Application
 
 
@@ -28,7 +30,8 @@ class Raider:
 
     Attributes:
       application:
-        An Application object with the currently active project.
+        An :class:`Application <Application>` object with the currently
+        active project.
       config:
         A Config object containing all of the necessary settings.
       user:
@@ -39,14 +42,47 @@ class Raider:
 
     """
 
-    def __init__(self, name: str) -> None:
-        self.application = Application(name)
+    def __init__(self, project: Optional[str] = None) -> None:
+        """Initializes the Raider object.
+
+        Initializes the main entry point for Raider. If the name of the
+        project is supplied, this application will be used, otherwise
+        the last used application will be chosen.
+
+        Args:
+          project:
+            A string with the name of the project.
+
+        """
+        self.application = Application(project)
         self.config = self.application.config
         self.user = self.application.active_user
         self.functions = self.application.functions
 
     def authenticate(self, username: str = None) -> None:
+        """Authenticates in the chosen application.
+
+        Runs the authentication process from start to end on the
+        selected application with the specified user.
+
+        Args:
+          username:
+            A string with the username to authenticate. If not
+            specified, the last used user will be selected.
+
+        """
         self.application.authenticate(username)
 
     def run_function(self, function: str) -> None:
+        """Runs a function in the chosen application.
+
+        With the selected application and user run the function from the
+        argument.
+
+        Args:
+          function:
+            A string with the function identifier as defined in
+            "_functions" variable.
+
+        """
         self.functions.run(function, self.user, self.config)

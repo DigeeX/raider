@@ -40,15 +40,53 @@ class Functions:
     """
 
     def __init__(self, functions: list[Flow]) -> None:
+        """Initializes the Functions object.
+
+        Args:
+          functions:
+            A list of Flow objects to be included in the Functions
+            object.
+
+        """
         self.functions = functions
 
     def get_function_by_name(self, name: str) -> Optional[Flow]:
+        """Gets the function given its name.
+
+        Tries to find the Flow object with the given name, and returns
+        it if it's found, otherwise returns None.
+
+        Args:
+          name:
+            A string with the unique identifier of the function as
+            defined in the Flow.
+
+        Returns:
+          A Flow object associated with the name, or None if no such
+          function has been found.
+
+        """
         for function in self.functions:
             if function.name == name:
                 return function
         return None
 
     def run(self, name: str, user: User, config: Config) -> None:
+        """Runs a Function.
+
+        Executes the given function, in the context of the specified
+        user, and applies the global Raider configuration.
+
+        Args:
+          name:
+            A string with the name of the function to run.
+          user:
+            A User object containing all the data needed to run the
+            function in this user's context.
+          config:
+            A Config object with the global Raider configuration.
+
+        """
         logging.info("Running function %s", name)
         function = self.get_function_by_name(name)
         if function:

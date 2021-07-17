@@ -30,6 +30,15 @@ class DataStore:
     """
 
     def __init__(self, data: Optional[dict[Any, Any]]) -> None:
+        """Initializes the DataStore object.
+
+        Given a dictionary with the data, store them in this object.
+
+        Args:
+          data:
+            A dictionary with Any elements to be stored.
+
+        """
         self._index = -1
         if data:
             self._store = data
@@ -37,18 +46,22 @@ class DataStore:
             self._store = {}
 
     def __getitem__(self, key: Any) -> Any:
+        """Getter to return an element with the key."""
         if key in self._store:
             return self._store[key]
         return None
 
     def __setitem__(self, key: Any, value: Any) -> None:
+        """Setter to add a new element to DataStore."""
         self._store.update({key: value})
 
     def __iter__(self) -> Iterator[Any]:
+        """Iterator to yield the keys."""
         for key in list(self._store):
             yield key
 
     def __next__(self) -> Any:
+        """Iterator to get the next element."""
         self._index += 1
         if self._index >= len(self._store):
             self._index = -1
@@ -58,21 +71,26 @@ class DataStore:
         return self._store[key]
 
     def update(self, data: dict[Any, Any]) -> None:
+        """Updates the DataStore with a new element."""
         self._store.update(data)
 
     def pop(self, name: Any) -> Any:
+        """Pops an element from the DataStore."""
         return self._store.pop(name)
 
     def list_keys(self) -> list[Any]:
+        """Returns a list of the keys in the DataStore."""
         return list(self._store)
 
     def list_values(self) -> list[Any]:
+        """Returns a list of the values in the DataStore."""
         data = []
         for key in self._store:
             data.append(self._store[key])
         return data
 
     def to_dict(self) -> dict[Any, Any]:
+        """Returns the DataStore elements as a dictionary."""
         return self._store
 
 
@@ -85,6 +103,15 @@ class HeaderStore(DataStore):
     """
 
     def __init__(self, data: Optional[list[Header]]) -> None:
+        """Initializes the HeaderStore object.
+
+        Creates a HeaderStore object out of the given Header list.
+
+        Args:
+          data:
+            A list of Header objects to store.
+
+        """
         values = {}
         if data:
             for header in data:
@@ -92,10 +119,35 @@ class HeaderStore(DataStore):
         super().__init__(values)
 
     def set(self, header: Header) -> None:
-        super().update({header.name: header})
+        """Sets the value of a Header.
+
+        Given a Header object, add or update its value in the
+        HeaderStore.
+
+        Args:
+          header:
+            A Header object to be added to the HeaderStore.
+
+        """
+        super().update({header.name: header.value})
 
     @classmethod
     def from_dict(cls, data: Optional[dict[str, str]]) -> "HeaderStore":
+        """Creates a HeaderStore object from a dictionary.
+
+        Given a dictionary with header values, creates a HeaderStore
+        object and returns it.
+
+        Args:
+          data:
+            A dictionary with header values. Those will be mapped in
+            Header objects.
+
+        Returns:
+          A HeaderStore object containing the headers created from the
+          supplied dictionary.
+
+        """
         headerlist = []
         if data:
             for name, value in data.items():
@@ -113,23 +165,52 @@ class CookieStore(DataStore):
     """
 
     def __init__(self, data: Optional[list[Cookie]]) -> None:
+        """Initializes a CookieStore object.
+
+        Given a list of Cookie objects, create the CookieStore
+        containing them.
+
+        Args:
+          data:
+            A list of Cookies to be added to the CookieStore.
+
+        """
         values = {}
         if data:
             for cookie in data:
                 values[cookie.name] = cookie
         super().__init__(values)
 
-    def to_dict(self) -> dict[str, str]:
-        data = {}
-        for key in self:
-            data[key] = self[key].value
-        return data
-
     def set(self, cookie: Cookie) -> None:
-        super().update({cookie.name: cookie})
+        """Sets the value of a Cookie.
+
+        Given a Cookie object, add or update its value in the
+        CookieStore.
+
+        Args:
+          cookie:
+            A Cookie object to be added to the CookieStore
+
+        """
+        super().update({cookie.name: cookie.value})
 
     @classmethod
     def from_dict(cls, data: Optional[dict[str, str]]) -> "CookieStore":
+        """Creates a CookieStore object from a dictionary.
+
+        Given a dictionary with cookie values, creates a CookieStore
+        object and returns it.
+
+        Args:
+          data:
+            A dictionary with cookie values. Those will be mapped in
+            Cookie objects.
+
+        Returns:
+          A CookieStore object containing the cookies created from the
+          supplied dictionary.
+
+        """
         cookielist = []
         if data:
             for name, value in data.items():

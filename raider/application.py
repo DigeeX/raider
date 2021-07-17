@@ -61,17 +61,29 @@ class Application:
 
     """
 
-    def __init__(self, name: str = None) -> None:
+    def __init__(self, project: str = None) -> None:
+        """Initializes the Application object.
+
+        Sets up the environment necessary to test the specified
+        application.
+
+        Args:
+          project:
+            A string with the name of the application to be
+            initialized. If not supplied, the last used application will
+            be selected
+
+        """
         self.config = Config()
 
-        if name:
-            self.config.active_project = name
+        if project:
+            self.config.active_project = project
             self.config.write_config_file()
-            self.name = name
+            self.project = project
         else:
-            self.name = self.config.active_project
+            self.project = self.config.active_project
 
-        output = self.config.load_project(name)
+        output = self.config.load_project(project)
         self.users = UserStore(output["_users"])
         active_user = output.get("_active_user")
         if active_user:
@@ -86,14 +98,32 @@ class Application:
         self.base_url = output["_base_url"]
 
     def authenticate(self, username: str = None) -> None:
+        """Authenticates the user.
+
+        Runs all the steps of the authentication process defined in the
+        hy config files for the application.
+
+        Args:
+          username:
+            A string with the user to be authenticated. If not supplied,
+            the last used username will be selected.
+
+        """
         if username:
             self.active_user = self.users[username]
         self.authentication.run_all(self.active_user, self.config)
         self.write_project_file()
 
     def write_session_file(self) -> None:
+        """Saves session data.
+
+        Saves user related session data in a file for later use. This
+        includes cookies, headers, and other data extracted using
+        Plugins.
+
+        """
         self.load_session_file()
-        filename = get_project_file(self.name, "_userdata.hy")
+        filename = get_project_file(self.project, "_userdata.hy")
         value = ""
         cookies = {}
         headers = {}
@@ -113,7 +143,13 @@ class Application:
             sess_file.write(value)
 
     def load_session_file(self) -> None:
-        filename = get_project_file(self.name, "_userdata.hy")
+        """Loads session data.
+
+        If session data was saved with write_session_file() this
+        function can load this data.
+
+        """
+        filename = get_project_file(self.project, "_userdata.hy")
         logging.debug("Loading session file %s", filename)
         if not os.path.exists(filename):
             logging.critical("Configuration file doesn't exist")
@@ -131,7 +167,13 @@ class Application:
                     logging.debug("Finished processing %s", filename)
 
     def write_project_file(self) -> None:
-        filename = get_project_file(self.name, "_project.hy")
+        """Writes the project settings.
+
+        For now only the active user is saved, so that the next time the
+        project is used, there's no need to specify the user manually.
+
+        """
+        filename = get_project_file(self.project, "_project.hy")
         value = ""
         with open(filename, "w") as proj_file:
             value += create_hy_expression(

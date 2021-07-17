@@ -3,6 +3,9 @@
     version = "0.1.0"
     description = "Authentication testing tool"
     authors = ["Daniel Neagaru <daniel@digeex.de>"]
+    packages = [
+      { include = "raider" }
+    ]
 
 [tool.poetry.scripts]
     raider = "raider.cli:main"
@@ -12,8 +15,7 @@
     hy = "^0.20.0"
     requests = "^2.25.1"
     importlib-metadata = "^4.6.1"
-types-requests = "^2.25.0"
-bs4 = "^0.0.1"
+    bs4 = "^0.0.1"
 
 [tool.poetry.dev-dependencies]
     pytest = "^5.2"
@@ -23,6 +25,7 @@ bs4 = "^0.0.1"
     pylint = "^2.9.3"
     black = {version = "^21.6b0", allow-prereleases = true}
     isort = "^5.9.1"
+    sphinxcontrib-needs = "^0.7.0"
 
 [build-system]
     requires = ["poetry-core>=1.0.0"]
@@ -50,19 +53,9 @@ bs4 = "^0.0.1"
     line_length = 79
 
 
-[tool.pylint.MASTER]
-    ignore-patterns = '''
-        \.git
-        |\.pytest_cache
-        |\.tox
-        |dist
-        |conf.py
-    '''
-
 [tool.pylint.message_control]
     disable = '''
     import-error,
-    missing-function-docstring,
     '''
 
 
@@ -79,8 +72,8 @@ bs4 = "^0.0.1"
     disallow_untyped_defs = true
     overrides = [
 
-    # TODO
-    # something doesn't work with requests types in the virtual environment
+    # # TODO
+    # # something doesn't work with requests types in the virtual environment
     { module = "requests.*", ignore_missing_imports = true },
 
     ]

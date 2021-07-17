@@ -52,11 +52,41 @@ class Plugin:
         function: Callable[..., Optional[str]],
         value: Optional[str] = None,
     ) -> None:
+        """Initializes a Plugin object.
+
+        Creates a Plugin object, holding a "function" defining how to
+        extract the "value".
+
+        Args:
+          name:
+            A string with the unique identifier of the Plugin.
+          function:
+            A Callable function that will be used to extract the
+            Plugin's value.
+          value:
+            A string with the extracted value from the Plugin.
+
+        """
         self.name = name
         self.function = function
         self.value: Optional[str] = value
 
     def get_value(self, data: Any = None) -> Optional[str]:
+        """Extracts the value of the Plugin.
+
+        Given an optional "data", extracts the "value" of the Plugin
+        storing it inside the object, and also returning it.
+
+        Args:
+          data:
+            An Optional object to be passed to the Plugin's "function"
+            when extracting the value.
+
+        Returns:
+          A string with the value of the Plugin or None if no output has
+        been extracted.
+
+        """
         if data:
             self.value = self.function(data)
         else:
@@ -90,11 +120,42 @@ class Regex(Plugin):
     """
 
     def __init__(self, name: str, regex: str, extract: int = 0) -> None:
+        """Initializes the Regex Plugin.
+
+        Creates a Regex Plugin with the given regular expression, and
+        extracts the matched group given in the "extract" argument, or
+        the first matching group if not specified.
+
+        Args:
+          name:
+            A string with the name of the Plugin.
+          regex:
+            A string containing the regular expression to be matched.
+          extract:
+            An optional integer with the number of the group to be
+            extracted. By default the first group will be assumed.
+
+        """
         super().__init__(name, self.extract_regex)
         self.regex = regex
         self.extract = extract
 
     def extract_regex(self, text: str) -> Optional[str]:
+        """Extracts defined regular expression from a text.
+
+        Given a text to be searched for matches, return the string
+        inside the group defined in "extract" or the first group if it's
+        undefined.
+
+        Args:
+          text:
+            A string containing the text to be searched for matches.
+
+        Returns:
+          A string with the match from the extracted group. Returns None
+          if there are no matches.
+
+        """
         matches = re.search(self.regex, text)
         if matches:
             groups = matches.groups()
@@ -108,6 +169,7 @@ class Regex(Plugin):
         return self.value
 
     def __str__(self) -> str:
+        """Returns a string representation of the Plugin."""
         return "Regex:" + self.regex + ":" + str(self.extract)
 
 
@@ -138,13 +200,47 @@ class Html(Plugin):
         attributes: dict[hy.HyKeyword, str],
         extract: str,
     ) -> None:
+        """Initializes the Html Plugin.
 
+        Creates a Html Plugin with the given "tag" and
+        "attributes". Stores the "extract" attribute in the plugin's
+        "value".
+
+        Args:
+          name:
+            A string with the name of the Plugin.
+          tag:
+            A string with the HTML tag to look for.
+          attributes:
+            A hy dictionary with the attributes to look inside HTML
+            tags. The values of dictionary elements are treated as
+            regular expressions.
+          extract:
+            A string with the HTML tag attribute that needs to be
+            extracted and stored in the Plugin's object.
+
+        """
         super().__init__(name, self.extract_html_tag)
         self.tag = tag
         self.attributes = hy_dict_to_python(attributes)
         self.extract = extract
 
     def extract_html_tag(self, text: str) -> Optional[str]:
+        """Extract data from an HTML tag.
+
+        Given the HTML text, parses it, iterates through the tags, and
+        find the one matching the attributes. Then it stores the matched
+        "value" and returns it.
+
+        Args:
+          text:
+            A string containing the HTML text to be processed.
+
+        Returns:
+          A string with the match as defined in the Plugin. Returns None
+          if there are no matches.
+
+        """
         soup = BeautifulSoup(text, "html.parser")
         matches = soup.find_all(self.tag)
 
@@ -156,6 +252,7 @@ class Html(Plugin):
         return self.value
 
     def __str__(self) -> str:
+        """Returns a string representation of the Plugin."""
         return (
             "Html:"
             + self.tag
@@ -182,10 +279,34 @@ class Json(Plugin):
     """
 
     def __init__(self, name: str, extract: str) -> None:
+        """Initializes the Json Plugin.
+
+        Creates the Json Plugin and extracts the specified field.
+
+        Args:
+          name:
+            A string with the name of the Plugin.
+          extract:
+            A string with the location of the JSON field to extract.
+        """
         super().__init__(name, self.extract_json_field)
         self.extract = extract
 
     def extract_json_field(self, text: str) -> Optional[str]:
+        """Extracts the JSON field from the text.
+
+        Given the JSON body as a string, extract the field and store it
+        in the Plugin's "value" attribute.
+
+        Args:
+          text:
+            A string with the JSON body.
+
+        Returns:
+          A string with the result of extraction. If no such field is
+          found None will be returned.
+
+        """
         parsed = json.loads(text)
 
         items = self.extract.split(".")
@@ -198,6 +319,7 @@ class Json(Plugin):
         return self.value
 
     def __str__(self) -> str:
+        """Returns a string representation of the Plugin."""
         return "Json:" + str(self.extract)
 
 
@@ -209,12 +331,34 @@ class Variable(Plugin):
     """
 
     def __init__(self, name: str) -> None:
+        """Initializes the Variable Plugin.
+
+        Creates a Variable object that will return the data from a
+        previously defined variable.
+
+        Args:
+          name:
+            The name of the variable.
+
+        """
         super().__init__(name, self.extract_variable)
 
-    def extract_variable(
-        self, data: Optional[dict[str, Any]] = None
-    ) -> Optional[str]:
+    def extract_variable(self, data: dict[str, str] = None) -> Optional[str]:
+        """Extracts the variable value.
 
+        Given a dictionary with the predefined variables, return the
+        value of the with the same name as the "name" attribute from
+        this Plugin.
+
+        Args:
+          data:
+            A dictionary with the predefined variables.
+
+        Returns:
+          A string with the value of the variable found. None if no such
+          variable has been defined.
+
+        """
         if data and self.name in data:
             self.value = data[self.name]
         return self.value
@@ -229,9 +373,26 @@ class Prompt(Plugin):
     """
 
     def __init__(self, name: str) -> None:
+        """Initializes the Prompt Plugin.
+
+        Creates a Prompt Plugin which will ask the user's input to get
+        the Plugin's value.
+
+        Args:
+          name:
+            A string containing the prompt asking the user for input.
+
+        """
         super().__init__(name, self.get_user_prompt)
 
     def get_user_prompt(self) -> str:
+        """Gets the value from user input.
+
+        Creates a prompt asking the user for input and stores the value
+        in the Plugin.
+
+        """
+        self.value = None
         while not self.value:
             print("Please provide the input value")
             self.value = input(self.name + " = ")
@@ -250,13 +411,30 @@ class Cookie(Plugin):
         value: Optional[str] = None,
         function: Optional[Callable[..., Optional[str]]] = None,
     ) -> None:
+        """Initializes the Cookie Plugin.
 
+        Creates a Cookie Plugin, either with predefined value, or by
+        using a function defining how the value should be generated on
+        runtime.
+
+        Args:
+          name:
+            A string with the name of the Cookie.
+          value:
+            An optional string with the value of the Cookie in case it's
+            already known.
+          function:
+            A Callable function which is used to get the value of the
+            Cookie on runtime.
+
+        """
         if not function:
             super().__init__(name, lambda: self.value, value)
         else:
             super().__init__(name, function)
 
     def __str__(self) -> str:
+        """Returns a string representation of the cookie."""
         return str({self.name: self.value})
 
 
@@ -272,23 +450,69 @@ class Header(Plugin):
         value: Optional[str] = None,
         function: Optional[Callable[..., Optional[str]]] = None,
     ) -> None:
+        """Initializes the Header Plugin.
 
+        Creates a Header Plugin, either with predefined value, or by
+        using a function defining how the value should be generated on
+        runtime.
+
+        Args:
+          name:
+            A string with the name of the Header.
+          value:
+            An optional string with the value of the Header in case it's
+            already known.
+          function:
+            A Callable function which is used to get the value of the
+            Header on runtime.
+
+        """
         if not function:
             super().__init__(name, lambda: self.value, value)
         else:
             super().__init__(name, function)
 
     def __str__(self) -> str:
+        """Returns a string representation of the Plugin."""
         return str({self.name: self.value})
 
     @classmethod
     def basicauth(cls, username: str, password: str) -> "Header":
+        """Creates a basic authentication header.
+
+        Given the username and the password for the basic
+        authentication, returns the Header object with the proper value.
+
+        Args:
+          username:
+            A string with the basic authentication username.
+          password:
+            A string with the basic authentication password.
+
+        Returns:
+          A Header object with the encoded basic authentication string.
+
+        """
         encoded = b64encode(":".join([username, password]).encode("utf-8"))
         header = cls("Authorization", "Basic " + encoded.decode("utf-8"))
         return header
 
     @classmethod
     def bearerauth(cls, access_token: Plugin) -> "Header":
+        """Creates a bearer authentication header.
+
+        Given the access_token as a Plugin, extracts its value and
+        returns a Header object with the correct value to be passed as
+        the Bearer Authorization string in the Header.
+
+        Args:
+          access_token:
+            A Plugin containing the value of the token to use.
+
+        Returns:
+          A Header object with the proper bearer authentication string.
+
+        """
         header = cls(
             "Authorization",
             None,

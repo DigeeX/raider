@@ -8,7 +8,7 @@
         :name "get_unread_messages"
         :request (Request
                    :method "GET"
-                   :headers [(Bearerauth access_token)]
+                   :headers [(Header.bearerauth access_token)]
                    :url "https://www.app4.com/unread_message_count")))
 
 (setv get_nickname
