@@ -17,13 +17,13 @@
 """
 
 import logging
-from typing import Optional, Union
+from typing import Optional
 
 import requests
 
 from raider.config import Config
-from raider.operations import Error, Grep, Http, NextStage, Print
-from raider.plugins import Cookie, Header, Html, Json, Plugin, Regex
+from raider.operations import Operation
+from raider.plugins import Plugin
 from raider.request import Request
 from raider.user import User
 
@@ -67,8 +67,8 @@ class Flow:
         self,
         name: str,
         request: Request,
-        outputs: list[Union[Regex, Html, Json]] = None,
-        operations: list[Union[Error, Grep, Http, NextStage, Print]] = None,
+        outputs: list[Plugin] = None,
+        operations: list[Operation] = None,
     ) -> None:
         """Initializes the Flow object.
 
@@ -123,38 +123,9 @@ class Flow:
         respective Plugin object.
 
         """
-        if not self.outputs:
-            return
-
-        for output in self.outputs:
-            if isinstance(output, Cookie):
-                value = self.response.cookies.get(output.name)
-                if value:
-                    output.value = value
-                    self.logger.debug(
-                        "Found cookie %s = %s",
-                        output.name,
-                        str(output.value),
-                    )
-                else:
-                    self.logger.warning("Cookie %s not found", output.name)
-            elif isinstance(output, Header):
-                value = self.response.headers.get(output.name)
-                if value:
-                    output.value = value
-                    self.logger.debug(
-                        "Found header %s = %s",
-                        output.name,
-                        str(output.value),
-                    )
-                else:
-                    self.logger.warning("Header %s not found", output.name)
-            elif isinstance(output, Plugin):
-                result = output.get_value(self.response.text)
-                if not result:
-                    self.logger.warning(
-                        "Couldn't extract output: %s", str(output)
-                    )
+        if self.outputs:
+            for output in self.outputs:
+                output.extract_value(self.response)
 
     def run_operations(self) -> Optional[str]:
         """Runs the defined operations.

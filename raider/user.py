@@ -16,11 +16,10 @@
 """Classes used for handling users.
 """
 
-from typing import Union
 
 import hy
 
-from raider.plugins import Cookie, Header, Html, Json, Regex
+from raider.plugins import Cookie, Header, Plugin
 from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.utils import hy_dict_to_python
 
@@ -109,7 +108,7 @@ class User:
         if header.value:
             self.headers.set(header)
 
-    def set_data(self, data: Union[Regex, Html, Json]) -> None:
+    def set_data(self, data: Plugin) -> None:
         """Sets the data for the user.
 
         Given a Plugin, update the user's data attribute to include this

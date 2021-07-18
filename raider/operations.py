@@ -25,10 +25,6 @@ import requests
 
 from raider.plugins import Html, Json, Regex, Variable
 
-# Operation flags
-IS_CONDITIONAL = 0x01
-NEEDS_RESPONSE = 0x02
-
 
 def execute_actions(
     operations: Union["Operation", list["Operation"]],
@@ -92,10 +88,14 @@ class Operation:
 
     """
 
+    # Operation flags
+    IS_CONDITIONAL = 0x01
+    NEEDS_RESPONSE = 0x02
+
     def __init__(
         self,
         function: Callable[..., Any],
-        flags: int,
+        flags: int = 0,
         action: Optional[Union["Operation", list["Operation"]]] = None,
         otherwise: Optional[Union["Operation", list["Operation"]]] = None,
     ):
@@ -116,8 +116,7 @@ class Operation:
 
         """
         self.function = function
-        self.needs_response = bool(flags & NEEDS_RESPONSE)
-        self.is_conditional = bool(flags & IS_CONDITIONAL)
+        self.flags = flags
         self.action = action
         self.otherwise = otherwise
 
@@ -172,6 +171,16 @@ class Operation:
 
         return None
 
+    @property
+    def needs_response(self) -> bool:
+        """Returns True if the NEEDS_RESPONSE flag is set."""
+        return bool(self.flags & self.NEEDS_RESPONSE)
+
+    @property
+    def is_conditional(self) -> bool:
+        """Returns True if the IS_CONDITIONAL flag is set."""
+        return bool(self.flags & self.IS_CONDITIONAL)
+
 
 class Http(Operation):
     """Operation that runs actions depending on the HTTP status code.
@@ -216,7 +225,7 @@ class Http(Operation):
             function=self.match_status_code,
             action=action,
             otherwise=otherwise,
-            flags=IS_CONDITIONAL | NEEDS_RESPONSE,
+            flags=self.IS_CONDITIONAL | self.NEEDS_RESPONSE,
         )
 
     def match_status_code(self, response: requests.models.Response) -> bool:
@@ -279,7 +288,7 @@ class Grep(Operation):
             function=self.match_response,
             action=action,
             otherwise=otherwise,
-            flags=IS_CONDITIONAL | NEEDS_RESPONSE,
+            flags=self.IS_CONDITIONAL | self.NEEDS_RESPONSE,
         )
 
     def match_response(self, response: requests.models.Response) -> bool:
@@ -322,7 +331,6 @@ class Print(Operation):
         self.args = args
         super().__init__(
             function=self.print_items,
-            flags=0,
         )
 
     def print_items(self) -> None:
@@ -356,7 +364,6 @@ class Error(Operation):
         self.message = message
         super().__init__(
             function=lambda: sys.exit(self.message),
-            flags=0,
         )
 
     def __str__(self) -> str:
@@ -378,17 +385,16 @@ class NextStage(Operation):
 
     """
 
-    def __init__(self, next_stage: str) -> None:
+    def __init__(self, next_stage: Optional[str]) -> None:
         """Initializes the NextStage Operation.
 
         Args:
           next_stage:
             A string with the name of the next stage.
         """
-        self.next_stage = next_stage
+        self.next_stage = str(next_stage)
         super().__init__(
             function=lambda: self.next_stage,
-            flags=0,
         )
 
     def __str__(self) -> str:

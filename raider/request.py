@@ -26,44 +26,9 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 
 from raider.config import Config
-from raider.plugins import (
-    Cookie,
-    Header,
-    Html,
-    Json,
-    Plugin,
-    Prompt,
-    Regex,
-    Variable,
-)
+from raider.plugins import Cookie, Header, Plugin
 from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
-
-
-def get_module_value(item: Plugin, data: dict[str, str]) -> Optional[str]:
-    """Gets the value from the Plugin.
-
-    Given a Plugin, extract the value from it, depending on the Plugin
-    type.
-
-    Args:
-      item:
-        A Plugin object from where the value should be extracted.
-      data:
-        A dictionary containing the previously extracted data.
-
-    Returns:
-      A string with the extracted value. None if nothing was found.
-
-    """
-    if isinstance(item, Variable):
-        value = item.get_value(data)
-    elif isinstance(item, Prompt):
-        value = item.get_value()
-    elif isinstance(item, (Regex, Html, Json)):
-        value = data[item.name]
-
-    return value
 
 
 # pylint: disable=too-many-arguments
@@ -195,20 +160,20 @@ class Request:
                 cookies.pop(key)
 
         for key in self.headers:
-            value = self.headers[key].get_value()
+            value = self.headers[key].get_value(userdata)
             headers.update({key: value})
 
         for key in list(httpdata):
             value = httpdata[key]
-            if type(value) in [Variable, Prompt, Regex, Html, Json]:
-                value = get_module_value(value, userdata)
-                httpdata.update({key: value})
+            if isinstance(value, Plugin):
+                new_value = value.get_value(userdata)
+                httpdata.update({key: new_value})
 
-            if type(key) in [Variable, Prompt, Regex, Html, Json]:
-                httpdata.pop(key)
-                new_key = get_module_value(key, userdata)
+            if isinstance(key, Plugin):
+                new_value = httpdata.pop(key)
+                new_key = key.get_value(userdata)
                 if new_key:
-                    httpdata.update({new_key: value})
+                    httpdata.update({new_key: new_value})
 
         return {"cookies": cookies, "data": httpdata, "headers": headers}
 

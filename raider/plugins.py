@@ -20,15 +20,15 @@ import json
 import logging
 import re
 from base64 import b64encode
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
 import hy
+import requests
 from bs4 import BeautifulSoup
 
 from raider.utils import hy_dict_to_python, match_tag
 
 
-# pylint: disable=too-few-public-methods
 class Plugin:
     """Parent class for all plugins.
 
@@ -46,10 +46,15 @@ class Plugin:
         A string containing the Plugin's output value.
     """
 
+    # Plugin flags
+    NEEDS_USERDATA = 0x01
+    NEEDS_RESPONSE = 0x02
+
     def __init__(
         self,
         name: str,
         function: Callable[..., Optional[str]],
+        flags: int = 0,
         value: Optional[str] = None,
     ) -> None:
         """Initializes a Plugin object.
@@ -65,33 +70,74 @@ class Plugin:
             Plugin's value.
           value:
             A string with the extracted value from the Plugin.
+          flags:
+            An integer containing the flags that define the Plugin's
+            behaviour. For now only NEEDS_USERDATA and NEEDS_RESPONSE is
+            supported. If NEEDS_USERDATA is set, the plugin will get its
+            value from the user's data, which will be sent to the function
+            defined here. If NEEDS_RESPONSE is set, the Plugin will extract
+            its value from the HTTP response instead.
 
         """
         self.name = name
         self.function = function
         self.value: Optional[str] = value
+        self.flags = flags
 
-    def get_value(self, data: Any = None) -> Optional[str]:
-        """Extracts the value of the Plugin.
+    def extract_value(
+        self,
+        response: Optional[requests.models.Response],
+    ) -> None:
+        """Extracts the value of the Plugin from the HTTP response.
 
-        Given an optional "data", extracts the "value" of the Plugin
-        storing it inside the object, and also returning it.
+        If NEEDS_RESPONSE flag is set, the Plugin will extract its value
+        upon receiving the HTTP response, and store it inside the "value"
+        attribute.
 
         Args:
-          data:
-            An Optional object to be passed to the Plugin's "function"
-            when extracting the value.
-
-        Returns:
-          A string with the value of the Plugin or None if no output has
-        been extracted.
+          response:
+            An requests.models.Response object with the HTTP response.
 
         """
-        if data:
-            self.value = self.function(data)
-        else:
-            self.value = self.function()
+        if self.needs_response:
+            output = self.function(response)
+            if output:
+                self.value = output
+                logging.debug(
+                    "Found ouput %s = %s",
+                    self.name,
+                    self.value,
+                )
+            else:
+                logging.warning("Couldn't extract output: %s", str(self.name))
+
+    def get_value(
+        self,
+        userdata: dict[str, str],
+    ) -> Optional[str]:
+        """Gets the value from the Plugin.
+
+        Depending on the Plugin's flags, extract and return its value.
+
+        Args:
+          userdata:
+            A dictionary with the user specific data.
+        """
+        if self.needs_userdata:
+            self.function(userdata)
+        elif not self.needs_response:
+            self.function()
         return self.value
+
+    @property
+    def needs_userdata(self) -> bool:
+        """Returns True if the NEEDS_USERDATA flag is set."""
+        return bool(self.flags & self.NEEDS_USERDATA)
+
+    @property
+    def needs_response(self) -> bool:
+        """Returns True if the NEEDS_RESPONSE flag is set."""
+        return bool(self.flags & self.NEEDS_RESPONSE)
 
 
 class Regex(Plugin):
@@ -136,11 +182,17 @@ class Regex(Plugin):
             extracted. By default the first group will be assumed.
 
         """
-        super().__init__(name, self.extract_regex)
+        super().__init__(
+            name=name,
+            function=self.extract_regex,
+            flags=self.NEEDS_RESPONSE,
+        )
         self.regex = regex
         self.extract = extract
 
-    def extract_regex(self, text: str) -> Optional[str]:
+    def extract_regex(
+        self, response: requests.models.Response
+    ) -> Optional[str]:
         """Extracts defined regular expression from a text.
 
         Given a text to be searched for matches, return the string
@@ -156,7 +208,7 @@ class Regex(Plugin):
           if there are no matches.
 
         """
-        matches = re.search(self.regex, text)
+        matches = re.search(self.regex, response.text)
         if matches:
             groups = matches.groups()
             self.value = groups[self.extract]
@@ -220,12 +272,18 @@ class Html(Plugin):
             extracted and stored in the Plugin's object.
 
         """
-        super().__init__(name, self.extract_html_tag)
+        super().__init__(
+            name=name,
+            function=self.extract_html_tag,
+            flags=self.NEEDS_RESPONSE,
+        )
         self.tag = tag
         self.attributes = hy_dict_to_python(attributes)
         self.extract = extract
 
-    def extract_html_tag(self, text: str) -> Optional[str]:
+    def extract_html_tag(
+        self, response: requests.models.Response
+    ) -> Optional[str]:
         """Extract data from an HTML tag.
 
         Given the HTML text, parses it, iterates through the tags, and
@@ -241,7 +299,7 @@ class Html(Plugin):
           if there are no matches.
 
         """
-        soup = BeautifulSoup(text, "html.parser")
+        soup = BeautifulSoup(response.text, "html.parser")
         matches = soup.find_all(self.tag)
 
         for item in matches:
@@ -289,10 +347,16 @@ class Json(Plugin):
           extract:
             A string with the location of the JSON field to extract.
         """
-        super().__init__(name, self.extract_json_field)
+        super().__init__(
+            name=name,
+            function=self.extract_json_field,
+            flags=self.NEEDS_RESPONSE,
+        )
         self.extract = extract
 
-    def extract_json_field(self, text: str) -> Optional[str]:
+    def extract_json_field(
+        self, response: requests.models.Response
+    ) -> Optional[str]:
         """Extracts the JSON field from the text.
 
         Given the JSON body as a string, extract the field and store it
@@ -307,7 +371,7 @@ class Json(Plugin):
           found None will be returned.
 
         """
-        parsed = json.loads(text)
+        parsed = json.loads(response.text)
 
         items = self.extract.split(".")
         temp = parsed
@@ -341,7 +405,11 @@ class Variable(Plugin):
             The name of the variable.
 
         """
-        super().__init__(name, self.extract_variable)
+        super().__init__(
+            name=name,
+            function=self.extract_variable,
+            flags=self.NEEDS_USERDATA,
+        )
 
     def extract_variable(self, data: dict[str, str] = None) -> Optional[str]:
         """Extracts the variable value.
@@ -383,7 +451,7 @@ class Prompt(Plugin):
             A string containing the prompt asking the user for input.
 
         """
-        super().__init__(name, self.get_user_prompt)
+        super().__init__(name=name, function=self.get_user_prompt)
 
     def get_user_prompt(self) -> str:
         """Gets the value from user input.
@@ -429,9 +497,20 @@ class Cookie(Plugin):
 
         """
         if not function:
-            super().__init__(name, lambda: self.value, value)
+            super().__init__(
+                name=name,
+                function=self.extract_cookie,
+                value=value,
+                flags=self.NEEDS_RESPONSE,
+            )
         else:
             super().__init__(name, function)
+
+    def extract_cookie(
+        self, response: requests.models.Response
+    ) -> Optional[str]:
+        """Returns the cookie with the specified name from the response."""
+        return response.cookies.get(self.name)
 
     def __str__(self) -> str:
         """Returns a string representation of the cookie."""
@@ -467,10 +546,24 @@ class Header(Plugin):
             Header on runtime.
 
         """
+
         if not function:
-            super().__init__(name, lambda: self.value, value)
+            super().__init__(
+                name=name,
+                function=lambda: self.value,
+                value=value,
+                flags=self.NEEDS_RESPONSE,
+            )
         else:
-            super().__init__(name, function)
+            super().__init__(
+                name=name, function=function, flags=self.NEEDS_RESPONSE
+            )
+
+    def extract_header(
+        self, response: requests.models.Response
+    ) -> Optional[str]:
+        """Returns the header with the specified name from the response."""
+        return response.headers.get(self.name)
 
     def __str__(self) -> str:
         """Returns a string representation of the Plugin."""

@@ -130,10 +130,21 @@ def import_raider_objects() -> dict[str, Any]:
 
     """
     hy_imports = {
-        "plugins": "Variable Prompt Regex Html Json Cookie Header",
+        "plugins": (
+            "Variable "
+            "Prompt "
+            "Regex "
+            "Html "
+            "Json "
+            "Cookie "
+            "Header "
+            "Plugin"
+        ),
         "flow": "Flow",
         "request": "Request",
-        "operations": "Http Grep Print Error NextStage",
+        "operations": (
+            "Http " "Grep " "Print " "Error " "NextStage " "Operation"
+        ),
     }
 
     for module, classes in hy_imports.items():
