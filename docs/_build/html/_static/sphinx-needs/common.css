@@ -1,0 +1,152 @@
+/* This is needed to avoid custom settings for common tables, like the ReadTheDocs theme docs */
+/* It reimplements the normal browser behavior of breaking/wrapping table content if too long.*/
+table.need td {
+    white-space: normal;
+}
+
+/* Needed for RTD theme.
+Manipulates it for EVERY table, so also none sphinx-needs tables
+Another solution would be to use JS, to address only divs, which have a sphinx-needs table as child.*/
+div.wy-table-responsive {
+    overflow: unset;
+    margin-bottom: unset;
+}
+ /* Bringing Head and content columns align*/
+ /*solution from https://datatables.net/forums/discussion/comment/72586/#Comment_72586*/
+/*table.dataTable,*/
+/*table.dataTable  thead th,*/
+/*table.dataTable tbody td {*/
+/*  -webkit-box-sizing: content-box;*/
+/*  -moz-box-sizing: content-box;*/
+/*  box-sizing: content-box;*/
+/*}*/
+
+table.NEEDS_TABLE {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  width: 100%;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+  margin: 0 auto;
+}
+
+/* We need not line-block margin:24 px here, which is coming from sphinx theme */
+table.need td div.needs_side.line-block{
+    margin-bottom: 0;
+}
+
+table.need tr.head div.line-block,
+table.need tr.meta div.line-block,
+table.need tr.footer div.line-block {
+    display: block;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.toggle .header {
+    display: block;
+    clear: both;
+}
+
+.toggle .header p{
+    display: inline;
+}
+
+.toggle .header:after {
+    content: " ▷";
+}
+
+.toggle .header.open:after {
+    content: " ▽";
+}
+
+div.toggle {
+    /*border: 2px solid #ddd;*/
+    /*padding: 5px;*/
+    /*border-radius: 5px;*/
+}
+
+div.need div.toggle {
+    /*margin-top: -15px;*/
+}
+
+div.need div.toggle div.line-block {
+    margin-top: 0px;
+    margin-left: 30px;
+}
+
+/* DEAD Links config */
+/* allowed dead links */
+span.needs_dead_link {
+    opacity: 0.8;
+}
+/*forbidden dead links */
+span.needs_dead_link.forbidden{
+    color: #dc3545;
+}
+
+
+/* Style configuration */
+
+/* CLEAN */
+table.style_needs_clean {
+    background: None !important;
+    border: None !important;
+    box-shadow: None !important;
+}
+
+table.style_needs_clean td {
+    padding: 0;
+}
+
+
+/* **************** */
+/* DataTable layout */
+/* **************** */
+table.dataTable {
+    border-collapse: collapse;
+    border: none;
+}
+
+div.dataTables_length {
+    margin-bottom: 10px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.15em 0.75em;
+    background: none;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: none;
+}
+
+div.dataTables_length select {
+    background: none;
+}
+
+/*DataTables Download Buttons*/
+div.dt-buttons {
+   margin-left: 10%;
+}
+
+div.dt-buttons button {
+    padding: 0.1em 1em;
+    border: 1px solid #999;
+    border-radius: 2px;
+    font-size: 0.88em;
+    line-height: inherit;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: inherit;
+    background-image: none;
+}
+
+/* Style for external need links*/
+a.external_link:after {
+    content: "🡽"
+    /* Same, but with none breaking space (&nbsp not supported in content!)*/
+    /*content: "\00a0\00a0🡽"*/
+}

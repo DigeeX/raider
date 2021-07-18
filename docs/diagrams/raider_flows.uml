@@ -1,0 +1,68 @@
+skinparam componentStyle rectangle
+
+package "Flow0" {
+  frame "Stage0" {
+  [Request0] -down- [Response0]
+  }
+
+  component outputs0 [
+  output_0
+  output_1
+  ...
+  output_n
+  ]
+
+  component operations0 [
+  operation_0
+  operation_1
+  ...
+  operation_n
+  ]
+
+  Response0 --> outputs0
+  note top of outputs0 : Outputs
+
+  outputs0 -right-> operations0
+  note top of operations0 : Operations
+
+}
+
+
+package "Flow1" {
+  frame "Stage1" {
+  [Request1] -down- [Response1]
+  }
+
+  component outputs1 [
+  output_0
+  output_1
+  ...
+  output_n
+  ]
+
+  component inputs1 [
+  input_0
+  input_1
+  ...
+  input_n
+  ]
+
+  component operations1 [
+  operation_0
+  operation_1
+  ...
+  operation_n
+  ]
+
+  Response1 --> outputs1
+  note top of outputs1 : Outputs
+  note left of inputs1 : Inputs
+
+  outputs1 -right-> operations1
+  note top of operations1 : Operations
+
+}
+
+operations0 -> Flow1
+outputs0 -> inputs1
+inputs1 -> Request1

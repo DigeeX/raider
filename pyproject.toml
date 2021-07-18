@@ -26,6 +26,8 @@
     black = {version = "^21.6b0", allow-prereleases = true}
     isort = "^5.9.1"
     sphinxcontrib-needs = "^0.7.0"
+sphinx-autodoc-typehints = "^1.12.0"
+sphinx-rtd-theme = "^0.5.2"
 
 [build-system]
     requires = ["poetry-core>=1.0.0"]
@@ -41,6 +43,7 @@
         | \.git
         | \.tox
         | dist
+	| docs
       )/
     )
     '''
@@ -53,6 +56,13 @@
     line_length = 79
 
 
+[tool.pylint.master]
+    ignore-patterns = '''
+         \.eggs
+         |\.git
+	 |conf.py
+    '''
+
 [tool.pylint.message_control]
     disable = '''
     import-error,
@@ -60,7 +70,6 @@
 
 
 [tool.mypy]
-    exclude = "/docs/source/conf.py"
     python_version = "3.9"
     follow_imports = "silent"
     strict_optional = true

@@ -1,0 +1,32 @@
+[*] --> Unauthenticated : Open login page
+
+state Unauthenticated
+state "MFA required" as MFA_required
+state "Login failed" as login_failed
+state Authenticated
+
+Authenticated --> [*]
+
+state "Login check" as login <<sdlreceive>>
+state "Is MFA enabled?" as mfa_enabled <<sdlreceive>>
+state "Is MFA code correct?" as mfa_correct <<sdlreceive>>
+
+state login_check <<choice>>
+state mfa_enabled_check <<choice>>
+state mfa_correct_check <<choice>>
+
+
+Unauthenticated --> login : Log in
+login --> login_check
+login_check --> mfa_enabled : Correct credentials
+login_check --> login_failed : Bad credentials
+
+
+mfa_enabled --> mfa_enabled_check
+mfa_enabled_check --> MFA_required : MFA enabled
+mfa_enabled_check --> Authenticated : MFA disabled
+
+MFA_required -->  mfa_correct
+mfa_correct --> mfa_correct_check
+mfa_correct_check --> login_failed : Failed MFA
+mfa_correct_check --> Authenticated : Passed MFA

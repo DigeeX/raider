@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>raider.config &mdash; raider 0.1.0 documentation</title>
+
+
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-needs/libs/html/datatables.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-needs/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-needs/layouts.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-needs/styles.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-needs/modern.css" type="text/css" />
+
+
+
+
+
+
+
+
+
+
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx-needs/libs/html/datatables.min.js"></script>
+        <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js"></script>
+        <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js"></script>
+
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+
+
+  <div class="wy-grid-for-nav">
+
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+            <a href="../../index.html" class="icon icon-home"> raider
+
+
+
+          </a>
+
+
+
+
+              <div class="version">
+                0.1.0
+              </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+
+
+
+
+
+
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/install.html">Installing Raider</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/definitions.html">Definitions</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/operations.html">Operations</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/api.html">API reference</a></li>
+</ul>
+
+
+
+        </div>
+
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+
+      <nav class="wy-nav-top" aria-label="top navigation">
+
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">raider</a>
+
+      </nav>
+
+
+      <div class="wy-nav-content">
+
+        <div class="rst-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+
+      <li>raider.config</li>
+
+
+      <li class="wy-breadcrumbs-aside">
+
+      </li>
+
+  </ul>
+
+
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <h1>Source code for raider.config</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2021 DigeeX</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
+
+<span class="sd">&quot;&quot;&quot;Config class holding global Raider configuration.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span> <span class="nn">raider.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_hy_expression</span><span class="p">,</span>
+    <span class="n">default_user_agent</span><span class="p">,</span>
+    <span class="n">eval_file</span><span class="p">,</span>
+    <span class="n">eval_project_file</span><span class="p">,</span>
+    <span class="n">get_config_file</span><span class="p">,</span>
+    <span class="n">get_project_dir</span><span class="p">,</span>
+    <span class="n">list_apps</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../dev/api.html#raider.config.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class dealing with global Raider configuration.</span>
+
+<span class="sd">    A Config object will contain all the information necessary to run</span>
+<span class="sd">    Raider. It will define global configurations like the web proxy and</span>
+<span class="sd">    the logging level, but also the data defined in the active project</span>
+<span class="sd">    configuration files.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">      proxy:</span>
+<span class="sd">        An optional string to define the web proxy to relay the traffic</span>
+<span class="sd">        through.</span>
+<span class="sd">      verify:</span>
+<span class="sd">        A boolean flag which will let the requests library know whether</span>
+<span class="sd">        to check the SSL certificate or ignore it.</span>
+<span class="sd">      loglevel:</span>
+<span class="sd">        A string used by the logging library to define the desired</span>
+<span class="sd">        logging level.</span>
+<span class="sd">      user_agent:</span>
+<span class="sd">        A string which will be used as the user agent in HTTP requests.</span>
+<span class="sd">      active_project:</span>
+<span class="sd">        A string defining the current active project.</span>
+<span class="sd">      project_config:</span>
+<span class="sd">        A dictionary containing all of the local variables defined in</span>
+<span class="sd">        the active project&#39;s hy configuration files.</span>
+<span class="sd">      logger:</span>
+<span class="sd">        A logging.RootLogger object used for debugging.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initializes the Config object.</span>
+
+<span class="sd">        Retrieves configuration from &quot;common.hy&quot; file, or populates it</span>
+<span class="sd">        with the default values if it doesn&#39;t exist.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">get_config_file</span><span class="p">(</span><span class="s2">&quot;common.hy&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">eval_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">proxy</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;proxy&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verify</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verify&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;loglevel&quot;</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_agent</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_agent&quot;</span><span class="p">,</span> <span class="n">default_user_agent</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_project</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active_project&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">list_apps</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s2">&quot;No application have been configured. Cannot run.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Config.load_project"><a class="viewcode-back" href="../../dev/api.html#raider.config.Config.load_project">[docs]</a>    <span class="k">def</span> <span class="nf">load_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Loads project settings.</span>
+
+<span class="sd">        Goes through all the &quot;.hy&quot; files in the project directory,</span>
+<span class="sd">        evaluates them all, and returns the created locals, making them</span>
+<span class="sd">        available to the rest of Raider.</span>
+
+<span class="sd">        Files are loaded in alphabetical order, and objects created in</span>
+<span class="sd">        one of them will be available to the next one, eliminating the</span>
+<span class="sd">        need to use imports. This allows the user to split the</span>
+<span class="sd">        configuration files however it makes sense, and Raider doesn&#39;t</span>
+<span class="sd">        impose any restrictions on those files.</span>
+
+<span class="sd">        All &quot;.hy&quot; files in the project directory are evaluated, which</span>
+<span class="sd">        could be considered unsafe and could cause all kinds of security</span>
+<span class="sd">        issues, but Raider assumes the user knows what they&#39;re doing and</span>
+<span class="sd">        will not copy/paste hylang code from untrusted sources.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          project:</span>
+<span class="sd">            A string with the name of the project. By default the</span>
+<span class="sd">            project is located in &quot;~/.config/raider/&quot;. All &quot;.hy&quot; files</span>
+<span class="sd">            from this directory will be executed and the locals that</span>
+<span class="sd">            were created during that will be returned.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          A dictionary as returned by the locals() function. It contains</span>
+<span class="sd">          all of the locally defined objects in the &quot;.hy&quot; configuration</span>
+<span class="sd">          files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">project</span><span class="p">:</span>
+            <span class="n">active_project</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_project</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">active_project</span> <span class="o">=</span> <span class="n">project</span>
+
+        <span class="n">hyfiles</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">get_project_dir</span><span class="p">(</span><span class="n">active_project</span><span class="p">)))</span>
+        <span class="n">shared_locals</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+        <span class="n">shared_locals</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">confile</span> <span class="ow">in</span> <span class="n">hyfiles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">confile</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.hy&quot;</span><span class="p">):</span>
+                <span class="n">shared_locals</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="n">eval_project_file</span><span class="p">(</span><span class="n">active_project</span><span class="p">,</span> <span class="n">confile</span><span class="p">,</span> <span class="n">shared_locals</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span> <span class="o">=</span> <span class="n">shared_locals</span>
+        <span class="k">return</span> <span class="n">shared_locals</span></div>
+
+<div class="viewcode-block" id="Config.write_config_file"><a class="viewcode-back" href="../../dev/api.html#raider.config.Config.write_config_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Writes global configuration to common.hy.</span>
+
+<span class="sd">        Gets the current configuration from the Config object and writes</span>
+<span class="sd">        them in hylang format in the &quot;common.hy&quot; file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">get_config_file</span><span class="p">(</span><span class="s2">&quot;common.hy&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">conf_file</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="n">create_hy_expression</span><span class="p">(</span><span class="s2">&quot;proxy&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">proxy</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="n">create_hy_expression</span><span class="p">(</span><span class="s2">&quot;user_agent&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_agent</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="n">create_hy_expression</span><span class="p">(</span><span class="s2">&quot;loglevel&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="n">create_hy_expression</span><span class="p">(</span><span class="s2">&quot;verify&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">verify</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="n">create_hy_expression</span><span class="p">(</span><span class="s2">&quot;active_project&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_project</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing to config file </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;data = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+            <span class="n">conf_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Config.print_config"><a class="viewcode-back" href="../../dev/api.html#raider.config.Config.print_config">[docs]</a>    <span class="k">def</span> <span class="nf">print_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Prints current configuration.&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;proxy: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">proxy</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;verify: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">verify</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;loglevel: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;user_agent: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_agent</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;active_project: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_project</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, DigeeX.
+
+    </p>
+  </div>
+
+
+
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+
+
+
+
+
+</body>
+</html>

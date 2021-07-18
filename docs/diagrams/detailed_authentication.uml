@@ -1,0 +1,84 @@
+state User {
+  User: Username
+  User: Password
+}
+
+state Factors {
+Factors: SMS code
+Factors: E-mail confirmation
+Factors: TOTP
+Factors: Biometrics
+}
+
+
+
+state Initialization {
+  state Request0
+  state Response0
+  Request0 -[#orange]-> Response0
+  Response0 --> outputs0
+  state outputs0 <<expansionOutput>>
+  Response0 : CSRF Token
+  Response0 : Session cookie
+}
+
+
+state Login {
+  state inputs1 <<expansionInput>>
+  state outputs1 <<expansionOutput>>
+  state Request1
+  state Response1
+  inputs1 --> Request1
+  outputs0 --> inputs1
+  Request1 -[#orange]-> Response1
+  Request1: CSRF Token
+  Request1: Session cookie
+  Request1: Username
+  Request1: Password
+  Response1 --> outputs1
+  Response1: CSRF Token
+  Response1: Session cookie
+  Response1: User cookie
+}
+
+User -[#blue]-> inputs1
+
+
+state "Multi-factor authentication" as MFA {
+  state inputs2 <<expansionInput>>
+  state outputs2 <<expansionOutput>>
+  state Request2
+  Request2: CSRF Token
+  Request2: Session cookie
+  Request2: User cookie
+  state Response2
+  Response2: Session cookie
+  Response2: User cookie
+  Response2: MFA passed cookie
+  Request2 -[#orange]-> Response2
+  outputs1 --> inputs2
+  inputs2 --> Request2
+  Response2 --> outputs2
+
+}
+
+[*] --> Initialization
+
+Initialization -[#green]-> Login
+
+
+Factors -[#blue]-> inputs2
+
+Login -[#green]> MFA : MFA enabled
+Login -[#green]-> Authenticated : MFA disabled
+
+state Authenticated
+state "Login failed" as login_failed
+state "MFA failed" as MFA_failed
+
+Login -left[#green]-> login_failed : Bad credentials
+
+MFA -[#green]-> Authenticated : MFA passed
+MFA -left[#green]-> MFA_failed
+
+Authenticated --> [*]

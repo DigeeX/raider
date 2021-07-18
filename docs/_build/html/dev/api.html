@@ -1,0 +1,738 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>API reference &mdash; raider 0.1.0 documentation</title>
+
+
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-needs/libs/html/datatables.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-needs/common.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-needs/layouts.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-needs/styles.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-needs/modern.css" type="text/css" />
+
+
+
+
+
+
+
+
+
+
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx-needs/libs/html/datatables.min.js"></script>
+        <script src="../_static/sphinx-needs/libs/html/datatables_loader.js"></script>
+        <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js"></script>
+
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Operations" href="operations.html" />
+</head>
+
+<body class="wy-body-for-nav">
+
+
+  <div class="wy-grid-for-nav">
+
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+            <a href="../index.html" class="icon icon-home"> raider
+
+
+
+          </a>
+
+
+
+
+              <div class="version">
+                0.1.0
+              </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+
+
+
+
+
+
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user/install.html">Installing Raider</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/definitions.html">Definitions</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operations.html">Operations</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API reference</a></li>
+</ul>
+
+
+
+        </div>
+
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+
+      <nav class="wy-nav-top" aria-label="top navigation">
+
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">raider</a>
+
+      </nav>
+
+
+      <div class="wy-nav-content">
+
+        <div class="rst-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+
+      <li>API reference</li>
+
+
+      <li class="wy-breadcrumbs-aside">
+
+
+            <a href="../_sources/dev/api.rst.txt" rel="nofollow"> View page source</a>
+
+
+      </li>
+
+  </ul>
+
+
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <div class="section" id="module-raider">
+<span id="api-reference"></span><span id="api"></span><h1>API reference<a class="headerlink" href="#module-raider" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.Raider">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Raider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/raider.html#Raider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.Raider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main class used as the point of entry.</p>
+<p>The Raider class should be used to access everything else inside
+Raider. For now it’s still not doing much, but for the future this
+is where all of the features available to the end user should be.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.Raider.application">
+<span class="sig-name descname"><span class="pre">application</span></span><a class="headerlink" href="#raider.Raider.application" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <code class="xref py py-class docutils literal notranslate"><span class="pre">Application</span></code> object with the currently
+active project.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.Raider.config">
+<span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#raider.Raider.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Config object containing all of the necessary settings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.Raider.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#raider.Raider.user" title="Permalink to this definition">¶</a></dt>
+<dd><p>A User object containing the active user of the active project.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.Raider.functions">
+<span class="sig-name descname"><span class="pre">functions</span></span><a class="headerlink" href="#raider.Raider.functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Functions object containing the defined functions of the
+active project.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.Raider.authenticate">
+<span class="sig-name descname"><span class="pre">authenticate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/raider.html#Raider.authenticate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.Raider.authenticate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Authenticates in the chosen application.</p>
+<p>Runs the authentication process from start to end on the
+selected application with the specified user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>username</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – A string with the username to authenticate. If not
+specified, the last used user will be selected.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.Raider.run_function">
+<span class="sig-name descname"><span class="pre">run_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/raider.html#Raider.run_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.Raider.run_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a function in the chosen application.</p>
+<p>With the selected application and user run the function from the
+argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>function</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – A string with the function identifier as defined in
+“_functions” variable.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-raider.config"></span><p>Config class holding global Raider configuration.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.config.Config">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Config</span></span><a class="reference internal" href="../_modules/raider/config.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.config.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class dealing with global Raider configuration.</p>
+<p>A Config object will contain all the information necessary to run
+Raider. It will define global configurations like the web proxy and
+the logging level, but also the data defined in the active project
+configuration files.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.config.Config.proxy">
+<span class="sig-name descname"><span class="pre">proxy</span></span><a class="headerlink" href="#raider.config.Config.proxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional string to define the web proxy to relay the traffic
+through.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.config.Config.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><a class="headerlink" href="#raider.config.Config.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean flag which will let the requests library know whether
+to check the SSL certificate or ignore it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.config.Config.loglevel">
+<span class="sig-name descname"><span class="pre">loglevel</span></span><a class="headerlink" href="#raider.config.Config.loglevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string used by the logging library to define the desired
+logging level.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.config.Config.user_agent">
+<span class="sig-name descname"><span class="pre">user_agent</span></span><a class="headerlink" href="#raider.config.Config.user_agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string which will be used as the user agent in HTTP requests.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.config.Config.active_project">
+<span class="sig-name descname"><span class="pre">active_project</span></span><a class="headerlink" href="#raider.config.Config.active_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string defining the current active project.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.config.Config.project_config">
+<span class="sig-name descname"><span class="pre">project_config</span></span><a class="headerlink" href="#raider.config.Config.project_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary containing all of the local variables defined in
+the active project’s hy configuration files.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.config.Config.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#raider.config.Config.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>A logging.RootLogger object used for debugging.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.config.Config.load_project">
+<span class="sig-name descname"><span class="pre">load_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/config.html#Config.load_project"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.config.Config.load_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads project settings.</p>
+<p>Goes through all the “.hy” files in the project directory,
+evaluates them all, and returns the created locals, making them
+available to the rest of Raider.</p>
+<p>Files are loaded in alphabetical order, and objects created in
+one of them will be available to the next one, eliminating the
+need to use imports. This allows the user to split the
+configuration files however it makes sense, and Raider doesn’t
+impose any restrictions on those files.</p>
+<p>All “.hy” files in the project directory are evaluated, which
+could be considered unsafe and could cause all kinds of security
+issues, but Raider assumes the user knows what they’re doing and
+will not copy/paste hylang code from untrusted sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – A string with the name of the project. By default the
+project is located in “~/.config/raider/”. All “.hy” files
+from this directory will be executed and the locals that
+were created during that will be returned.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary as returned by the locals() function. It contains
+all of the locally defined objects in the “.hy” configuration
+files.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.config.Config.print_config">
+<span class="sig-name descname"><span class="pre">print_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/config.html#Config.print_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.config.Config.print_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints current configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.config.Config.write_config_file">
+<span class="sig-name descname"><span class="pre">write_config_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/config.html#Config.write_config_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.config.Config.write_config_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes global configuration to common.hy.</p>
+<p>Gets the current configuration from the Config object and writes
+them in hylang format in the “common.hy” file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-raider.application"></span><p>Application class holding project configuration.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.application.Application">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Application</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/application.html#Application"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.application.Application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class holding all the project related data.</p>
+<p>This class isn’t supposed to be used directly by the user, instead
+the Raider class should be used, which will deal with the
+Application class internally.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.application.Application.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#raider.application.Application.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string with the name of the application.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.application.Application.base_url">
+<span class="sig-name descname"><span class="pre">base_url</span></span><a class="headerlink" href="#raider.application.Application.base_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string with the base URL of the application.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.application.Application.config">
+<span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#raider.application.Application.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Config object with Raider global configuration plus the
+variables defined in hy configuration files related to the
+Application.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.application.Application.users">
+<span class="sig-name descname"><span class="pre">users</span></span><a class="headerlink" href="#raider.application.Application.users" title="Permalink to this definition">¶</a></dt>
+<dd><p>A UserStore object generated from the “_users” variable set in
+the hy configuration files for the project.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.application.Application.active_user">
+<span class="sig-name descname"><span class="pre">active_user</span></span><a class="headerlink" href="#raider.application.Application.active_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>A User object pointing to the active user inside the “users”
+object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.application.Application.authentication">
+<span class="sig-name descname"><span class="pre">authentication</span></span><a class="headerlink" href="#raider.application.Application.authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>An Authentication object containing all the Flows relevant to
+the authentication process. It’s created out of the
+“_authentication” variable from the hy configuration files.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.application.Application.functions">
+<span class="sig-name descname"><span class="pre">functions</span></span><a class="headerlink" href="#raider.application.Application.functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Functions object with all Flows that don’t affect the
+authentication process. This object is being created out of the
+“_functions” variable from the hy configuration files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.application.Application.authenticate">
+<span class="sig-name descname"><span class="pre">authenticate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/application.html#Application.authenticate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.application.Application.authenticate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Authenticates the user.</p>
+<p>Runs all the steps of the authentication process defined in the
+hy config files for the application.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>username</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – A string with the user to be authenticated. If not supplied,
+the last used username will be selected.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.application.Application.load_session_file">
+<span class="sig-name descname"><span class="pre">load_session_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/application.html#Application.load_session_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.application.Application.load_session_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads session data.</p>
+<p>If session data was saved with write_session_file() this
+function can load this data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.application.Application.write_project_file">
+<span class="sig-name descname"><span class="pre">write_project_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/application.html#Application.write_project_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.application.Application.write_project_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the project settings.</p>
+<p>For now only the active user is saved, so that the next time the
+project is used, there’s no need to specify the user manually.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.application.Application.write_session_file">
+<span class="sig-name descname"><span class="pre">write_session_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/application.html#Application.write_session_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.application.Application.write_session_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves session data.</p>
+<p>Saves user related session data in a file for later use. This
+includes cookies, headers, and other data extracted using
+Plugins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-raider.authentication"></span><p>Authentication class responsible for running the defined stages.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.authentication.Authentication">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Authentication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stages</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/authentication.html#Authentication"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.authentication.Authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class holding authentication stages.</p>
+<p>This class holds all the information necessary to authenticate. It
+provides functions to run those authentication steps.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.authentication.Authentication.stages">
+<span class="sig-name descname"><span class="pre">stages</span></span><a class="headerlink" href="#raider.authentication.Authentication.stages" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of Flow objects relevant to the authentication process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.authentication.Authentication.get_stage_by_name">
+<span class="sig-name descname"><span class="pre">get_stage_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/authentication.html#Authentication.get_stage_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.authentication.Authentication.get_stage_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Flow object given the name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – A string with the name of the Flow as defined in the hy
+configuration files.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Flow</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A Flow object matching the name supplied to the function, or
+None if there are no such object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.authentication.Authentication.get_stage_index">
+<span class="sig-name descname"><span class="pre">get_stage_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/authentication.html#Authentication.get_stage_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.authentication.Authentication.get_stage_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the index of the stage given its name.</p>
+<p>Each authentication step is given an index based on its position
+in the “_authentication” list. This function returns the index of
+the Flow based on its name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – A string with the name of the Flow.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An integer with the index of the Flow with the specified “name”.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.authentication.Authentication.get_stage_name_by_id">
+<span class="sig-name descname"><span class="pre">get_stage_name_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/authentication.html#Authentication.get_stage_name_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.authentication.Authentication.get_stage_name_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the stage name given its number.</p>
+<p>Each authentication step is given an index based on its position
+in the “_authentication” list. This function returns the name of
+the Flow based on its position in this list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – An integer with the index of the stage.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A string with the name of the Flow in the position “stage_id”.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.authentication.Authentication.run_all">
+<span class="sig-name descname"><span class="pre">run_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/authentication.html#Authentication.run_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.authentication.Authentication.run_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs all authentication stages.</p>
+<p>This function will run all authentication stages for the
+specified User and will take into account the supplied Config
+for things like the user agent and the web proxy to use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code>) – A User object containing the credentials and where the user
+specific data will be stored.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="#raider.config.Config" title="raider.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>) – A Config object with the global Raider settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.authentication.Authentication.run_current_stage">
+<span class="sig-name descname"><span class="pre">run_current_stage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/authentication.html#Authentication.run_current_stage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.authentication.Authentication.run_current_stage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the current stage only.</p>
+<p>Authentication class keeps the index of the current stage in the
+“_current_stage” variable. This function runs only one
+authentication step indexed by this variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code>) – A User object containing the credentials and where the user
+specific data will be stored.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="#raider.config.Config" title="raider.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>) – A Config object with the global Raider settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.authentication.Authentication.run_stage">
+<span class="sig-name descname"><span class="pre">run_stage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/authentication.html#Authentication.run_stage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.authentication.Authentication.run_stage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs one authentication Stage.</p>
+<p>First, the Flow object of the specified stage is identified,
+then the related HTTP request is processed, sent, the response
+is received, and the operations are run on the Flow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stage_id</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – A string or an integer identifying the authentication stage
+to run. If it’s a string, it’s the name of the Flow, and if
+it’s an integer, it’s the index of the Flow object in the
+“_authentication” variable.</p></li>
+<li><p><strong>user</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code>) – A User object containing the credentials and where the user
+specific data will be stored.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="#raider.config.Config" title="raider.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>) – A Config object with the global Raider settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Optionally, this function returns a string with the name of
+the next Flow in the authentication process.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-raider.functions"></span><p>Functions class holding all Flows unrelated to authentication.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.functions.Functions">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Functions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">functions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/functions.html#Functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.functions.Functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class holding all Flows that don’t affect the authentication.</p>
+<p>This class shouldn’t be used directly by the user, instead the
+Raider class should be used which will deal with Functions
+internally.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.functions.Functions.functions">
+<span class="sig-name descname"><span class="pre">functions</span></span><a class="headerlink" href="#raider.functions.Functions.functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of Flow objects with all available functions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.functions.Functions.get_function_by_name">
+<span class="sig-name descname"><span class="pre">get_function_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/functions.html#Functions.get_function_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.functions.Functions.get_function_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the function given its name.</p>
+<p>Tries to find the Flow object with the given name, and returns
+it if it’s found, otherwise returns None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – A string with the unique identifier of the function as
+defined in the Flow.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Flow</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A Flow object associated with the name, or None if no such
+function has been found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="raider.functions.Functions.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/functions.html#Functions.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.functions.Functions.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a Function.</p>
+<p>Executes the given function, in the context of the specified
+user, and applies the global Raider configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – A string with the name of the function to run.</p></li>
+<li><p><strong>user</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code>) – A User object containing all the data needed to run the
+function in this user’s context.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="#raider.config.Config" title="raider.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>) – A Config object with the global Raider configuration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="operations.html" class="btn btn-neutral float-left" title="Operations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, DigeeX.
+
+    </p>
+  </div>
+
+
+
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+
+
+
+
+
+</body>
+</html>
