@@ -6,9 +6,27 @@
     packages = [
       { include = "raider" }
     ]
+    license = "GPL-3.0-or-later"
+    readme = "README.md"
+    include = [
+      "LICENSE"
+    ]
+    keywords = ["authentication", "security", "raider", "digeex", "hy"]
+    classifiers = [
+      "Development Status :: 1 - Planning",
+      "Environment :: Console",
+      "Intended Audience :: Developers",
+      "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+      "Natural Language :: English",
+      "Operating System :: OS Independent",
+      "Programming Language :: Lisp",
+      "Programming Language :: Python :: 3.9",
+      "Topic :: Internet :: WWW/HTTP",
+      "Topic :: Security",
+    ]
 
-[tool.poetry.scripts]
-    raider = "raider.cli:main"
+# [tool.poetry.scripts]
+#     raider = "raider.cli:main"
 
 [tool.poetry.dependencies]
     python = "^3.9"
@@ -26,8 +44,8 @@
     black = {version = "^21.6b0", allow-prereleases = true}
     isort = "^5.9.1"
     sphinxcontrib-needs = "^0.7.0"
-sphinx-autodoc-typehints = "^1.12.0"
-sphinx-rtd-theme = "^0.5.2"
+    sphinx-autodoc-typehints = "^1.12.0"
+    sphinx-rtd-theme = "^0.5.2"
 
 [build-system]
     requires = ["poetry-core>=1.0.0"]

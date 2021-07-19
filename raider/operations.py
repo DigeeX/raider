@@ -49,8 +49,6 @@ def execute_actions(
 
     """
     if isinstance(operations, Operation):
-        if operations.is_conditional:
-            return operations.run_conditional(response)
         return operations.run(response)
 
     if isinstance(operations, list):
