@@ -65,13 +65,11 @@ We define a new request that will check for the unread messages in hy:
 
        
 In Hy, `setv` is used to set up new variables. Here we created the
-variable `get_unread_messages` that will hold the information about this
-step of the authentication. Note that it doesn't really make part of the
-authentication process, since the user is already authenticated at this
-point, but since this is tutorial I'm going to asume that this is the
-last step of the authentication.
+variable `get_unread_messages` that will hold the information about
+this Flow. This will be hold in the `_function` special variable which
+stores the Flows which aren't affecting the authentication.
        
-The variable is of type `Flow`. The only required parameters for it
+The variable is also of type `Flow`. The only required parameters for it
 are the name and the request. The name is a string that is used for
 reference purposes, and the request contains the actual HTTP request
 definition. It needs to be of type `Request`.
@@ -162,7 +160,7 @@ from the response.
        
 Now we define the cookie like this:
        
-.. code-block::
+.. code-block:: hylang
 
        (setv reddit_session (Cookie "reddit_session"))
 
@@ -196,7 +194,7 @@ configuration. In the web proxy, the request looks like this:
        
 Now we translate the request in the Raider `Request` type:
        
-.. code-block::
+.. code-block:: hylang
    
        (Request
           :method "POST"
@@ -220,11 +218,20 @@ Here we use the new cookie called `session_id` that we define as:
 To use the username and password of the active user, we create two new
 inputs of type `Variable`:
        
-.. code-block::
+.. code-block:: hylang
    
        (setv username (Variable "username"))
        (setv password (Variable "password"))
 
+The nickname can be extracted with a Regex:
+
+.. code-block:: hylang
+
+  (setv nickname
+      (Regex
+        :name "nickname"
+        :regex "href=\"/user/([^\"]+)"))
+		
        
 The multi-factor authentication code will be given as an input to the
 CLI manually, so we define the `mfa_code` as following:
@@ -396,8 +403,8 @@ don't affect authentication.
          [get_access_token
 	  get_unread_messages])
 
-       
-And now the complete configuration file for reddit looks like this:
+Adding one more function `get_nickname`, and the complete
+configuration file for reddit looks like this:
        
 
 .. code-block:: hylang
@@ -516,12 +523,71 @@ And now the complete configuration file for reddit looks like this:
                   :headers [(Header.bearerauth access_token)]
                   :url "https://s.reddit.com/api/v1/sendbird/unread_message_count")))
    
+   (setv nickname
+         (Regex
+           :name "nickname"
+           :regex "href=\"/user/([^\"]+)"))
+
+   (setv get_nickname
+         (Flow
+           :name "get_nickname"
+           :request (Request
+                      :method "GET"
+                      :cookies [session_id reddit_session]
+                      :path "/")
+           :outputs [nickname]
+           :operations [(Print nickname)]))
+
+
    (setv _authentication
      initialization
      login
-     multi_factor])
+     multi_factor
+     get_access_token])
 
 
        (setv _functions
-         [get_access_token
-	  get_unread_messages])
+         [get_unread_messages
+	  get_nickname])
+
+
+Now, with the configuration finished, we can run Raider with a python
+script:
+
+.. code-block:: python
+import raider
+
+raider = raider.Raider("reddit")
+raider.config.proxy = "http://localhost:8080"
+raider.authenticate()
+raider.run_function("get_nickname")
+raider.run_function("get_unread_messages")
+
+
+Running the script, we can see its output, and entries in the web
+proxy listening on port 8080:
+
+.. code-block::
+
+   $ python script.py
+
+   Reddit
+   INFO:root:Running stage initialization
+   session = [REDACTED]
+   csrf_token = [REDACTED]
+   INFO:root:Running stage login
+   WARNING:root:Couldn't extract output: session
+   WARNING:root:Couldn't extract output: reddit_session
+   session = [REDACTED]
+   reddit_session = None
+   Multi-factor authentication enabled
+   INFO:root:Running stage multi_factor
+   reddit_session = [REDACTED]
+   csrf_token = [REDACTED]
+   INFO:root:Running stage get_access_token
+   access_token = [REDACTED]
+   INFO:root:Running function get_nickname
+   nickname = [REDACTED]
+
+
+   
