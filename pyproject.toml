@@ -1,6 +1,6 @@
 [tool.poetry]
     name = "raider"
-    version = "0.1.1"
+    version = "0.1.2"
     description = "Authentication testing tool"
     authors = ["Daniel Neagaru <daniel@digeex.de>"]
     packages = [
@@ -21,6 +21,7 @@
       "Operating System :: OS Independent",
       "Programming Language :: Lisp",
       "Programming Language :: Python :: 3.9",
+      "Programming Language :: Python :: 3.8",
       "Topic :: Internet :: WWW/HTTP",
       "Topic :: Security",
     ]
@@ -29,7 +30,7 @@
 #     raider = "raider.cli:main"
 
 [tool.poetry.dependencies]
-    python = "^3.9"
+    python = "^3.8"
     hy = "^0.20.0"
     requests = "^2.25.1"
     importlib-metadata = "^4.6.1"

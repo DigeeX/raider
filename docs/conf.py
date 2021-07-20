@@ -22,10 +22,8 @@ import raider
 project = "raider"
 copyright = "2021, DigeeX"
 author = "Daniel Neagaru"
-# version = raider.__version__
-# release = raider.__version__
-version = "0.1.1"
-release = "0.1.1"
+version = raider.__version__
+release = raider.__version__
 
 
 # -- General configuration ---------------------------------------------------
