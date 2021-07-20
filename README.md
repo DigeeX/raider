@@ -1,6 +1,16 @@
 # What is this
 
-This is a tool I wrote to help me test authentication for web applications. I was not satisfied with the existing tools when I attempted to find bugs in the authentication part of the application. While web proxies like ZAProxy and Burpsuite allow you to do authenticated tests, they don't provide features to test the authentication process itself, i.e. manipulating the relevant input fields to identify broken authentication. Most authentication bugs in the wild have been found by manually testing it or writing custom scripts that replicate the behaviour. Raider aims to make testing easier, by providing the interface to interact with all important elements found in modern authentication systems.
+This is a tool I wrote to help me test authentication for web
+applications. I was not satisfied with the existing tools when I
+attempted to find bugs in the authentication part of the
+application. While web proxies like ZAProxy and Burpsuite allow you to
+do authenticated tests, they don't provide features to test the
+authentication process itself, i.e. manipulating the relevant input
+fields to identify broken authentication. Most authentication bugs in
+the wild have been found by manually testing it or writing custom
+scripts that replicate the behaviour. Raider aims to make testing
+easier, by providing the interface to interact with all important
+elements found in modern authentication systems.
 
 ## How does it work
 
