@@ -19,7 +19,7 @@
 import logging
 import os
 import re
-from typing import Any, Union
+from typing import Any, Dict, List, Union
 
 import bs4
 import hy
@@ -117,7 +117,7 @@ def get_project_file(project: str, filename: str) -> str:
     return file_path
 
 
-def import_raider_objects() -> dict[str, Any]:
+def import_raider_objects() -> Dict[str, Any]:
     """Imports Raider objects to use inside hy configuration files.
 
     To make Raider objects visible inside hy files without using
@@ -157,7 +157,7 @@ def import_raider_objects() -> dict[str, Any]:
     return locals()
 
 
-def hy_dict_to_python(hy_dict: dict[hy.HyKeyword, Any]) -> dict[str, Any]:
+def hy_dict_to_python(hy_dict: Dict[hy.HyKeyword, Any]) -> Dict[str, Any]:
     """Converts a hy dictionary to a python dictionary.
 
     When creating dictionaries in hylang using :parameters they become
@@ -183,8 +183,8 @@ def hy_dict_to_python(hy_dict: dict[hy.HyKeyword, Any]) -> dict[str, Any]:
 
 
 def py_dict_to_hy_list(
-    data: dict[str, Any]
-) -> list[Union[hy.HyString, hy.HyDict, hy.HySymbol]]:
+    data: Dict[str, Any]
+) -> List[Union[hy.HyString, hy.HyDict, hy.HySymbol]]:
     """Converts a python dictionary to a hylang list.
 
     In hy, dictionaries are created out of lists, and this function
@@ -214,7 +214,7 @@ def py_dict_to_hy_list(
 
 
 def create_hy_expression(
-    variable: str, value: Union[str, dict[Any, Any], list[Any]]
+    variable: str, value: Union[str, Dict[Any, Any], List[Any]]
 ) -> str:
     """Creates a hy expression.
 
@@ -291,8 +291,8 @@ def serialize_hy(
 
 
 def eval_file(
-    filename: str, shared_locals: dict[str, Any] = None
-) -> dict[str, Any]:
+    filename: str, shared_locals: Dict[str, Any] = None
+) -> Dict[str, Any]:
     """Evaluate hy file.
 
     This function evaluates all the content inside the supplied hy file,
@@ -329,8 +329,8 @@ def eval_file(
 
 
 def eval_project_file(
-    project: str, filename: str, shared_locals: dict[str, Any]
-) -> dict[str, Any]:
+    project: str, filename: str, shared_locals: Dict[str, Any]
+) -> Dict[str, Any]:
     """Evaluate a hy file from a project.
 
     This function evaluates the specified file inside the project and
@@ -359,7 +359,7 @@ def eval_project_file(
     return shared_locals
 
 
-def list_apps() -> list[str]:
+def list_apps() -> List[str]:
     """List existing applications.
 
     This function returns the list of applications that have been
@@ -379,7 +379,7 @@ def list_apps() -> list[str]:
     return apps
 
 
-def match_tag(html_tag: bs4.element.Tag, attributes: dict[str, str]) -> bool:
+def match_tag(html_tag: bs4.element.Tag, attributes: Dict[str, str]) -> bool:
     """Tells if a tag matches the search.
 
     This function checks whether the supplied tag matches the

@@ -18,7 +18,7 @@
 
 import logging
 import sys
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from raider.config import Config
 from raider.flow import Flow
@@ -38,7 +38,7 @@ class Authentication:
 
     """
 
-    def __init__(self, stages: list[Flow]) -> None:
+    def __init__(self, stages: List[Flow]) -> None:
         """Initializes the Authentication object.
 
         Creates an object to handle the authentication process.

@@ -19,7 +19,7 @@
 import logging
 import re
 import sys
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, List, Optional, Union
 
 import requests
 
@@ -27,7 +27,7 @@ from raider.plugins import Html, Json, Regex, Variable
 
 
 def execute_actions(
-    operations: Union["Operation", list["Operation"]],
+    operations: Union["Operation", List["Operation"]],
     response: requests.models.Response,
 ) -> Optional[str]:
     """Run an Operation or a list of Operations.
@@ -94,8 +94,8 @@ class Operation:
         self,
         function: Callable[..., Any],
         flags: int = 0,
-        action: Optional[Union["Operation", list["Operation"]]] = None,
-        otherwise: Optional[Union["Operation", list["Operation"]]] = None,
+        action: Optional[Union["Operation", List["Operation"]]] = None,
+        otherwise: Optional[Union["Operation", List["Operation"]]] = None,
     ):
         """Initializes the Operation object.
 
@@ -202,8 +202,8 @@ class Http(Operation):
     def __init__(
         self,
         status: int,
-        action: Optional[Union[Operation, list[Operation]]],
-        otherwise: Optional[Union[Operation, list[Operation]]] = None,
+        action: Optional[Union[Operation, List[Operation]]],
+        otherwise: Optional[Union[Operation, List[Operation]]] = None,
     ) -> None:
         """Initializes the Http Operation.
 

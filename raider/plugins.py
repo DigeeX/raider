@@ -20,7 +20,7 @@ import json
 import logging
 import re
 from base64 import b64encode
-from typing import Callable, Optional
+from typing import Callable, Dict, Optional
 
 import hy
 import requests
@@ -123,7 +123,7 @@ class Plugin:
 
     def get_value(
         self,
-        userdata: dict[str, str],
+        userdata: Dict[str, str],
     ) -> Optional[str]:
         """Gets the value from the Plugin.
 
@@ -259,7 +259,7 @@ class Html(Plugin):
         self,
         name: str,
         tag: str,
-        attributes: dict[hy.HyKeyword, str],
+        attributes: Dict[hy.HyKeyword, str],
         extract: str,
     ) -> None:
         """Initializes the Html Plugin.
@@ -421,7 +421,7 @@ class Variable(Plugin):
             flags=self.NEEDS_USERDATA,
         )
 
-    def extract_variable(self, data: dict[str, str] = None) -> Optional[str]:
+    def extract_variable(self, data: Dict[str, str] = None) -> Optional[str]:
         """Extracts the variable value.
 
         Given a dictionary with the predefined variables, return the

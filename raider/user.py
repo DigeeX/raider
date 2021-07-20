@@ -17,6 +17,8 @@
 """
 
 
+from typing import Dict, List
+
 import hy
 
 from raider.plugins import Cookie, Header, Plugin
@@ -55,7 +57,7 @@ class User:
         self,
         username: str,
         password: str,
-        **kwargs: dict[str, str],
+        **kwargs: Dict[str, str],
     ) -> None:
         """Initializes a User object.
 
@@ -122,7 +124,7 @@ class User:
         if data.value:
             self.data.update({data.name: data.value})
 
-    def to_dict(self) -> dict[str, str]:
+    def to_dict(self) -> Dict[str, str]:
         """Returns this object's data in a dictionary format."""
         data = {}
         data["username"] = self.username
@@ -151,7 +153,7 @@ class UserStore(DataStore):
     """
 
     def __init__(
-        self, users: list[dict[hy.HyKeyword, str]], active_user: str = None
+        self, users: List[Dict[hy.HyKeyword, str]], active_user: str = None
     ) -> None:
         """Initializes the UserStore object.
 
@@ -180,7 +182,7 @@ class UserStore(DataStore):
 
         super().__init__(values)
 
-    def to_dict(self) -> dict[str, str]:
+    def to_dict(self) -> Dict[str, str]:
         """Returns the UserStore data in dictionary format."""
         data = {}
         for username in self:

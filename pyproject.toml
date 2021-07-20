@@ -99,8 +99,8 @@
     disallow_untyped_defs = true
     overrides = [
 
-    # # TODO
-    # # something doesn't work with requests types in the virtual environment
-    # { module = "requests.*", ignore_missing_imports = true },
+    # TODO
+    # something doesn't work with requests types in the virtual environment
+    { module = "requests.*", ignore_missing_imports = true },
 
     ]

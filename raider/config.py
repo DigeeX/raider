@@ -19,7 +19,7 @@
 import logging
 import os
 import sys
-from typing import Any
+from typing import Any, Dict
 
 from raider.utils import (
     create_hy_expression,
@@ -80,7 +80,7 @@ class Config:
         self.loglevel = output.get("loglevel", "WARNING")
         self.user_agent = output.get("user_agent", default_user_agent())
         self.active_project = output.get("active_project", None)
-        self.project_config: dict[str, Any] = {}
+        self.project_config: Dict[str, Any] = {}
 
         self.logger = logging.getLogger()
         self.logger.setLevel(self.loglevel)
@@ -91,7 +91,7 @@ class Config:
             )
             sys.exit()
 
-    def load_project(self, project: str = None) -> dict[str, Any]:
+    def load_project(self, project: str = None) -> Dict[str, Any]:
         """Loads project settings.
 
         Goes through all the ".hy" files in the project directory,
@@ -126,7 +126,7 @@ class Config:
             active_project = project
 
         hyfiles = sorted(os.listdir(get_project_dir(active_project)))
-        shared_locals: dict[str, Any]
+        shared_locals: Dict[str, Any]
         shared_locals = {}
         for confile in hyfiles:
             if confile.endswith(".hy"):

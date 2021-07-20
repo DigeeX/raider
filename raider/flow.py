@@ -17,7 +17,7 @@
 """
 
 import logging
-from typing import Optional
+from typing import List, Optional
 
 import requests
 
@@ -67,8 +67,8 @@ class Flow:
         self,
         name: str,
         request: Request,
-        outputs: list[Plugin] = None,
-        operations: list[Operation] = None,
+        outputs: List[Plugin] = None,
+        operations: List[Operation] = None,
     ) -> None:
         """Initializes the Flow object.
 

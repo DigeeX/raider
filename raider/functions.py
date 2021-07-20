@@ -19,7 +19,7 @@
 
 import logging
 import sys
-from typing import Optional
+from typing import List, Optional
 
 from raider.config import Config
 from raider.flow import Flow
@@ -39,7 +39,7 @@ class Functions:
 
     """
 
-    def __init__(self, functions: list[Flow]) -> None:
+    def __init__(self, functions: List[Flow]) -> None:
         """Initializes the Functions object.
 
         Args:

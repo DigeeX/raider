@@ -19,7 +19,7 @@
 
 import logging
 import sys
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 from urllib import parse
 
 import requests
@@ -73,9 +73,9 @@ class Request:
         method: str,
         url: str = None,
         path: str = None,
-        cookies: list[Cookie] = None,
-        headers: list[Header] = None,
-        data: dict[Any, Any] = None,
+        cookies: List[Cookie] = None,
+        headers: List[Header] = None,
+        data: Dict[Any, Any] = None,
     ) -> None:
         """Initializes the Request object.
 
@@ -123,7 +123,7 @@ class Request:
 
     def process_inputs(
         self, user: User, config: Config
-    ) -> dict[str, dict[str, str]]:
+    ) -> Dict[str, Dict[str, str]]:
         """Process the Request inputs.
 
         Uses the supplied user data to replace the Plugins in the inputs

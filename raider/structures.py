@@ -16,7 +16,7 @@
 """Data structures used in Raider.
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any, Dict, Iterator, List, Optional
 
 from raider.plugins import Cookie, Header
 
@@ -29,7 +29,7 @@ class DataStore:
 
     """
 
-    def __init__(self, data: Optional[dict[Any, Any]]) -> None:
+    def __init__(self, data: Optional[Dict[Any, Any]]) -> None:
         """Initializes the DataStore object.
 
         Given a dictionary with the data, store them in this object.
@@ -70,7 +70,7 @@ class DataStore:
         key = list(self._store)[self._index]
         return self._store[key]
 
-    def update(self, data: dict[Any, Any]) -> None:
+    def update(self, data: Dict[Any, Any]) -> None:
         """Updates the DataStore with a new element."""
         self._store.update(data)
 
@@ -78,18 +78,18 @@ class DataStore:
         """Pops an element from the DataStore."""
         return self._store.pop(name)
 
-    def list_keys(self) -> list[Any]:
+    def list_keys(self) -> List[Any]:
         """Returns a list of the keys in the DataStore."""
         return list(self._store)
 
-    def list_values(self) -> list[Any]:
+    def list_values(self) -> List[Any]:
         """Returns a list of the values in the DataStore."""
         data = []
         for key in self._store:
             data.append(self._store[key])
         return data
 
-    def to_dict(self) -> dict[Any, Any]:
+    def to_dict(self) -> Dict[Any, Any]:
         """Returns the DataStore elements as a dictionary."""
         return self._store
 
@@ -102,7 +102,7 @@ class HeaderStore(DataStore):
 
     """
 
-    def __init__(self, data: Optional[list[Header]]) -> None:
+    def __init__(self, data: Optional[List[Header]]) -> None:
         """Initializes the HeaderStore object.
 
         Creates a HeaderStore object out of the given Header list.
@@ -132,7 +132,7 @@ class HeaderStore(DataStore):
         super().update({header.name: header.value})
 
     @classmethod
-    def from_dict(cls, data: Optional[dict[str, str]]) -> "HeaderStore":
+    def from_dict(cls, data: Optional[Dict[str, str]]) -> "HeaderStore":
         """Creates a HeaderStore object from a dictionary.
 
         Given a dictionary with header values, creates a HeaderStore
@@ -164,7 +164,7 @@ class CookieStore(DataStore):
 
     """
 
-    def __init__(self, data: Optional[list[Cookie]]) -> None:
+    def __init__(self, data: Optional[List[Cookie]]) -> None:
         """Initializes a CookieStore object.
 
         Given a list of Cookie objects, create the CookieStore
@@ -195,7 +195,7 @@ class CookieStore(DataStore):
         super().update({cookie.name: cookie.value})
 
     @classmethod
-    def from_dict(cls, data: Optional[dict[str, str]]) -> "CookieStore":
+    def from_dict(cls, data: Optional[Dict[str, str]]) -> "CookieStore":
         """Creates a CookieStore object from a dictionary.
 
         Given a dictionary with cookie values, creates a CookieStore
