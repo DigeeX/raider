@@ -41,9 +41,19 @@ class Plugin:
         A string used as an identifier for the Plugin.
       function:
         A function which will be called to extract the "value" of the
-        Plugin when used as an input in a Flow.
+        Plugin when used as an input in a Flow. The function should set
+        self.value and also return it.
       value:
-        A string containing the Plugin's output value.
+        A string containing the Plugin's output value to be used as
+        input in the HTTP request.
+      flags:
+        An integer containing the flags that define the Plugin's
+        behaviour. For now only NEEDS_USERDATA and NEEDS_RESPONSE is
+        supported. If NEEDS_USERDATA is set, the plugin will get its
+        value from the user's data, which will be sent to the function
+        defined here. If NEEDS_RESPONSE is set, the Plugin will extract
+        its value from the HTTP response instead.
+
     """
 
     # Plugin flags

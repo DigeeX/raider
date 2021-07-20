@@ -11,12 +11,12 @@
 
 @mixin dtb-radial-gradient ($fromColor, $toColor ) {
 	background: $toColor; /* Fallback */
-	background:     -ms-radial-gradient(center, ellipse farthest-corner, $fromColor 0%, $toColor 100%); /* IE10 Consumer Preview */
-	background:    -moz-radial-gradient(center, ellipse farthest-corner, $fromColor 0%, $toColor 100%); /* Firefox */
-	background:      -o-radial-gradient(center, ellipse farthest-corner, $fromColor 0%, $toColor 100%); /* Opera */
-	background: -webkit-gradient(radial, center center, 0, center center, 497, color-stop(0, $fromColor), color-stop(1, $toColor)); /* Webkit (Safari/Chrome 10) */
-	background: -webkit-radial-gradient(center, ellipse farthest-corner, $fromColor 0%, $toColor 100%); /* Webkit (Chrome 11+) */
-	background: radial-gradient(ellipse farthest-corner at center, $fromColor 0%, $toColor 100%); /* W3C Markup, IE10 Release Preview */
+	background:     -ms-radial-gradient(center, ellipse farthest-corner, $fromColor 0%, $toColor 100%); /* IE10 Consumer Preview */ 
+	background:    -moz-radial-gradient(center, ellipse farthest-corner, $fromColor 0%, $toColor 100%); /* Firefox */ 
+	background:      -o-radial-gradient(center, ellipse farthest-corner, $fromColor 0%, $toColor 100%); /* Opera */ 
+	background: -webkit-gradient(radial, center center, 0, center center, 497, color-stop(0, $fromColor), color-stop(1, $toColor)); /* Webkit (Safari/Chrome 10) */ 
+	background: -webkit-radial-gradient(center, ellipse farthest-corner, $fromColor 0%, $toColor 100%); /* Webkit (Chrome 11+) */ 
+	background: radial-gradient(ellipse farthest-corner at center, $fromColor 0%, $toColor 100%); /* W3C Markup, IE10 Release Preview */ 
 }
 
 

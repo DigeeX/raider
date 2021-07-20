@@ -62,4 +62,16 @@ HTTP response code is 200 or to stage Y if it's 403.
 Inputs and outputs are often the same object, and you may want to
 update its value from one Flow to the next (for example the CSRF token
 changes for every stage). This was implemented in Raider using
-:ref:`Plugins <definition_plugin>`.
+:ref:`Plugins <plugins>`.
+
+Plugins are pieces of code that can act as inputs for the HTTP
+requests to be sent, and/or as outputs from the HTTP responses. They
+are used to facilitate the information exchange between Flows.
+
+
+Once the response is received, the :ref:`Operations <operations>`
+will be executed. The primary function of operations is to define
+which Flow comes next. But they can do anything, and *Raider* makes it
+easy to write new operations.
+
+

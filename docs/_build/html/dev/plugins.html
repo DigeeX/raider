@@ -4,13 +4,13 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Plugins &mdash; raider 0.1.1 documentation</title>
+  
 
-  <title>Plugins &mdash; raider 0.1.0 documentation</title>
-
-
-
+  
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -21,20 +21,20 @@
   <link rel="stylesheet" href="../_static/sphinx-needs/styles.css" type="text/css" />
   <link rel="stylesheet" href="../_static/sphinx-needs/modern.css" type="text/css" />
 
+  
+  
 
+  
+  
 
+  
 
-
-
-
-
-
-
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-
-
+  
+    
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
@@ -43,43 +43,43 @@
         <script src="../_static/sphinx-needs/libs/html/datatables.min.js"></script>
         <script src="../_static/sphinx-needs/libs/html/datatables_loader.js"></script>
         <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js"></script>
-
+    
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Operations" href="operations.html" />
-    <link rel="prev" title="Definitions" href="../user/definitions.html" />
+    <link rel="prev" title="Definitions" href="../user/definitions.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
 
-
+   
   <div class="wy-grid-for-nav">
-
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
 
-
-
+          
             <a href="../index.html" class="icon icon-home"> raider
+          
 
-
-
+          
           </a>
 
-
-
-
+          
+            
+            
               <div class="version">
-                0.1.0
+                0.1.1
               </div>
+            
+          
 
-
-
-
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -88,17 +88,17 @@
   </form>
 </div>
 
-
+          
         </div>
 
-
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-
-
-
-
-
-
+          
+            
+            
+              
+            
+            
               <p class="caption"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../user/install.html">Installing Raider</a></li>
@@ -116,6 +116,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#regex">Regex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html">Html</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json">Json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-custom-plugins">Writing custom plugins</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="operations.html">Operations</a></li>
@@ -125,29 +126,29 @@
 <li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 
-
-
+            
+          
         </div>
-
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
-
+      
       <nav class="wy-nav-top" aria-label="top navigation">
-
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">raider</a>
-
+        
       </nav>
 
 
       <div class="wy-nav-content">
-
+        
         <div class="rst-content">
-
-
+        
+          
 
 
 
@@ -168,56 +169,249 @@
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
-
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-
+        
       <li>Plugins</li>
-
-
+    
+    
       <li class="wy-breadcrumbs-aside">
-
-
+        
+          
             <a href="../_sources/dev/plugins.rst.txt" rel="nofollow"> View page source</a>
-
-
+          
+        
       </li>
-
+    
   </ul>
 
-
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-
-  <div class="section" id="plugins">
-<h1>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h1>
+            
+  <span class="target" id="module-raider.plugins"><span id="plugins"></span></span><div class="section" id="id1">
+<h1>Plugins<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="variable">
 <h2>Variable<a class="headerlink" href="#variable" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.plugins.Variable">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/plugins.html#Variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.plugins.Variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin to extract the value of a variable.</p>
+<p>For now only the username and password variables are supported.
+Use this when supplying credentials to the web application.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="prompt">
 <h2>Prompt<a class="headerlink" href="#prompt" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.plugins.Prompt">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/plugins.html#Prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.plugins.Prompt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin to ask the user for an input.</p>
+<p>Use this plugin when the value cannot be known in advance, for
+example when asking for multi-factor authentication code that is
+going to be sent over SMS.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="cookie">
 <h2>Cookie<a class="headerlink" href="#cookie" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.plugins.Cookie">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Cookie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/plugins.html#Cookie"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.plugins.Cookie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin to deal with HTTP cookies.</p>
+<p>Use this Plugin when dealing with the cookies in the HTTP request.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="header">
 <h2>Header<a class="headerlink" href="#header" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.plugins.Header">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/plugins.html#Header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.plugins.Header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin to deal with HTTP headers.</p>
+<p>Use this Plugin when dealing with the headers in the HTTP request.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="regex">
 <h2>Regex<a class="headerlink" href="#regex" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.plugins.Regex">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/plugins.html#Regex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.plugins.Regex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin to extract something using regular expressions.</p>
+<p>This plugin will match the regex provided, and extract the value
+inside the matched group, which by default is the first one. A group
+is the string that matched inside the brackets.</p>
+<p>For example if the regular expression is:</p>
+<p>“accessToken”:”([^”]+)”</p>
+<p>and the text to match it against contains:</p>
+<p>“accessToken”:”0123456789abcdef”</p>
+<p>then only the string “0123456789abcdef” will be extracted and saved
+in the “value” attribute.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.plugins.Regex.regex">
+<span class="sig-name descname"><span class="pre">regex</span></span><a class="headerlink" href="#raider.plugins.Regex.regex" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string containing the regular expression to be matched.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.plugins.Regex.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><a class="headerlink" href="#raider.plugins.Regex.extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>An integer with the group number that needs to be extracted.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="html">
 <h2>Html<a class="headerlink" href="#html" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.plugins.Html">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/plugins.html#Html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.plugins.Html" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin to extract something from an HTML tag.</p>
+<p>This Plugin will find the HTML “tag” containing the specified
+“attributes” and store the “extract” attribute of the matched tag
+in its “value” attribute.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.plugins.Html.tag">
+<span class="sig-name descname"><span class="pre">tag</span></span><a class="headerlink" href="#raider.plugins.Html.tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string defining the HTML tag to look for.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.plugins.Html.attributes">
+<span class="sig-name descname"><span class="pre">attributes</span></span><a class="headerlink" href="#raider.plugins.Html.attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary with attributes matching the desired HTML tag. The
+keys in the dictionary are strings matching the tag’s attributes,
+and the values are treated as regular expressions, to help
+match tags that don’t have a static value.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.plugins.Html.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><a class="headerlink" href="#raider.plugins.Html.extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string defining the HTML tag’s attribute that needs to be
+extracted and stored inside “value”.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="json">
 <h2>Json<a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.plugins.Json">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/plugins.html#Json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.plugins.Json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin to extract a field from JSON.</p>
+<p>The “extract” attribute is used to specify which field to store
+in the “value”. Using the dot “.” character you can go deeper inside
+the JSON object. No arrays are supported yet.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.plugins.Json.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><a class="headerlink" href="#raider.plugins.Json.extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string defining the location of the field that needs to be
+extracted. For now this is still quite primitive, and cannot
+access data from JSON arrays.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="writing-custom-plugins">
+<h2>Writing custom plugins<a class="headerlink" href="#writing-custom-plugins" title="Permalink to this headline">¶</a></h2>
+<p>In case the existing plugins are not enough, the user can write
+their own to add the new functionality. Those new plugins should be
+written in the project’s configuration directory in a “.hy” file. To
+do this, a new class has to be defined, which will inherit from
+<em>Raider</em>’s Plugin class:</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="raider.plugins.Plugin">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Plugin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/raider/plugins.html#Plugin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#raider.plugins.Plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parent class for all plugins.</p>
+<p>Each Plugin class inherits from here. “get_value” function should
+be called when extracting the value from the plugin, which will then
+be stored in the “value” attribute.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.plugins.Plugin.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#raider.plugins.Plugin.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string used as an identifier for the Plugin.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.plugins.Plugin.function">
+<span class="sig-name descname"><span class="pre">function</span></span><a class="headerlink" href="#raider.plugins.Plugin.function" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function which will be called to extract the “value” of the
+Plugin when used as an input in a Flow. The function should set
+self.value and also return it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.plugins.Plugin.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#raider.plugins.Plugin.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string containing the Plugin’s output value to be used as
+input in the HTTP request.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="raider.plugins.Plugin.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><a class="headerlink" href="#raider.plugins.Plugin.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>An integer containing the flags that define the Plugin’s
+behaviour. For now only NEEDS_USERDATA and NEEDS_RESPONSE is
+supported. If NEEDS_USERDATA is set, the plugin will get its
+value from the user’s data, which will be sent to the function
+defined here. If NEEDS_RESPONSE is set, the Plugin will extract
+its value from the HTTP response instead.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Let’s assume we want a new plugin that will use <a class="reference external" href="https://www.passwordstore.org/">unix password store</a> to extract the OTP from our website.</p>
+<div class="highlight-hylang notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="kd">defclass </span><span class="nv">PasswordStore</span> <span class="p">[</span><span class="nv">Plugin</span><span class="p">]</span>
+<span class="c1">;; Define class PasswordStore which inherits from Plugin</span>
+
+  <span class="p">(</span><span class="kd">defn </span><span class="nv">__init__</span> <span class="p">[</span><span class="bp">self</span> <span class="nv">path</span><span class="p">]</span>
+  <span class="c1">;; Initiatialize the object given the path</span>
+
+    <span class="p">(</span><span class="nf">.__init__</span> <span class="p">(</span><span class="nb">super</span><span class="p">)</span>
+               <span class="ss">:name</span> <span class="nv">path</span>
+               <span class="ss">:function</span> <span class="p">(</span><span class="nf">.</span> <span class="bp">self</span> <span class="nv">run_command</span><span class="p">)))</span>
+  <span class="c1">;; Call the super() class, i.e. Plugin, and give it the</span>
+  <span class="c1">;; path as the name identifier, and the function</span>
+  <span class="c1">;; self.run_command() as a function to get the value.</span>
+  <span class="c1">;;</span>
+  <span class="c1">;; We don&#39;t need the response nor the user data to use</span>
+  <span class="c1">;; this plugin, so no flags will be set.</span>
+
+  <span class="p">(</span><span class="kd">defn </span><span class="nv">run_command</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+    <span class="p">(</span><span class="k">import </span><span class="nv">os</span><span class="p">)</span>
+    <span class="c1">;; We need os.popen() to run the command</span>
+
+    <span class="p">(</span><span class="kd">setv </span><span class="bp">self</span><span class="nv">.value</span>
+          <span class="p">((</span><span class="nf">.</span> <span class="p">((</span><span class="nf">.</span> <span class="p">(</span><span class="nf">os.popen</span>
+                    <span class="p">(</span><span class="nf">+</span> <span class="s">&quot;pass otp &quot;</span> <span class="bp">self</span><span class="nv">.path</span><span class="p">))</span>
+                  <span class="nv">read</span><span class="p">))</span>
+              <span class="nv">strip</span><span class="p">)))</span>
+    <span class="c1">;; set self.value to the output from &quot;pass otp&quot;,</span>
+    <span class="c1">;; with the newline stripped.</span>
+
+    <span class="p">(</span><span class="k">return</span> <span class="bp">self</span><span class="nv">.value</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>And we can create a new variable that will use this class:</p>
+<div class="highlight-hylang notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="kd">setv </span><span class="nv">mfa_code</span> <span class="p">(</span><span class="nf">PasswordStore</span> <span class="s">&quot;personal/reddit&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Now whenever we use the <code class="docutils literal notranslate"><span class="pre">mfa_code</span></code> in our requests, its value will
+be extracted from the password store.</p>
 </div>
 </div>
 
 
            </div>
-
+           
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
@@ -233,14 +427,14 @@
 
     </p>
   </div>
-
-
-
+    
+    
+    
     Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
@@ -249,7 +443,7 @@
     </section>
 
   </div>
-
+  
 
   <script type="text/javascript">
       jQuery(function () {
@@ -257,10 +451,10 @@
       });
   </script>
 
-
-
-
-
+  
+  
+    
+   
 
 </body>
 </html>

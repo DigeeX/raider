@@ -492,6 +492,14 @@ mccabe = ">=0.6,<0.7"
 toml = ">=0.7.1"
 
 [[package]]
+name = "pylint-venv"
+version = "2.1.1"
+description = "pylint-venv provides a Pylint init-hook to use the same Pylint installation with different virtual environments."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pyparsing"
 version = "2.4.7"
 description = "Python parsing module"
@@ -881,7 +889,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
     python-versions = "^3.9"
-content-hash = "58085dfb8f2d47b028a8bed1e64fa52cc33ddd348c349b51b2067067cb3cfd3f"
+content-hash = "f08e0d4548982099e8392a20aa8ab146fba951c3320cabc6b33e60c3d0794b74"
 
 [metadata.files]
 alabaster = [
@@ -1304,6 +1312,10 @@ pygments = [
 pylint = [
     {file = "pylint-2.9.3-py3-none-any.whl", hash = "sha256:5d46330e6b8886c31b5e3aba5ff48c10f4aa5e76cbf9002c6544306221e63fbc"},
     {file = "pylint-2.9.3.tar.gz", hash = "sha256:23a1dc8b30459d78e9ff25942c61bb936108ccbe29dd9e71c01dc8274961709a"},
+]
+pylint-venv = [
+    {file = "pylint-venv-2.1.1.tar.gz", hash = "sha256:dfe009a0ccfb2063b246d0b8a4b1b43a0eeb49e4b1cb492ea567d6f0abe3731a"},
+    {file = "pylint_venv-2.1.1-py3-none-any.whl", hash = "sha256:10f271ebe740cf17659731ca669bd395253ca410256bb3a65ae66c48defda6d8"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},

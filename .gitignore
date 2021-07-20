@@ -18,7 +18,10 @@ dist/
 # mypy
 .mypy_cache
 
-## Emacs
+# Emacs
 *~
 \#*\#
 .\#*
+
+# Sphinx build files
+docs/_build

@@ -1,6 +1,6 @@
 [tool.poetry]
     name = "raider"
-    version = "0.1.0"
+    version = "0.1.1"
     description = "Authentication testing tool"
     authors = ["Daniel Neagaru <daniel@digeex.de>"]
     packages = [
@@ -76,8 +76,7 @@
 
 [tool.pylint.master]
     ignore-patterns = '''
-         \.eggs
-         |\.git
+         \.git
 	 |conf.py
     '''
 
@@ -101,6 +100,6 @@
 
     # # TODO
     # # something doesn't work with requests types in the virtual environment
-    { module = "requests.*", ignore_missing_imports = true },
+    # { module = "requests.*", ignore_missing_imports = true },
 
     ]
