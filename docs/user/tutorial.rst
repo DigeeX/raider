@@ -1,6 +1,9 @@
 Tutorial
 ========
 
+Preparation
+-----------
+
 Before you can use Raider, you have to set up the authentication in the
 config file. To do that, you'll probably need to use a web proxy
 (`BurpSuite <https://portswigger.net/burp>`_, `ZAProxy
@@ -52,7 +55,7 @@ We define a new request that will check for the unread messages in hy:
                :name "get_unread_messages"
                :request (Request
                           :method "GET"
-                          :headers [(Bearerauth access_token)]
+                          :headers [(Header.bearerauth access_token)]
                           :url "https://s.reddit.com/api/v1/sendbird/unread_message_count")))
 
        
@@ -71,8 +74,9 @@ definition. It needs to be of type `Request`.
 The `Request` object requires only the method and url. Other
 parameters are optional. We translate the original request into Raider
 config format, and to use the access token we need to define it in the
-request header. Since this is a bearer header, we use the `Bearerauth`
-object with the `access_token` which we will create later on.
+request header. Since this is a bearer header, we use
+`Header.bearerauth` with the `access_token` which we will create later
+on.
        
        
 Getting the access token
@@ -134,6 +138,7 @@ the request:
        
        
 .. code-block:: hylang
+
        (setv get_access_token
              (Flow
                :name "get_access_token"
@@ -397,27 +402,30 @@ And now the complete configuration file for reddit looks like this:
    (setv password (Variable "password"))
    (setv mfa_code (Prompt "MFA"))
           
-   (setv csrf_token (Html
-                      :name "csrf_token"
-   		   :tag "input"
-   		   :attributes
-   		   {:name "csrf_token"
-   		    :value "^[0-9a-f]{40}$"
-   		    :type "hidden"}
-   		   :extract "value"))
+   (setv csrf_token
+     (Html
+       :name "csrf_token"
+       :tag "input"
+       :attributes
+       {:name "csrf_token"
+        :value "^[0-9a-f]{40}$"
+        :type "hidden"}
+       :extract "value"))
           
-   (setv access_token (Regex
-                       :name "access_token"
-   		    :regex "\"accessToken\":\"([^\"]+)\""))
+   (setv access_token
+     (Regex
+        :name "access_token"
+   	:regex "\"accessToken\":\"([^\"]+)\""))
           
    (setv session_id (Cookie "session"))
    (setv reddit_session (Cookie "reddit_session"))
           
           
-   (setv initialization (Flow
+   (setv initialization
+     (Flow
        :name "initialization"
        :request (Request
-                  :method "GET"
+                 :method "GET"
        		 :url "https://www.reddit.com/login/")
        :outputs [csrf_token session_id]
        :operations
@@ -428,7 +436,7 @@ And now the complete configuration file for reddit looks like this:
      (Flow
        :name "login"
        :request (Request
-                 :method "POST"
+               :method "POST"
      	       :url "https://www.reddit.com/login"
      	       :cookies [session_id]
      	       :data
@@ -483,28 +491,28 @@ And now the complete configuration file for reddit looks like this:
    
    
    (setv get_access_token
-         (Flow
-           :name "get_access_token"
-           :request (Request
-                      :method "GET"
-                      :url "https://www.reddit.com/"
-                      :cookies [reddit_session])
-           :outputs [access_token]
-           :operations [(Print access_token)
-                        (NextStage "get_unread_messages")]))
+     (Flow
+       :name "get_access_token"
+       :request (Request
+                  :method "GET"
+                  :url "https://www.reddit.com/"
+                  :cookies [reddit_session])
+       :outputs [access_token]
+       :operations [(Print access_token)
+                    (NextStage "get_unread_messages")]))
    
    (setv get_unread_messages
-         (Flow
-           :name "get_unread_messages"
-           :request (Request
-                      :method "GET"
-                      :headers [(Bearerauth access_token)]
-                      :url "https://s.reddit.com/api/v1/sendbird/unread_message_count")))
+     (Flow
+       :name "get_unread_messages"
+       :request (Request
+                  :method "GET"
+                  :headers [(Header.bearerauth access_token)]
+                  :url "https://s.reddit.com/api/v1/sendbird/unread_message_count")))
    
    (setv _authentication
-         [initialization
-          login
-          multi_factor
-          get_access_token
-          get_unread_messages])
+     initialization
+     login
+     multi_factor
+     get_access_token
+     get_unread_messages])
 
