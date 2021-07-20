@@ -17,6 +17,11 @@ all static files (.png, .js, .pdf, etc...). When you're left with a
 fewer requests to deal with, it's time to dive deeper and understand
 how the authentication works.
 
+At this point we assume you already know the basics of `Python
+<https://docs.python.org/3/tutorial/>`_ and `Hylang
+<https://docs.hylang.org/en/stable/tutorial.html>`_ so continue only
+if you are already familiar.
+
 This tutorial will show the authentication in use by Reddit at the
 time of writing this. It could be different in the future when you're
 reading this, if they update the way authentication works, so you will
@@ -376,18 +381,20 @@ The request will give us the token we need, and the session
 cookie. The configuration file is almost complete. To complete the
 authentication configuration, we set the special variable
 `_authentication` containing the list of the authentication steps we
-defined.
+defined. In `_functions` we will put the other defined Flows which
+don't affect authentication.
        
 
 .. code-block:: hylang
    
        (setv _authentication
-             [initialization
-              login
-              multi_factor
-              get_access_token
-              get_unread_messages
-              #_ /])
+         [initialization
+          login
+          multi_factor])
+
+       (setv _functions
+         [get_access_token
+	  get_unread_messages])
 
        
 And now the complete configuration file for reddit looks like this:
@@ -512,7 +519,9 @@ And now the complete configuration file for reddit looks like this:
    (setv _authentication
      initialization
      login
-     multi_factor
-     get_access_token
-     get_unread_messages])
+     multi_factor])
 
+
+       (setv _functions
+         [get_access_token
+	  get_unread_messages])
