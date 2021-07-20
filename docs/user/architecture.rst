@@ -50,10 +50,10 @@ In Raider, **stages** are implemented using :ref:`Flow
 series of Flows connected to each other. Each one accepts inputs and
 generates outputs. In addition to that, Flow objects implement
 :ref:`Operations <definition_operation>` which can be used to run
-various action upon receiving the response, but most importantly
-they're used to control the authentication process by conditionally
-defining the next stage. So for example one can jump to stage X if the
-HTTP response code is 200 or to stage Y if it's 403.
+various actions upon receiving the response, but most importantly
+they're used to control the authentication process by conditionally or
+unconditionally defining the next stage. So for example one can jump
+to stage X if the HTTP response code is 200 or to stage Y if it's 403.
 
 
 .. uml:: ../diagrams/raider_flows.uml
