@@ -555,13 +555,14 @@ Now, with the configuration finished, we can run Raider with a python
 script:
 
 .. code-block:: python
-import raider
 
-raider = raider.Raider("reddit")
-raider.config.proxy = "http://localhost:8080"
-raider.authenticate()
-raider.run_function("get_nickname")
-raider.run_function("get_unread_messages")
+   import raider
+   
+   raider = raider.Raider("reddit")
+   raider.config.proxy = "http://localhost:8080"
+   raider.authenticate()
+   raider.run_function("get_nickname")
+   raider.run_function("get_unread_messages")
 
 
 Running the script, we can see its output, and entries in the web

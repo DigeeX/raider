@@ -1,6 +1,10 @@
 Architecture
 ============
 
+
+Abstracting the authentication process
+--------------------------------------
+
 First let's start by taking a closer look at how web authentication
 works. Every :ref:`authentication process <definition_authentication>`
 can be abstracted as a `Finite State Machine
@@ -13,6 +17,10 @@ authenticated state. A typical modern web application will looks like
 the following in a diagram:
 
 .. uml:: ../diagrams/high_level_authentication.uml
+
+
+Basic concepts in Raider
+------------------------
 
 Now let's zoom in and look at the details. Instead of dealing with the
 states (*Unauthenticated*, *Login failed*, *MFA required*, and
@@ -66,12 +74,12 @@ changes for every stage). This was implemented in Raider using
 
 Plugins are pieces of code that can act as inputs for the HTTP
 requests to be sent, and/or as outputs from the HTTP responses. They
-are used to facilitate the information exchange between Flows.
+are used to facilitate the information exchange between
+Flows. *Raider* provides the user the option to write new plugins with
+a small piece of hylang code.
 
 
 Once the response is received, the :ref:`Operations <operations>`
 will be executed. The primary function of operations is to define
 which Flow comes next. But they can do anything, and *Raider* makes it
 easy to write new operations.
-
-
