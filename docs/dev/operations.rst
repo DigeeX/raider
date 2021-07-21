@@ -80,6 +80,9 @@ Grep
 
 .. autoclass:: Grep       
 
+.. _operations_api:
+
+
 
 Writing custom operations
 -------------------------

@@ -39,6 +39,15 @@ Json
 
 .. autoclass:: Json
 
+.. _plugin_api:
+
+
+Plugin API
+----------
+
+.. autoclass:: Plugin
+
+
 Writing custom plugins
 ----------------------
 
@@ -49,7 +58,6 @@ written in the project's configuration directory in a ".hy" file. To
 do this, a new class has to be defined, which will inherit from
 *Raider*'s Plugin class:
 
-.. autoclass:: Plugin
 
 Let's assume we want a new plugin that will use `unix password store
 <https://www.passwordstore.org/>`_ to extract the OTP from our website.
