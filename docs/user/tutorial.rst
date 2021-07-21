@@ -384,6 +384,9 @@ no additional information. Now we can define this stage:
                             (NextStage "login")]))
 
        
+Finishing configuration
+-----------------------
+
 The request will give us the token we need, and the session
 cookie. The configuration file is almost complete. To complete the
 authentication configuration, we set the special variable
@@ -540,15 +543,19 @@ configuration file for reddit looks like this:
 
 
    (setv _authentication
-     initialization
-     login
-     multi_factor
-     get_access_token])
+     [initialization
+      login
+      multi_factor
+      get_access_token])
 
 
-       (setv _functions
-         [get_unread_messages
-	  get_nickname])
+   (setv _functions
+     [get_unread_messages
+      get_nickname])
+
+
+Running **Raider**
+------------------
 
 
 Now, with the configuration finished, we can run Raider with a python
@@ -559,10 +566,17 @@ script:
    import raider
    
    raider = raider.Raider("reddit")
+   # Create a Raider() object for application "reddit"
+   
    raider.config.proxy = "http://localhost:8080"
+   # Run traffic through the local web proxy
+
    raider.authenticate()
+   # Run authentication stages one by one
+   
    raider.run_function("get_nickname")
    raider.run_function("get_unread_messages")
+   # Run both defined functions
 
 
 Running the script, we can see its output, and entries in the web

@@ -26,12 +26,15 @@ authentication systems.
    user/architecture
    user/tutorial
    user/definitions
+   user/faq
 
 
 .. toctree::
    :maxdepth: 2
    :caption: Configuration
 
+   dev/special_variables
+   dev/flows
    dev/plugins
    dev/operations
 
