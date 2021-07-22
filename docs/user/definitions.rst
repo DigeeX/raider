@@ -24,10 +24,10 @@ Definitions
 
     In **Raider** the authentication process is defined by a series of
     :term:`Flow objects <Flow>`.  Those are extracted from the
-    ``_authentication`` variable in the :term:`hyfiles <hyfiles>`, and
-    stored inside an :class:`raider.authentication.Authentication`
-    object. It's also accessible from the :class:`raider.Raider`
-    directly:
+    :ref:`_authentication<var_authentication>` variable in the
+    :term:`hyfiles <hyfiles>`, and stored inside an
+    :class:`raider.authentication.Authentication` object. It's also
+    accessible from the :class:`raider.Raider` directly:
 
     .. code-block:: python
 

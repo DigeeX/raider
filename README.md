@@ -1,6 +1,6 @@
 # What is this
 
-This is a tool designed to test authentication for web
+This is a framework designed to test authentication for web
 applications. While web proxies like
 [ZAProxy](https://www.zaproxy.org/) and
 [Burpsuite](https://portswigger.net/burp) allow authenticated tests,
