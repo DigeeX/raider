@@ -18,6 +18,7 @@
 
 import json
 import logging
+import os
 import re
 from base64 import b64encode
 from typing import Callable, Dict, Optional
@@ -439,6 +440,50 @@ class Variable(Plugin):
         """
         if data and self.name in data:
             self.value = data[self.name]
+        return self.value
+
+
+class Command(Plugin):
+    """Runs a shell command and extract the output."""
+
+    def __init__(self, name: str, command: str) -> None:
+        """Initializes the Command Plugin.
+
+        The specified command will be executed with os.popen() and the
+        output with the stripped last newline, will be saved inside the
+        value.
+
+        Args:
+          name:
+            A unique identifier for the plugin.
+          command:
+            The command to be executed.
+
+        """
+        self.command = command
+        super().__init__(
+            name=name,
+            function=self.run_command,
+        )
+
+    def run_command(self) -> Optional[str]:
+        """Runs a command and returns its value.
+
+        Given a dictionary with the predefined variables, return the
+        value of the with the same name as the "name" attribute from
+        this Plugin.
+
+        Args:
+          data:
+            A dictionary with the predefined variables.
+
+        Returns:
+          A string with the value of the variable found. None if no such
+          variable has been defined.
+
+        """
+        self.value = os.popen(self.command).read().strip()
+
         return self.value
 
 

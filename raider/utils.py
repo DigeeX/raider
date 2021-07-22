@@ -138,12 +138,13 @@ def import_raider_objects() -> Dict[str, Any]:
             "Json "
             "Cookie "
             "Header "
-            "Plugin"
+            "Command "
+            "Plugin "
         ),
         "flow": "Flow",
         "request": "Request",
         "operations": (
-            "Http " "Grep " "Print " "Error " "NextStage " "Operation"
+            "Http " "Grep " "Print " "Error " "NextStage " "Operation "
         ),
     }
 
