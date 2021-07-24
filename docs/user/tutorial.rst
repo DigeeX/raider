@@ -6,12 +6,14 @@ Tutorial
 Preparation
 -----------
 
-Before you can use Raider, you have to set up the authentication in the
-config file. To do that, you'll probably need to use a web proxy
-(`BurpSuite <https://portswigger.net/burp>`_, `ZAProxy
+Before you can use **Raider**, you have to set up the
+:term:`authentication` inside :term:`hyfiles`. To do that, you'll
+probably need to use a web proxy (`BurpSuite
+<https://portswigger.net/burp>`_, `ZAProxy
 <https://www.zaproxy.org/>`_, `mitmproxy <https://mitmproxy.org/>`_,
-etc...)  to see the requests the application is generating, and identify
-all the important inputs and outputs for each request.
+etc...)  to see the :term:`requests <Request>` the application is
+generating, and identify all the important inputs and outputs for each
+request.
 
 After the traffic was captured, there will probably be lots of HTTP
 requests that are irrelevant to the authentication. Start by removing
@@ -19,17 +21,17 @@ all static files (.png, .js, .pdf, etc...). When you're left with a
 fewer requests to deal with, it's time to dive deeper and understand
 how the authentication works.
 
-At this point we assume you already know the basics of `Python
-<https://docs.python.org/3/tutorial/>`_ and `Hylang
-<https://docs.hylang.org/en/stable/tutorial.html>`_ so continue only
-if you are already familiar.
+At this point we assume *you already know* the basics of Python and
+Hylang so this documentation will not cover information that can be
+found somewhere else.
 
 This tutorial will show the authentication in use by Reddit at the
 time of writing this. It could be different in the future when you're
-reading this, if they update the way authentication works, so you will
-have to do this all by yourself anyways.
+reading this, if they update the way authentication works or change
+the HTML structure, so you will have to do this all by yourself
+anyways.
 
-The easiest way to do this is by going backwards starting with one
+The easiest way to start this is by going backwards starting with one
 authenticated request. This should be some kind of request that only
 works when the user is already authenticated. I choose the
 "unread_message_count" one for reddit, and the request looks like
@@ -53,7 +55,8 @@ this:
 As you can see from this, the only information we sent to this URL
 from our authentication is the Bearer token.
        
-We define a new request that will check for the unread messages in hy:
+We define a new :term:`Flow` that will check for the unread messages
+in hy:
        
 .. code-block:: hylang
 
@@ -66,22 +69,23 @@ We define a new request that will check for the unread messages in hy:
                           :url "https://s.reddit.com/api/v1/sendbird/unread_message_count")))
 
        
-In Hy, `setv` is used to set up new variables. Here we created the
-variable `get_unread_messages` that will hold the information about
-this Flow. This will be hold in the `_function` special variable which
-stores the Flows which aren't affecting the authentication.
+In Hy, ``setv`` is used to set up new variables. Here we created the
+variable ``get_unread_messages`` that will hold the information about
+this Flow. This will be hold in the :ref:`_functions special variable
+<var_functions>` which stores the Flows which aren't affecting the
+authentication.
        
-The variable is also of type `Flow`. The only required parameters for it
-are the name and the request. The name is a string that is used for
-reference purposes, and the request contains the actual HTTP request
-definition. It needs to be of type `Request`.
+The only required parameters for :class:`Flow <raider.flow.Flow>`
+objects are the name and the request. The name is a string that is used
+for reference purposes, and the request contains the actual HTTP request
+definition as a :class:`Request <raider.request.Request>` object.
        
-The `Request` object requires only the method and url. Other
-parameters are optional. We translate the original request into Raider
-config format, and to use the access token we need to define it in the
-request header. Since this is a bearer header, we use
-`Header.bearerauth` with the `access_token` which we will create later
-on.
+The Request object requires only the method and url. Other parameters
+are optional. We translate the original request into **Raider** config
+format, and to use the access token we need to define it in the request
+header. Since this is a bearer header, we use :class:`Header.bearerauth
+<raider.plugins.Header>` with the ``access_token`` which we will create
+later on.
        
        
 Getting the access token
@@ -98,11 +102,11 @@ response, and it looks like this:
        [...] "session":{"accessToken":"[REDACTED_TOKEN]","expires":"2021-06-23T19:30:10.000Z" [...]
 
 
-The easiest way to extract the token using Raider, is to use the `Regex`
-module. This module searches for the regex you supplied and returns the
-value of the first group that matches. The group is the string in
-between '(' and ')' characters. The final `Regex` object I configured
-looks like this:
+The easiest way to extract the token using **Raider**, is to use the
+:ref:`Regex <plugin_regex>` module. This module searches for the regex
+you supplied and returns the value of the first group that
+matches. The group is the string in between ``(`` and ``)``
+characters. The final object I configured looks like this:
        
 .. code-block:: hylang
 
@@ -111,8 +115,8 @@ looks like this:
                :name "access_token"
                :regex "\"accessToken\":\"([^\"]+)\""))
        
-We are setting up the variable `access_token` to the `Regex` object,
-with the internal name `access_token` and that'll return the value of
+We are setting up the variable ``access_token`` to the ``Regex`` object,
+with the internal name ``access_token`` and that'll return the value of
 the string between double quotes after the "accessToken" part.
        
 Now we need to define the actual request that will get us this access
@@ -136,10 +140,10 @@ Now we can see there are several cookies being sent with this
 request. Most of them are irellevant here. To see which one is
 required for the request to succeed, we remove them one by one and see
 if we get the information we need inside the response. By doing this,
-I found out that the only cookie we need is `reddit_session`. As long
-as we supply it in the request, we do get the `access_token` in the
-response. With this information, we can now write the definition of
-the request:
+I found out that the only cookie we need is ``reddit_session``. As
+long as we supply it in the request, we do get the ``access_token`` in
+the response. With this information, we can now write the definition
+of the request:
        
        
 .. code-block:: hylang
@@ -156,8 +160,8 @@ the request:
                             (NextStage "get_unread_messages")]))
 
        
-Here we can see that we specified the `reddit_session` cookie to be
-sent with the request, and `access_token` as the only output generated
+Here we can see that we specified the ``reddit_session`` cookie to be
+sent with the request, and ``access_token`` as the only output generated
 from the response.
        
 Now we define the cookie like this:
@@ -168,15 +172,15 @@ Now we define the cookie like this:
 
        
 When the stage is complete, two operations will be executed. The first
-will print the value of the `access_token` on the command line, and
-the next will tell Raider to go to the next stage that we defined
+will print the value of the ``access_token`` on the command line, and
+the next will tell **Raider** to go to the next stage that we defined
 previously.
        
 
 Multi-factor authentication
 ---------------------------
 
-To show how Raider works with multi-factor authentication, I have
+To show how **Raider** works with multi-factor authentication, I have
 enabled it on my reddit account, and added this step to the
 configuration. In the web proxy, the request looks like this:
        
@@ -194,7 +198,7 @@ configuration. In the web proxy, the request looks like this:
        password=[REDACTED]&username=[REDACTED]&csrf_token=[REDACTED]&otp=566262&dest=https%3A%2F%2Fwww.reddit.com
 
        
-Now we translate the request in the Raider `Request` type:
+Now we translate the request in the **Raider** Request type:
        
 .. code-block:: hylang
    
@@ -210,7 +214,7 @@ Now we translate the request in the Raider `Request` type:
            "dest" "https://www.reddit.com"})
 
        
-Here we use the new cookie called `session_id` that we define as:
+Here we use the new cookie called ``session_id`` that we define as:
        
 .. code-block:: hylang
 
@@ -218,7 +222,7 @@ Here we use the new cookie called `session_id` that we define as:
 
        
 To use the username and password of the active user, we create two new
-inputs of type `Variable`:
+inputs of type :ref:`Variable <plugin_variable>`:
        
 .. code-block:: hylang
    
@@ -236,14 +240,15 @@ The nickname can be extracted with a Regex:
 		
        
 The multi-factor authentication code will be given as an input to the
-CLI manually, so we define the `mfa_code` as following:
+CLI manually, so we define the ``mfa_code`` as a :ref:`Prompt
+<plugin_prompt>` plugin:
        
 .. code-block:: hylang
 
        (setv mfa_code (Prompt "MFA"))
 
        
-The `csrf_token` value will be defined later on.
+The ``csrf_token`` value will be defined later on.
        
 I defined the multi_factor stage as shown below:
        
@@ -280,21 +285,26 @@ I defined the multi_factor stage as shown below:
 
        
 The only useful output that this stage will generate is the
-`reddit_session` cookie.
+``reddit_session`` cookie.
        
 Now looking at the operations, several things are happening here. The
 first operations will just print to the CLI output the values of the
-`csrf_token` and `reddit_session`. The second operation will instruct
-Raider to go to the `get_access_token` stage if the HTTP response code
-is 200. The third operation will run only if the status code is 400,
-which means the authentication failed. Inside the response body of a
-failed request will be a message indicating why it failed. Raider will
-then Grep the response for the string "WRONG\_OTP" in case we gave the
-wrong multi-factor authentication code. If it matches, Raider will go
-to the `initialization` stage starting the authentication from a clean
-state again. We will define this stage later in this tutorial. If the
-string "WRONG\_OTP" isn't found, Raider will quit with the error
-message "Multi-factor authentication error".
+``csrf_token`` and ``reddit_session``.
+
+The second operation will instruct **Raider** to go to the
+``get_access_token`` stage if the HTTP response code is 200.
+
+The third operation will run only if the status code is 400, which
+means the authentication failed. Inside the response body of a failed
+request will be a message indicating why it failed. **Raider** will
+then :ref:`Grep <operations_grep>` the response for the string
+"WRONG_OTP" in case we gave the wrong multi-factor authentication
+code. If it matches, **Raider** will go to the ``initialization``
+stage starting the authentication from a clean state again.
+
+We will define this stage later in this tutorial. If the string
+"WRONG_OTP" isn't found, **Raider** will quit with the error message
+"Multi-factor authentication error".
        
 
 Login
@@ -338,7 +348,7 @@ Getting the CSRF token
 Only piece of information we're missing at this point is the CSRF
 token.
        
-And now, for the `csrf_token` we need to find out where it was
+And now, for the ``csrf_token`` we need to find out where it was
 created. Searching inside the web proxy for the value of the token, we
 find it in a previous response. The relevant part of the HTML code
 looks like this:
@@ -348,10 +358,10 @@ looks like this:
        <input type="hidden" name="csrf_token" value="8309984e972e6608475765db68e25ffb8c0bedc9">
 
        
-So we have its value inside the `input` tag, of type `hidden`, with
-the name `csrf_token`. The actual value is a 40 character string made
-out of lowercase hexadecimal characters. We define this as a `Html`
-Raider object as following:
+So we have its value inside the ``input`` tag, of type ``hidden``, with
+the name ``csrf_token``. The actual value is a 40 character string made
+out of lowercase hexadecimal characters. We define this as a :ref:`Html
+<plugin_html>` plugin:
        
 .. code-block:: hylang
 
@@ -366,7 +376,7 @@ Raider object as following:
                :extract "value"))
 
        
-This object will extract the `csrf_token` value, and use it as an
+This object will extract the ``csrf_token`` value, and use it as an
 input where necessary.
        
 The token can be found by multiple means. The simplest way I found is
@@ -390,23 +400,17 @@ Finishing configuration
 -----------------------
 
 The request will give us the token we need, and the session
-cookie. The configuration file is almost complete. To complete the
-authentication configuration, we set the special variable
-`_authentication` containing the list of the authentication steps we
-defined. In `_functions` we will put the other defined Flows which
-don't affect authentication.
+cookie. The configuration file is almost complete. To finish, we set
+the special variables:
+
+* :ref:`_authentication <var_authentication>` - containing the list of
+  the authentication steps we defined.
+  
+* :ref:`_functions <var_functions>` - we will put the other defined
+  Flows which don't affect authentication.
        
+* :ref:`_users <var_users>` - user credentials go here
 
-.. code-block:: hylang
-   
-       (setv _authentication
-         [initialization
-          login
-          multi_factor])
-
-       (setv _functions
-         [get_access_token
-	  get_unread_messages])
 
 Adding one more function `get_nickname`, and the complete
 configuration file for reddit looks like this:
@@ -556,11 +560,17 @@ configuration file for reddit looks like this:
       get_nickname])
 
 
-Running **Raider**
-------------------
+   (setv _users
+      [{:username "user1"
+        :password "s3cr3tP4ssWrd1"}])
 
 
-Now, with the configuration finished, we can run Raider with a python
+
+Running Raider
+--------------
+
+
+Now, with the configuration finished, we can run **Raider** with a python
 script:
 
 .. code-block:: python

@@ -29,37 +29,44 @@ from raider.user import User
 
 
 class Flow:
-    """Class dealing with the information exchange from HTTP.
+    """Class dealing with the information exchange from HTTP communication.
 
     A Flow object in Raider defines all the information about one single
-    HTTP information exchange. It has a name, contains one request, the
-    response, the outputs that needs to be extracted from the response,
-    and a list of operations to be run when the exchange is over.
+    HTTP information exchange. It has a ``name``, contains one
+    ``request``, the ``response``, the ``outputs`` that needs to be
+    extracted from the response, and a list of ``operations`` to be run
+    when the exchange is over.
 
-    Flow objects are used as states in the Authentication class to
-    define the authentication process as a finite state machine.
+    Flow objects are used as states in the :class:`Authentication
+    <raider.authentication.Authentication>` class to define the
+    authentication process as a finite state machine.
 
-    It's also used in the Functions class to run arbitrary actions when
-    it doesn't affect the authentication state.
+    It's also used in the :class:`Functions
+    <raider.functions.Functions>` class to run arbitrary actions when it
+    doesn't affect the authentication state.
 
     Attributes:
       name:
         A string used as a unique identifier for the defined Flow.
       request:
-        A Request object detailing the HTTP request with its elements.
+        A :class:`Request <raider.request.Request>` object detailing the
+        HTTP request with its elements.
       response:
-        A requests.model.Response object. It's empty until the request
-        is sent. When the HTTP response arrives, it's stored here.
+        A :class:`requests.model.Response` object. It's empty until the
+        request is sent. When the HTTP response arrives, it's stored
+        here.
       outputs:
-        A list of Plugin objects detailing the pieces of information to
-        be extracted from the response. Those will be later available
-        for other Flow objects.
+        A list of :class:`Plugin <raider.plugins.Plugin>` objects
+        detailing the pieces of information to be extracted from the
+        response. Those will be later available for other Flow objects.
       operations:
-        A list of Operation objects to be executed after the response is
-        received and outputs are extracted. Should contain a NextStage
-        operation if another Flow is expected.
+        A list of :class:`Operation <raider.operations.Operation>`
+        objects to be executed after the response is received and
+        outputs are extracted. Should contain a :class:`NextStage
+        <raider.operations.NextStage>` operation if another Flow is
+        expected.
       logger:
-        A logging.RootLogger object used for debugging.
+        A :class:`logging.RootLogger` object used for debugging.
 
     """
 
@@ -106,10 +113,10 @@ class Flow:
 
         Args:
           user:
-            A User object containing all the user specific data relevant
-            for this action.
+            An object containing all the user specific data relevant for
+            this action.
           config:
-            A Config object with the global Raider configuration.
+            The global Raider configuration.
 
         """
         self.response = self.request.send(user, config)
@@ -120,7 +127,7 @@ class Flow:
 
         Iterates through the defined outputs in the Flow object, and
         extracts the data from the HTTP response, saving it in the
-        respective Plugin object.
+        respective :class:`Plugin <raider.plugins.Plugin>` object.
 
         """
         if self.outputs:
@@ -128,15 +135,14 @@ class Flow:
                 output.extract_value(self.response)
 
     def run_operations(self) -> Optional[str]:
-        """Runs the defined operations.
+        """Runs the defined :class:`operations <raider.operations.Operation>`.
 
-        Iterates through the defined operations and executes them one by
-        one. Iteration stops when the first NextStage operations is
-        encountered.
+        Iterates through the defined ``operations`` and executes them
+        one by one. Iteration stops when the first :class:`NextStage
+        <raider.operations.NextStage>` operations is encountered.
 
         Returns:
-          Optionally, it returns a string with the name of the next
-          stage to run.
+          A string with the name of the next stage to run or None.
 
         """
         next_stage = None

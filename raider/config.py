@@ -28,7 +28,7 @@ from raider.utils import (
     eval_project_file,
     get_config_file,
     get_project_dir,
-    list_apps,
+    list_projects,
 )
 
 
@@ -85,7 +85,7 @@ class Config:
         self.logger = logging.getLogger()
         self.logger.setLevel(self.loglevel)
 
-        if not list_apps():
+        if not list_projects():
             self.logger.critical(
                 "No application have been configured. Cannot run."
             )

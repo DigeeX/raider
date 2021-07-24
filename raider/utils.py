@@ -92,7 +92,7 @@ def get_project_dir(project: str) -> str:
 
     """
     confdir = get_config_dir()
-    project_conf = os.path.join(confdir, "apps", project)
+    project_conf = os.path.join(confdir, "projects", project)
     return project_conf
 
 
@@ -360,24 +360,24 @@ def eval_project_file(
     return shared_locals
 
 
-def list_apps() -> List[str]:
-    """List existing applications.
+def list_projects() -> List[str]:
+    """List existing projects.
 
-    This function returns the list of applications that have been
+    This function returns the list of projects that have been
     configured in Raider.
 
     Returns:
-      A list with the strings of the applications found in the
+      A list with the strings of the project found in the
       configuration directory.
 
     """
-    apps = []
-    appdir = os.path.join(get_config_dir(), "apps")
-    os.makedirs(appdir, exist_ok=True)
-    for filename in os.listdir(appdir):
+    projects = []
+    projectdir = os.path.join(get_config_dir(), "projects")
+    os.makedirs(projectdir, exist_ok=True)
+    for filename in os.listdir(projectdir):
         if not filename[0] == "_":
-            apps.append(filename)
-    return apps
+            projects.append(filename)
+    return projects
 
 
 def match_tag(html_tag: bs4.element.Tag, attributes: Dict[str, str]) -> bool:

@@ -12,6 +12,8 @@ the operations, and *Raider* allows writing custom ones in hylang to
 enable users to add functionality that isn't supported by the main
 code.
 
+.. _operations_nextstage:
+
 NextStage
 ---------
 
@@ -26,6 +28,8 @@ decision making.
 
 .. autoclass:: NextStage
 
+.. _operations_print:
+	       
 Print
 -----
 
@@ -41,6 +45,8 @@ in a new line.
 
 .. autoclass:: Print
 
+.. _operations_error:
+	       
 Error
 -----
 
@@ -51,6 +57,9 @@ Operation that will exit Raider and print the error message.
    (Error "Login failed.")
 
 .. autoclass:: Error
+
+
+.. _operations_http:
 
 Http
 ----
@@ -65,6 +74,8 @@ Http
         (NextStage "multi_factor"))
 
 .. autoclass:: Http
+
+.. _operations_grep:
 
 Grep
 ----

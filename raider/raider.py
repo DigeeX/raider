@@ -19,6 +19,7 @@
 from typing import Optional
 
 from raider.application import Application
+from raider.authentication import Authentication
 
 
 class Raider:
@@ -30,8 +31,8 @@ class Raider:
 
     Attributes:
       application:
-        An :class:`Application <Application>` object with the currently
-        active project.
+        An :class:`Application <raider.application.Application>` object
+        with the currently active project.
       config:
         A Config object containing all of the necessary settings.
       user:
@@ -86,3 +87,8 @@ class Raider:
 
         """
         self.functions.run(function, self.user, self.config)
+
+    @property
+    def authentication(self) -> Authentication:
+        """Returns the Authentication object"""
+        return self.application.authentication

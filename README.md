@@ -15,13 +15,13 @@ authentication systems.
 # Features
 
 **Raider** has the goal to support most of the modern authentication
-systems, and for now it has the following features:
+systems, and here are some features that other tools don't offer:
 
 * Unlimited authentication steps
 * Unlimited inputs/outputs for each step
+* Ability to conditionally decide the next step
 * Running arbitrary operations when receiving the response
-* Testing under multiple users
-* Writing custom operations and plugins
+* Easy to write custom operations and plugins
 
 
 # How does it work

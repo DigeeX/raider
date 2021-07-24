@@ -9,12 +9,12 @@ _users
 
 Setting this variable *is required* for **Raider** to run.
 
-It should contain a list of dictionaries with the user
-credentials. For now only usernames and passwords are evaluated, but
-in future it will be used for other arbitrary user related
-information. This data gets converted into a
-:class:`raider.user.UserStore` object which provides a dictionary-like
-structure with :class:`raider.user.User` objects inside.
+It should contain a list of dictionaries with the user credentials. For
+now only usernames and passwords are evaluated, but in future it will be
+used for other arbitrary user related information. This data gets
+converted into a :class:`UserStore <raider.user.UserStore>` object which
+provides a dictionary-like structure with :class:`User
+<raider.user.User>` objects inside.
 
 Example:
 
@@ -49,7 +49,7 @@ Example:
            #_ /])
 
 
-Where each item in the list is a :class:`raider.flow.Flow` object, and
+Where each item in the list is a :class:`Flow <raider.flow.Flow>` object, and
 might look like this:
 
 .. code-block:: hylang
@@ -77,8 +77,8 @@ _base_url
 This variable *is optional*.
 
 Setting ``base_url`` will enable a shortcut for writing new
-:class:`raider.request.Request` objects. When enabled, the Requests
-can be created using ``:path`` instead of ``url``
+:class:`Request <raider.request.Request>` objects. When enabled, the
+Requests can be created using ``:path`` instead of ``:url``
 
 
 .. _var_functions:

@@ -11,6 +11,8 @@ between :ref:`Flows <flows>`. Below there's a list of predefined
 Plugins. The users are also encouraged to write their own plugins.
 
 
+.. _plugin_variable:
+
 Variable
 --------
 
@@ -28,6 +30,8 @@ Example:
 .. autoclass:: Variable
    :members:	       
 
+.. _plugin_prompt:
+
 Prompt
 ------
 
@@ -42,6 +46,8 @@ Example:
 
 .. autoclass:: Prompt
    :members:	       
+
+.. _plugin_command:
 
 Command
 -------
@@ -60,6 +66,8 @@ Example:
 .. autoclass:: Command
    :members:	       
 
+.. _plugin_cookie:      
+
 Cookie
 ------
 
@@ -74,6 +82,9 @@ Example:
 .. autoclass:: Cookie
    :members:	       
 	       
+
+.. _plugin_header:      
+
 Header
 ------
 
@@ -101,6 +112,8 @@ Example:
 .. autoclass:: Header
    :members:	       
 
+.. _plugin_regex:
+
 Regex
 -----
 
@@ -121,6 +134,8 @@ Example:
 .. autoclass:: Regex
    :members:	       
 	       
+
+.. _plugin_html:      
 
 Html
 ----
@@ -149,7 +164,9 @@ Example:
 
 .. autoclass:: Html
    :members:	       
-	       
+
+.. _plugin_json:
+      
 Json
 ----
 
