@@ -191,10 +191,8 @@ class Request:
         headers.update({"User-agent": config.user_agent})
 
         for key in self.cookies:
-            if self.cookies[key].value:
-                cookies.update({key: userdata[key]})
-            else:
-                cookies.pop(key)
+            value = self.cookies[key].get_value(userdata)
+            cookies.update({key: value})
 
         for key in self.headers:
             value = self.headers[key].get_value(userdata)
