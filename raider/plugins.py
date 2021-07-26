@@ -533,6 +533,7 @@ class Cookie(Plugin):
         name: str,
         value: Optional[str] = None,
         function: Optional[Callable[..., Optional[str]]] = None,
+        flags: int = Plugin.NEEDS_RESPONSE,
     ) -> None:
         """Initializes the Cookie Plugin.
 
@@ -556,7 +557,7 @@ class Cookie(Plugin):
                 name=name,
                 function=self.extract_cookie,
                 value=value,
-                flags=self.NEEDS_RESPONSE,
+                flags=flags,
             )
         else:
             super().__init__(name, function)
@@ -570,6 +571,31 @@ class Cookie(Plugin):
     def __str__(self) -> str:
         """Returns a string representation of the cookie."""
         return str({self.name: self.value})
+
+    @classmethod
+    def from_plugin(cls, name: str, plugin: Plugin) -> "Cookie":
+        """Creates a Cookie from a Plugin.
+
+        Given another :class:`plugin <raider.plugins.Plugin>`, and a
+        name, create a :class:`cookie <raider.plugins.Cookie>`.
+
+        Args:
+          name:
+            The cookie name to use.
+          plugin:
+            The plugin which will contain the value we need.
+
+        Returns:
+          A Cookie object with the name and the plugin's value.
+
+        """
+        cookie = cls(
+            name=name,
+            value=None,
+            function=lambda: plugin.value if plugin.value else None,
+            flags=0,
+        )
+        return cookie
 
 
 class Header(Plugin):
