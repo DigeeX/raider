@@ -142,7 +142,7 @@ def import_raider_objects() -> Dict[str, Any]:
             "Plugin "
         ),
         "flow": "Flow",
-        "request": "Request",
+        "request": "Request PostBody",
         "operations": (
             "Http " "Grep " "Print " "Error " "NextStage " "Operation "
         ),

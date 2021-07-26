@@ -19,7 +19,7 @@
 
 import logging
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from urllib import parse
 
 import requests
@@ -31,6 +31,38 @@ from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
 
 
+class PostBody(DataStore):
+    """Holds the POST body data.
+
+    This class was created to enable the user to send the POST body in a
+    different format than the default url encoded. For now only JSON
+    encoding has been implemented.
+
+    Attributes:
+      encoding:
+        A string with the desired encoding. For now only "json" is
+        supported. If the encoding is skipped, the request will be url
+        encoded, and the Content-Type will be
+        ``application/x-www-form-urlencoded``.
+
+    """
+
+    def __init__(self, data: Dict[Any, Any], encoding: str) -> None:
+        """Initializes the PostBody object.
+
+        Args:
+          data:
+            A dictionary with the data to be sent.
+          encoding:
+            A string with the encoding. Only "json" is supported for
+            now.
+
+        """
+        self.encoding = encoding
+        super().__init__(data)
+
+
+# Request needs many arguments
 # pylint: disable=too-many-arguments
 class Request:
     """Class holding the elements of the HTTP request.
@@ -73,9 +105,9 @@ class Request:
         method: str,
         url: str = None,
         path: str = None,
-        cookies: List[Cookie] = None,
-        headers: List[Header] = None,
-        data: Dict[Any, Any] = None,
+        cookies: Optional[List[Cookie]] = None,
+        headers: Optional[List[Header]] = None,
+        data: Optional[Union[Dict[Any, Any], PostBody]] = None,
     ) -> None:
         """Initializes the Request object.
 
@@ -119,7 +151,12 @@ class Request:
 
         self.headers = HeaderStore(headers)
         self.cookies = CookieStore(cookies)
-        self.data = DataStore(data)
+
+        self.data: Union[PostBody, DataStore]
+        if isinstance(data, PostBody):
+            self.data = data
+        else:
+            self.data = DataStore(data)
 
     def process_inputs(
         self, user: User, config: Config
@@ -199,6 +236,7 @@ class Request:
         """
         verify = config.verify
         if not verify:
+            # False positive
             # pylint: disable=no-member
             requests.packages.urllib3.disable_warnings(
                 category=InsecureRequestWarning
@@ -231,15 +269,29 @@ class Request:
             return req
 
         if self.method == "POST":
-            req = requests.post(
-                self.url,
-                data=data,
-                headers=headers,
-                cookies=cookies,
-                proxies=proxies,
-                verify=verify,
-                allow_redirects=False,
-            )
+            if (
+                isinstance(self.data, PostBody)
+                and self.data.encoding == "json"
+            ):
+                req = requests.post(
+                    self.url,
+                    json=data,
+                    headers=headers,
+                    cookies=cookies,
+                    proxies=proxies,
+                    verify=verify,
+                    allow_redirects=False,
+                )
+            else:
+                req = requests.post(
+                    self.url,
+                    data=data,
+                    headers=headers,
+                    cookies=cookies,
+                    proxies=proxies,
+                    verify=verify,
+                    allow_redirects=False,
+                )
 
             return req
 
