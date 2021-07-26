@@ -135,9 +135,9 @@ class Plugin:
             A dictionary with the user specific data.
         """
         if self.needs_userdata:
-            self.function(userdata)
+            self.value = self.function(userdata)
         elif not self.needs_response:
-            self.function()
+            self.value = self.function()
         return self.value
 
     @property
@@ -583,6 +583,7 @@ class Header(Plugin):
         name: str,
         value: Optional[str] = None,
         function: Optional[Callable[..., Optional[str]]] = None,
+        flags: int = Plugin.NEEDS_RESPONSE,
     ) -> None:
         """Initializes the Header Plugin.
 
@@ -607,12 +608,10 @@ class Header(Plugin):
                 name=name,
                 function=lambda: self.value,
                 value=value,
-                flags=self.NEEDS_RESPONSE,
+                flags=flags,
             )
         else:
-            super().__init__(
-                name=name, function=function, flags=self.NEEDS_RESPONSE
-            )
+            super().__init__(name=name, function=function, flags=flags)
 
     def extract_header(
         self, response: requests.models.Response
@@ -662,10 +661,35 @@ class Header(Plugin):
 
         """
         header = cls(
-            "Authorization",
-            None,
-            lambda: "Bearer " + access_token.value
+            name="Authorization",
+            value=None,
+            function=lambda: "Bearer " + access_token.value
             if access_token.value
             else None,
+        )
+        return header
+
+    @classmethod
+    def from_plugin(cls, name: str, plugin: Plugin) -> "Header":
+        """Creates a Header from a Plugin.
+
+        Given another :class:`plugin <raider.plugins.Plugin>`, and a
+        name, create a :class:`header <raider.plugins.Header>`.
+
+        Args:
+          name:
+            The header name to use.
+          plugin:
+            The plugin which will contain the value we need.
+
+        Returns:
+          A Header object with the name and the plugin's value.
+
+        """
+        header = cls(
+            name=name,
+            value=None,
+            function=lambda: plugin.value if plugin.value else None,
+            flags=0,
         )
         return header
