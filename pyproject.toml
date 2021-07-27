@@ -1,6 +1,6 @@
 [tool.poetry]
     name = "raider"
-    version = "0.1.3"
+    version = "0.2.0-alpha.0"
     description = "Authentication testing framework"
     authors = ["Daniel Neagaru <daniel@digeex.de>"]
     packages = [
@@ -8,14 +8,23 @@
     ]
     license = "GPL-3.0-or-later"
     readme = "README.md"
+    homepage = "https://github.com/DigeeX/raider"
+    repository = "https://github.com/DigeeX/raider"
+    documentation = "https://raider.readthedocs.io/en/latest/"
     include = [
-      "LICENSE"
+      "LICENSE",
+      "CHANGELOG.md",
+      "docs/**/*",
+      "examples",
+      "scripts"
     ]
     keywords = ["authentication", "security", "raider", "digeex", "hy"]
     classifiers = [
-      "Development Status :: 1 - Planning",
+      "Development Status :: 2 - Pre-Alpha",
       "Environment :: Console",
       "Intended Audience :: Developers",
+      "Intended Audience :: System Administrators",
+      "Topic :: Software Development :: Testing",
       "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
       "Natural Language :: English",
       "Operating System :: OS Independent",

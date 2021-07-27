@@ -319,7 +319,12 @@ class Print(Operation):
 
     """
 
-    def __init__(self, *args: Union[str, Variable, Regex, Html, Json]):
+    def __init__(
+        self,
+        *args: Union[str, Variable, Regex, Html, Json],
+        flags: int = 0,
+        function: Callable[..., Any] = None,
+    ):
         """Initializes the Print Operation.
 
         Args:
@@ -327,9 +332,16 @@ class Print(Operation):
             Strings or Plugin objects to be printed.
         """
         self.args = args
-        super().__init__(
-            function=self.print_items,
-        )
+        if function:
+            super().__init__(
+                function=function,
+                flags=flags,
+            )
+        else:
+            super().__init__(
+                function=self.print_items,
+                flags=flags,
+            )
 
     def print_items(self) -> None:
         """Prints the defined items."""
@@ -342,6 +354,15 @@ class Print(Operation):
     def __str__(self) -> str:
         """Returns a string representation of the Print Operation."""
         return "(Print:" + str(self.args) + ")"
+
+    @classmethod
+    def body(cls) -> "Print":
+        """Classmethod to print the HTTP response body."""
+        operation = cls(
+            function=lambda response: print(response.text),
+            flags=Operation.NEEDS_RESPONSE,
+        )
+        return operation
 
 
 class Error(Operation):
