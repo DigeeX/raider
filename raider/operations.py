@@ -359,7 +359,9 @@ class Print(Operation):
     def body(cls) -> "Print":
         """Classmethod to print the HTTP response body."""
         operation = cls(
-            function=lambda response: print(response.text),
+            function=lambda response: print(
+                "HTTP response body:\n" + response.text
+            ),
             flags=Operation.NEEDS_RESPONSE,
         )
         return operation

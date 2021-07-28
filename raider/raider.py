@@ -16,9 +16,11 @@
 """Main object used to perform common actions.
 """
 
-from typing import Optional
+import logging
+from typing import Any, Callable, Optional
 
 from raider.application import Application
+from raider.attacks import Fuzz
 from raider.authentication import Authentication
 
 
@@ -87,6 +89,41 @@ class Raider:
 
         """
         self.functions.run(function, self.user, self.config)
+
+    def fuzz(
+        self,
+        function_name: str,
+        fuzzing_point: str,
+        fuzzing_function: Callable[..., Any],
+    ) -> None:
+        """Fuzz a function with an authenticated user.
+
+        Given a function name, a starting point for fuzzing, and a
+        function to generate the fuzzing strings, run the attack.
+
+        Args:
+          function_name:
+            The name of the :class:`Flow <raider.flow.Flow>` containing
+            the :class:`Request <raider.request.Request>` which will be
+            fuzzed.
+          fuzzing_point:
+            The name given to the :class:`Plugin
+            <raider.plugins.Plugin>` inside :class:`Request
+            <raider.request.Request>` which will be fuzzed.
+          fuzzing_function:
+            A callable function, that will be used to generate the
+            strings that will be used for fuzzing.
+
+        """
+        flow = self.functions.get_function_by_name(function_name)
+        if flow:
+            Fuzz(flow, fuzzing_point, fuzzing_function).attack(
+                self.user, self.config
+            )
+        else:
+            logging.critical(
+                "Function %s not defined, cannot fuzz!", function_name
+            )
 
     @property
     def authentication(self) -> Authentication:

@@ -158,6 +158,25 @@ class Request:
         else:
             self.data = DataStore(data)
 
+    def list_inputs(self) -> Optional[Dict[str, Plugin]]:
+        """Returns a list of request's inputs."""
+        inputs = {}
+        for name in self.cookies:
+            cookie = self.cookies[name]
+            inputs.update({name: cookie})
+
+        for name in self.headers:
+            header = self.headers[name]
+            inputs.update({name: header})
+
+        for key, value in self.data.items():
+            if isinstance(key, Plugin):
+                inputs.update({key.name: key})
+            if isinstance(value, Plugin):
+                inputs.update({value.name: value})
+
+        return inputs
+
     def process_inputs(
         self, user: User, config: Config
     ) -> Dict[str, Dict[str, str]]:

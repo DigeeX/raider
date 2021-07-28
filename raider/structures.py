@@ -16,7 +16,7 @@
 """Data structures used in Raider.
 """
 
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from raider.plugins import Cookie, Header
 
@@ -92,6 +92,14 @@ class DataStore:
     def to_dict(self) -> Dict[Any, Any]:
         """Returns the DataStore elements as a dictionary."""
         return self._store
+
+    def items(self) -> List[Tuple[Any, Any]]:
+        """Returns a list of tuples containing the keys and values."""
+        data = []
+        for key in self._store:
+            data.append((key, self._store[key]))
+
+        return data
 
 
 class HeaderStore(DataStore):
