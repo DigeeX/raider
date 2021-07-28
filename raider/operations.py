@@ -19,6 +19,7 @@
 import logging
 import re
 import sys
+from functools import partial
 from typing import Any, Callable, List, Optional, Union
 
 import requests
@@ -360,8 +361,94 @@ class Print(Operation):
         """Classmethod to print the HTTP response body."""
         operation = cls(
             function=lambda response: print(
-                "HTTP response body:\n" + response.text
+                "\nHTTP response body:\n" + response.text
             ),
+            flags=Operation.NEEDS_RESPONSE,
+        )
+        return operation
+
+    @classmethod
+    def headers(cls, headers: List[str] = None) -> "Print":
+        """Classmethod to print the HTTP response headers.
+
+        Args:
+          headers:
+            A list of strings containing the headers that needs to be
+            printed.
+        """
+
+        def print_headers(
+            response: requests.models.Response,
+            headers: List[str] = None,
+        ) -> None:
+            """Prints headers from the response.
+
+            Given a response, and optionally a list of headers, print
+            those headers, or all the headers otherwise.
+
+            Args:
+              response:
+                The HTTP response received.
+              headers:
+                A list of strings with the desired headers.
+
+            """
+
+            print("HTTP response headers:")
+
+            if headers:
+                for header in headers:
+                    value = response.headers.get(header)
+                    if value:
+                        print(": ".join([header, value]))
+            else:
+                for name, value in response.headers.items():
+                    print(": ".join([name, value]))
+
+        operation = cls(
+            function=partial(print_headers, headers=headers),
+            flags=Operation.NEEDS_RESPONSE,
+        )
+        return operation
+
+    @classmethod
+    def cookies(cls, cookies: List[str] = None) -> "Print":
+        """Classmethod to print the HTTP response cookies.
+
+        Args:
+          cookies:
+            A list of strings containing the cookies that needs to be
+            printed.
+
+        """
+
+        def print_cookies(
+            response: requests.models.Response,
+            cookies: List[str] = None,
+        ) -> None:
+            """Prints cookies from the response.
+
+            Args:
+              response:
+                The HTTP response received.
+              cookies:
+                A list of strings with the desired cookies.
+
+            """
+
+            print("HTTP response cookies:")
+
+            if cookies:
+                for cookie in cookies:
+                    value = response.cookies.get(cookie)
+                    if value:
+                        print(": ".join([cookie, value]))
+            else:
+                for name, value in response.cookies.items():
+                    print(": ".join([name, value]))
+
+        operation = cls(
+            function=partial(print_cookies, cookies=cookies),
             flags=Operation.NEEDS_RESPONSE,
         )
         return operation
