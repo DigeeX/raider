@@ -27,6 +27,7 @@ decision making.
    (NextStage "login")
 
 .. autoclass:: NextStage
+   :members:
 
 .. _operations_print:
 	       
@@ -44,6 +45,7 @@ in a new line.
      "This will be printed on the third line")
 
 .. autoclass:: Print
+   :members:
 
 .. _operations_error:
 	       
@@ -57,6 +59,7 @@ Operation that will exit Raider and print the error message.
    (Error "Login failed.")
 
 .. autoclass:: Error
+   :members:
 
 
 .. _operations_http:
@@ -74,6 +77,7 @@ Http
         (NextStage "multi_factor"))
 
 .. autoclass:: Http
+   :members:
 
 .. _operations_grep:
 
@@ -90,6 +94,7 @@ Grep
        (Print "Logged in successfully"))
 
 .. autoclass:: Grep       
+   :members:
 
 .. _operations_api:
 
@@ -105,5 +110,6 @@ do this, a new class has to be defined, which will inherit from
 *Raider*'s Operation class:
 
 .. autoclass:: Operation
+   :members:
 
 		
