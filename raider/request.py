@@ -207,7 +207,7 @@ class Request:
             base_url = config.project_config["_base_url"]
             self.url = parse.urljoin(base_url, self.path)
 
-        headers.update({"User-agent": config.user_agent})
+        headers.update({"user-agent": config.user_agent})
 
         for key in self.cookies:
             value = self.cookies[key].get_value(userdata)

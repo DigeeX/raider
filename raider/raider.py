@@ -112,7 +112,10 @@ class Raider:
             <raider.request.Request>` which will be fuzzed.
           fuzzing_function:
             A callable function, that will be used to generate the
-            strings that will be used for fuzzing.
+            strings that will be used for fuzzing. It should accept one
+            argument, which will the value of the plugin before
+            fuzzing. It can be used to build the list of strings to be
+            used for the attack.
 
         """
         flow = self.functions.get_function_by_name(function_name)

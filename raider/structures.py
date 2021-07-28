@@ -123,7 +123,7 @@ class HeaderStore(DataStore):
         values = {}
         if data:
             for header in data:
-                values[header.name] = header
+                values[header.name.lower()] = header
         super().__init__(values)
 
     def set(self, header: Header) -> None:
@@ -137,7 +137,7 @@ class HeaderStore(DataStore):
             A Header object to be added to the HeaderStore.
 
         """
-        super().update({header.name: header.value})
+        super().update({header.name.lower(): header.value})
 
     @classmethod
     def from_dict(cls, data: Optional[Dict[str, str]]) -> "HeaderStore":

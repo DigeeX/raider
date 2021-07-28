@@ -689,6 +689,7 @@ class Header(Plugin):
         header = cls(
             name="Authorization",
             value=None,
+            flags=0,
             function=lambda: "Bearer " + access_token.value
             if access_token.value
             else None,

@@ -19,7 +19,7 @@
 import logging
 import sys
 from copy import deepcopy
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 from raider.config import Config
 from raider.flow import Flow
@@ -34,7 +34,7 @@ class Fuzz:
         self,
         flow: Flow,
         fuzzing_point: str,
-        fuzzing_function: Callable[..., List[str]],
+        fuzzing_function: Callable[[Optional[str]], List[str]],
     ) -> None:
         """Initialize the Fuzz object.
 
@@ -45,7 +45,7 @@ class Fuzz:
         fuzzing. The ``fuzzing_point`` attribute should contain the name
         of the plugin.
 
-        Attributes:
+        Args:
           flow:
             A :class:`Flow <raider.flow.Flow>` object which needs to be
             fuzzed.
@@ -54,7 +54,10 @@ class Fuzz:
             <raider.plugins.Plugin>` which should be fuzzed.
           fuzzing_function:
             A callable function, which will generate the strings that
-            will be used for fuzzing.
+            will be used for fuzzing. The function should accept one
+            argument. This will be the value of the plugin before
+            fuzzing. It can be considered when building the fuzzing
+            list.
 
         """
         self.flow = flow
@@ -68,7 +71,12 @@ class Fuzz:
         this context.
 
         Args:
-
+          user:
+            The :class:`User <raider.user.User>` object with the
+            authenticated user data.
+          config:
+            The global Raider configuration object :class:`Config
+            <raider.config.Config>`
 
         """
         flow = deepcopy(self.flow)
@@ -88,7 +96,7 @@ class Fuzz:
         # the HTTP response anymore when fuzzing
         fuzzing_plugin.flags = 0
 
-        elements = self.fuzzing_function()
+        elements = self.fuzzing_function(fuzzing_plugin.value)
 
         for item in elements:
             fuzzing_plugin.function = lambda item=item: item
