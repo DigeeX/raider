@@ -416,7 +416,6 @@ class Json(Plugin):
                 if item in temp:
                     temp = temp[item]
                 else:
-                    breakpoint()
                     logging.warning(
                         (
                             "Key '%s' not found in the response body.",
