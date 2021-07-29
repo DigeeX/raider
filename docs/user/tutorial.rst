@@ -577,17 +577,17 @@ script:
 
    import raider
    
-   raider = raider.Raider("reddit")
+   app = raider.Raider("reddit")
    # Create a Raider() object for application "reddit"
    
-   raider.config.proxy = "http://localhost:8080"
+   app.config.proxy = "http://localhost:8080"
    # Run traffic through the local web proxy
 
-   raider.authenticate()
+   app.authenticate()
    # Run authentication stages one by one
    
-   raider.run_function("get_nickname")
-   raider.run_function("get_unread_messages")
+   app.run_function("get_nickname")
+   app.run_function("get_unread_messages")
    # Run both defined functions
 
 
