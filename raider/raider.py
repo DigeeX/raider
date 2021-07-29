@@ -17,6 +17,7 @@
 """
 
 import logging
+import sys
 from typing import Any, Callable, Optional
 
 from raider.application import Application
@@ -60,7 +61,8 @@ class Raider:
         self.application = Application(project)
         self.config = self.application.config
         self.user = self.application.active_user
-        self.functions = self.application.functions
+        if hasattr(self.application, "functions"):
+            self.functions = self.application.functions
 
     def authenticate(self, username: str = None) -> None:
         """Authenticates in the chosen application.
@@ -88,6 +90,9 @@ class Raider:
             "_functions" variable.
 
         """
+        if not hasattr(self, "functions"):
+            logging.critical("No functions defined. Cannot continue.")
+            sys.exit()
         self.functions.run(function, self.user, self.config)
 
     def fuzz(

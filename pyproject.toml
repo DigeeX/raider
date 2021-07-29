@@ -1,7 +1,7 @@
 [tool.poetry]
     name = "raider"
     version = "0.2.0-alpha.0"
-    description = "Authentication testing framework"
+    description = "Web authentication testing framework"
     authors = ["Daniel Neagaru <daniel@digeex.de>"]
     packages = [
       { include = "raider" }
