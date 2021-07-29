@@ -27,7 +27,7 @@ import hy
 import requests
 from bs4 import BeautifulSoup
 
-from raider.utils import hy_dict_to_python, match_tag
+from raider.utils import hy_dict_to_python, match_tag, parse_json_filter
 
 
 class Plugin:
@@ -335,9 +335,20 @@ class Html(Plugin):
 class Json(Plugin):
     """Plugin to extract a field from JSON.
 
-    The "extract" attribute is used to specify which field to store
-    in the "value". Using the dot "." character you can go deeper inside
-    the JSON object. No arrays are supported yet.
+    The "extract" attribute is used to specify which field to store in
+    the "value". Using the dot ``.`` character you can go deeper inside
+    the JSON object. To look inside an array, use square brackets
+    `[]`.
+
+    Keys with special characters should be written inside double quotes
+    ``"``. Keep in mind that when written inside :term:``hyfiles``,
+    it'll already be between double quotes, so you'll have to escape
+    them with the backslash character ``\\``.
+
+    Examples:
+
+      env.production[0].field
+      production.keys[1].x5c[0][1][0]."with space"[3]
 
     Attributes:
       extract:
@@ -382,15 +393,46 @@ class Json(Plugin):
           found None will be returned.
 
         """
-        parsed = json.loads(response.text)
+        data = json.loads(response.text)
 
-        items = self.extract.split(".")
-        temp = parsed
-        for item in items:
-            temp = temp[item]
+        json_filter = parse_json_filter(self.extract)
+        is_valid = True
+        temp = data
+        for item in json_filter:
+            if item.startswith("["):
+                index = int(item.strip("[]"))
+                if len(temp) > index:
+                    temp = temp[index]
+                else:
+                    logging.warning(
+                        (
+                            "JSON array index doesn't exist.",
+                            "Cannot extract plugin's value.",
+                        )
+                    )
+                    is_valid = False
+                    break
+            else:
+                if item in temp:
+                    temp = temp[item]
+                else:
+                    breakpoint()
+                    logging.warning(
+                        (
+                            "Key '%s' not found in the response body.",
+                            "Cannot extract plugin's value.",
+                        ),
+                        item,
+                    )
+                    is_valid = False
+                    break
 
-        self.value = str(temp)
-        logging.debug("Json filter %s: %s", self.name, str(self.value))
+        if is_valid:
+            self.value = str(temp)
+            logging.debug("Json filter %s: %s", self.name, str(self.value))
+        else:
+            self.value = None
+
         return self.value
 
     def __str__(self) -> str:

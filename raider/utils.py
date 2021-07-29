@@ -19,6 +19,7 @@
 import logging
 import os
 import re
+import sys
 from typing import Any, Dict, List, Union
 
 import bs4
@@ -404,3 +405,61 @@ def match_tag(html_tag: bs4.element.Tag, attributes: Dict[str, str]) -> bool:
         ):
             return False
     return True
+
+
+def parse_json_filter(raw: str) -> List[str]:
+    """Parses a raw JSON filter and returns a list with the items.
+
+    Args:
+      raw:
+        A string with the expected JSON filter.
+
+    Returns:
+      A list with all items found in the filter.
+    """
+    splitted = raw.split(".")
+
+    parsed_filter = []
+    for item in splitted:
+        parsed_item = []
+        open_delim_index = item.find("[")
+
+        if open_delim_index != -1:
+            if open_delim_index == 0:
+                logging.critical(
+                    (
+                        "Syntax error. '.' should be followed by a key,",
+                        "not an array index.",
+                    )
+                )
+                sys.exit()
+            parsed_item.append(item[:open_delim_index].strip('"'))
+            array_indices = item[open_delim_index:]
+            open_delim_index = 0
+
+            while array_indices:
+                close_delim_index = array_indices.find(
+                    "]", open_delim_index + 1
+                )
+                if close_delim_index == -1:
+                    logging.critical("Syntax error. Closing ']' not found.")
+                    sys.exit()
+
+                index = array_indices[open_delim_index + 1 : close_delim_index]
+                if index.isdecimal():
+                    parsed_item.append("[" + index + "]")
+                    array_indices = array_indices[close_delim_index + 1 :]
+                else:
+                    logging.critical(
+                        (
+                            "Syntax error.",
+                            "The index between '[' and '] is not a decimal.",
+                        )
+                    )
+                    sys.exit()
+        else:
+            parsed_item.append(item.strip('"'))
+
+        parsed_filter += parsed_item
+
+    return parsed_filter
