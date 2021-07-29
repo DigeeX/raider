@@ -341,14 +341,14 @@ class Json(Plugin):
     `[]`.
 
     Keys with special characters should be written inside double quotes
-    ``"``. Keep in mind that when written inside :term:``hyfiles``,
+    ``"``. Keep in mind that when written inside ``hyfiles``,
     it'll already be between double quotes, so you'll have to escape
     them with the backslash character ``\\``.
 
     Examples:
 
-      env.production[0].field
-      production.keys[1].x5c[0][1][0]."with space"[3]
+      ``env.production[0].field``
+      ``production.keys[1].x5c[0][1][0]."with space"[3]``
 
     Attributes:
       extract:
