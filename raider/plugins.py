@@ -761,3 +761,63 @@ class Header(Plugin):
             flags=0,
         )
         return header
+
+
+class Alter(Plugin):
+    """Plugin used to alter other plugin's value.
+
+    If the value extracted from other plugins cannot be used in it's raw
+    form and needs to be somehow processed, Alter plugin can be used to
+    do that. Initialize it with the original plugin and a function which
+    will process the string and return the modified value.
+
+    Attributes:
+      alter_function:
+        A function which will be given the plugin's value. It should
+        return a string with the processed value.
+
+    """
+
+    def __init__(
+        self, plugin: Plugin, alter_function: Callable[[str], Optional[str]]
+    ) -> None:
+        """Initializes the Alter Plugin.
+
+        Given the original plugin, and a function to alter the data,
+        initialize the object, and get the modified value.
+
+        Args:
+          plugin:
+            The original Plugin where the value is to be found.
+          alter_function:
+            The Function with instructions on how to alter the value.
+        """
+        self.alter_function = alter_function
+        super().__init__(
+            name=plugin.name,
+            value=plugin.value,
+            # Get plugin's value from userdata since it has
+            # already been extracted from the original plugin.
+            flags=self.NEEDS_USERDATA,
+            function=self.process_value,
+        )
+
+    def process_value(self, data: Dict[str, str] = None) -> Optional[str]:
+        """Process the original plugin's value.
+
+        Get the value of the original's plugin from userdata, and give
+        it to ``alter_function``. Return the processed value and store
+        it in self.value.
+
+        Args:
+          data:
+            A dictionary with the userdata where the original plugin's
+            value should be found.
+
+        Returns:
+          A string with the processed value.
+        """
+        if data and self.name in data:
+            self.value = self.alter_function(data[self.name])
+
+        return self.value

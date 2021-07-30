@@ -141,6 +141,7 @@ def import_raider_objects() -> Dict[str, Any]:
             "Header "
             "Command "
             "Plugin "
+            "Alter "
         ),
         "flow": "Flow",
         "request": "Request PostBody",
