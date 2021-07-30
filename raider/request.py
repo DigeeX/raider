@@ -103,8 +103,8 @@ class Request:
     def __init__(
         self,
         method: str,
-        url: str = None,
-        path: str = None,
+        url: Optional[Union[str, Plugin]] = None,
+        path: Optional[Union[str, Plugin]] = None,
         cookies: Optional[List[Cookie]] = None,
         headers: Optional[List[Header]] = None,
         data: Optional[Union[Dict[Any, Any], PostBody]] = None,
@@ -161,6 +161,12 @@ class Request:
     def list_inputs(self) -> Optional[Dict[str, Plugin]]:
         """Returns a list of request's inputs."""
         inputs = {}
+
+        if isinstance(self.url, Plugin):
+            inputs.update({self.url.name: self.url})
+        if isinstance(self.path, Plugin):
+            inputs.update({self.path.name: self.path})
+
         for name in self.cookies:
             cookie = self.cookies[name]
             inputs.update({name: cookie})
@@ -205,7 +211,14 @@ class Request:
 
         if self.path:
             base_url = config.project_config["_base_url"]
-            self.url = parse.urljoin(base_url, self.path)
+            if isinstance(self.path, Plugin):
+                path = self.path.get_value(userdata)
+            else:
+                path = self.path
+            self.url = parse.urljoin(base_url, path)
+
+        if isinstance(self.url, Plugin):
+            self.url = self.url.get_value(userdata)
 
         headers.update({"user-agent": config.user_agent})
 

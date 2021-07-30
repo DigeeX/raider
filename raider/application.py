@@ -95,7 +95,7 @@ class Application:
         functions = output.get("_functions")
         if functions:
             self.functions = Functions(functions)
-        self.base_url = output["_base_url"]
+        self.base_url = output.get("_base_url")
 
     def authenticate(self, username: str = None) -> None:
         """Authenticates the user.
