@@ -821,3 +821,17 @@ class Alter(Plugin):
             self.value = self.alter_function(data[self.name])
 
         return self.value
+
+    @classmethod
+    def prepend(cls, plugin: Plugin, string: str) -> "Alter":
+        """Prepend a string to plugin's value."""
+        alter = cls(plugin=plugin, alter_function=lambda value: string + value)
+
+        return alter
+
+    @classmethod
+    def append(cls, plugin: Plugin, string: str) -> "Alter":
+        """Append a string after the plugin's value"""
+        alter = cls(plugin=plugin, alter_function=lambda value: value + string)
+
+        return alter
