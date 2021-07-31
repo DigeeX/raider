@@ -203,3 +203,8 @@ class Authentication:
         else:
             self._current_stage = -1
         return next_stage
+
+    @property
+    def current_stage_name(self) -> str:
+        """Returns the name of the current stage."""
+        return self.get_stage_name_by_id(self._current_stage)

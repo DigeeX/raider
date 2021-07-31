@@ -95,7 +95,7 @@ class Raider:
             sys.exit()
         self.functions.run(function, self.user, self.config)
 
-    def fuzz(
+    def fuzz_function(
         self,
         function_name: str,
         fuzzing_point: str,
@@ -125,7 +125,7 @@ class Raider:
         """
         flow = self.functions.get_function_by_name(function_name)
         if flow:
-            Fuzz(flow, fuzzing_point, fuzzing_function).attack(
+            Fuzz(flow, fuzzing_point, fuzzing_function).attack_function(
                 self.user, self.config
             )
         else:
@@ -137,3 +137,48 @@ class Raider:
     def authentication(self) -> Authentication:
         """Returns the Authentication object"""
         return self.application.authentication
+
+    def fuzz_authentication(
+        self,
+        flow_name: str,
+        fuzzing_point: str,
+        fuzzing_function: Callable[..., Any],
+    ) -> None:
+        """Fuzz an authentication step.
+
+        Given a flow name, a starting point for fuzzing, and a function
+        to generate the fuzzing strings, run the attack. Unlike
+        ``fuzz_function``, it takes into consideration the
+        :class:`NextStage <raider.operations.NextStage>` operations,
+        making it possible to start from the beginning of the
+        authentication process if new tokens are needed.
+
+        Args:
+          flow_name:
+            The name of the :class:`Flow <raider.flow.Flow>` containing
+            the :class:`Request <raider.request.Request>` which will be
+            fuzzed.
+          fuzzing_point:
+            The name given to the :class:`Plugin
+            <raider.plugins.Plugin>` inside :class:`Request
+            <raider.request.Request>` which will be fuzzed.
+          fuzzing_function:
+            A callable function, that will be used to generate the
+            strings that will be used for fuzzing. It should accept one
+            argument, which will the value of the plugin before
+            fuzzing. It can be used to build the list of strings to be
+            used for the attack.
+
+        """
+        flow = self.authentication.get_stage_by_name(flow_name)
+        if flow:
+            Fuzz(
+                flow=flow,
+                fuzzing_point=fuzzing_point,
+                fuzzing_function=fuzzing_function,
+                flags=Fuzz.IS_AUTHENTICATION,
+            ).attack_authentication(
+                self.authentication, self.user, self.config
+            )
+        else:
+            logging.critical("Stage %s not defined, cannot fuzz!", flow_name)
