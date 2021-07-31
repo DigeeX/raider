@@ -44,8 +44,36 @@ in a new line.
      access_token
      "This will be printed on the third line")
 
+   (Print.body)
+
+   (Print.headers)
+   (Print.headers "User-agent")
+
+   (Print.cookies)
+   (Print.cookies "PHPSESSID")
+   
+
 .. autoclass:: Print
    :members:
+
+
+.. _operations_save:
+	       
+Save
+----
+
+When this Operation is executed, it will save its elements
+in a file.
+
+.. code-block:: hylang
+
+   (Save "/tmp/access_token" access_token)
+   (Save "/tmp/session" session_id :append True)
+   (Save.body "/tmp/body")
+
+.. autoclass:: Save
+   :members:
+
 
 .. _operations_error:
 	       

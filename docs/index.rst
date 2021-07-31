@@ -98,6 +98,7 @@ User guide
 
    dev/special_variables
    dev/flows
+   dev/attacks
    dev/plugins
    dev/operations
 
