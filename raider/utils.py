@@ -146,7 +146,7 @@ def import_raider_objects() -> Dict[str, Any]:
         "flow": "Flow",
         "request": "Request PostBody",
         "operations": (
-            "Http " "Grep " "Print " "Error " "NextStage " "Operation "
+            "Http " "Grep " "Print " "Error " "NextStage " "Operation " "Save "
         ),
     }
 

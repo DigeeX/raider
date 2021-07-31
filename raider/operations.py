@@ -24,7 +24,7 @@ from typing import Any, Callable, List, Optional, Union
 
 import requests
 
-from raider.plugins import Html, Json, Regex, Variable
+from raider.plugins import Html, Json, Plugin, Regex, Variable
 
 
 def execute_actions(
@@ -88,8 +88,17 @@ class Operation:
     """
 
     # Operation flags
+
+    # Operation is conditional. Needs to have an ``action`` defined and
+    # optionally an ``otherwise``.
     IS_CONDITIONAL = 0x01
+
+    # Operation's function needs the HTTP response to run.
     NEEDS_RESPONSE = 0x02
+
+    # Operation will append instead of overwrite. Used when dealing with files
+    # to make sure old data doesn't get overwritten.
+    WILL_APPEND = 0x04
 
     def __init__(
         self,
@@ -179,6 +188,11 @@ class Operation:
     def is_conditional(self) -> bool:
         """Returns True if the IS_CONDITIONAL flag is set."""
         return bool(self.flags & self.IS_CONDITIONAL)
+
+    @property
+    def will_append(self) -> bool:
+        """Returns True if the WILL_APPEND flag is set."""
+        return bool(self.flags & self.WILL_APPEND)
 
 
 class Http(Operation):
@@ -305,6 +319,130 @@ class Grep(Operation):
             + str(self.otherwise)
             + ")"
         )
+
+
+class Save(Operation):
+    """Operation to save information to files.
+
+    Attributes:
+      filename:
+        The path to the file where the data should be saved.
+    """
+
+    def __init__(
+        self,
+        filename: str,
+        plugin: Optional[Plugin] = None,
+        save_function: Callable[..., None] = None,
+        flags: int = 0,
+    ) -> None:
+        """Initializes the Save operation.
+
+        Args:
+          filename:
+            The path of the file where data should be saved.
+          plugin:
+            If saving Plugin's value, this should contain the plugin.
+          save_function:
+            A function to use when writing the file. Use when needing
+            some more complex saving instructions.
+          flags:
+            Operation's flags. No flag is set by default. Set
+            WILL_APPEND if needed to append to file instead of overwrite.
+
+        """
+        self.filename = filename
+        if not save_function:
+            if plugin:
+                super().__init__(
+                    function=partial(
+                        self.save_to_file,
+                        content=plugin,
+                    ),
+                    flags=flags,
+                )
+            else:
+                super().__init__(function=self.save_to_file, flags=flags)
+        else:
+            super().__init__(function=save_function, flags=flags)
+
+    def save_to_file(
+        self, content: Union[str, Plugin, requests.models.Response]
+    ) -> None:
+        """Saves a string or plugin's content to a file.
+
+        Given the content (a string or a plugin), open the file and
+        write its contents. If WILL_APPEND was set, append to file
+        instead of overwrite.
+
+        Args:
+          content:
+            A string or a Plugin with the data to be written.
+
+        """
+        if self.will_append:
+            mode = "a"
+        else:
+            mode = "w"
+
+        with open(self.filename, mode) as outfile:
+            if isinstance(content, requests.models.Response):
+                outfile.write(content.text)
+            elif isinstance(content, Plugin):
+                outfile.write(content.value)
+            else:
+                outfile.write(content)
+            outfile.write("\n")
+
+    @classmethod
+    def append(cls, filename: str, plugin: Plugin) -> "Save":
+        """Append to file instead of overwrite.
+
+        Args:
+          filename:
+            Path to the file to append to.
+          plugin:
+            The Plugin with the content to write.
+
+        Returns:
+          A Save object which will append data instead of overwrite.
+        """
+        operation = cls(
+            filename=filename, plugin=plugin, flags=Operation.WILL_APPEND
+        )
+        return operation
+
+    @classmethod
+    def body(cls, filename: str, append: bool = False) -> "Save":
+        """Save the entire HTTP body.
+
+        If you need to save the entire body instead of extracting some
+        data from it using plugins, use ``Save.body``. Given a filename,
+        and optionally a boolean ``append``, write the body's contents
+        into the file.
+
+        Args:
+          filename:
+            The path to the file where to write the data.
+          append:
+            A boolean which when True, will append to existing file
+            instead of overwriting it.
+
+        Returns:
+          A Save object which will save the response body.
+
+        """
+        if append:
+            flags = Operation.NEEDS_RESPONSE | Operation.WILL_APPEND
+        else:
+            flags = Operation.NEEDS_RESPONSE
+
+        operation = cls(
+            filename=filename,
+            flags=flags,
+        )
+
+        return operation
 
 
 class Print(Operation):
