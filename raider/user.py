@@ -96,6 +96,27 @@ class User:
         if cookie.value:
             self.cookies.set(cookie)
 
+    def set_cookies_from_dict(self, data: Dict[str, str]) -> None:
+        """Set user's cookies from a dictionary.
+
+        Given a dictionary of cookies, convert them to :class:`Cookie
+        <raider.plugins.Cookie>` objects, and load them in the
+        :class:`User <raider.user.User>` object respectively.
+
+        Args:
+          data:
+            A dictionary of strings corresponding to cookie keys and
+            values.
+
+        """
+        cookies = []
+        for key, value in data.items():
+            cookie = Cookie(key, value)
+            cookies.append(cookie)
+
+        for item in cookies:
+            self.set_cookie(item)
+
     def set_header(self, header: Header) -> None:
         """Sets the header for the user.
 
@@ -110,6 +131,27 @@ class User:
         if header.value:
             self.headers.set(header)
 
+    def set_headers_from_dict(self, data: Dict[str, str]) -> None:
+        """Set user's headers from a dictionary.
+
+        Given a dictionary of headers, convert them to :class:`Header
+        <raider.plugins.Header>` objects, and load them in the
+        :class:`User <raider.user.User>` object respectively.
+
+        Args:
+          data:
+            A dictionary of strings corresponding to header keys and
+            values.
+
+        """
+        headers = []
+        for key, value in data.items():
+            header = Header(key, value)
+            headers.append(header)
+
+        for item in headers:
+            self.set_header(item)
+
     def set_data(self, data: Plugin) -> None:
         """Sets the data for the user.
 
@@ -123,6 +165,22 @@ class User:
         """
         if data.value:
             self.data.update({data.name: data.value})
+
+    def set_data_from_dict(self, data: Dict[str, str]) -> None:
+        """Set user's data from a dictionary.
+
+        Given a dictionary of data items from :class:`Plugins
+        <raider.plugins.Plugin>`, load them in the :class:`User
+        <raider.user.User>` object respectively.
+
+        Args:
+          data:
+            A dictionary of strings corresponding to data keys and
+            values.
+
+        """
+        for key, value in data.items():
+            self.data.update({key: value})
 
     def to_dict(self) -> Dict[str, str]:
         """Returns this object's data in a dictionary format."""

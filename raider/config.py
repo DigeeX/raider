@@ -129,7 +129,7 @@ class Config:
         shared_locals: Dict[str, Any]
         shared_locals = {}
         for confile in hyfiles:
-            if confile.endswith(".hy"):
+            if confile.endswith(".hy") and not confile.startswith("."):
                 shared_locals.update(
                     eval_project_file(active_project, confile, shared_locals)
                 )

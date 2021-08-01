@@ -91,9 +91,15 @@ class Plugin:
 
         """
         self.name = name
-        self.function = function
         self.value: Optional[str] = value
         self.flags = flags
+
+        self.function: Callable[..., Optional[str]]
+
+        if flags & Plugin.NEEDS_USERDATA:
+            self.function = self.extract_from_userdata
+        else:
+            self.function = function
 
     def extract_value(
         self,
@@ -138,6 +144,35 @@ class Plugin:
             self.value = self.function(userdata)
         elif not self.needs_response:
             self.value = self.function()
+        return self.value
+
+    def extract_from_userdata(
+        self, data: Dict[str, str] = None
+    ) -> Optional[str]:
+        """Extracts the plugin value from userdata.
+
+        Given a dictionary with the userdata, return its value with the
+        same name as the "name" attribute from this Plugin.
+
+        Args:
+          data:
+            A dictionary with user specific data.
+
+        Returns:
+          A string with the value of the variable found. None if no such
+          variable has been defined.
+
+        """
+        if data and self.name in data:
+            self.value = data[self.name]
+        return self.value
+
+    def return_value(self) -> Optional[str]:
+        """Just return plugin's value.
+
+        This is used when needing a function just to return the value.
+
+        """
         return self.value
 
     @property
@@ -196,7 +231,7 @@ class Regex(Plugin):
         super().__init__(
             name=name,
             function=self.extract_regex,
-            flags=self.NEEDS_RESPONSE,
+            flags=Plugin.NEEDS_RESPONSE,
         )
         self.regex = regex
         self.extract = extract
@@ -286,7 +321,7 @@ class Html(Plugin):
         super().__init__(
             name=name,
             function=self.extract_html_tag,
-            flags=self.NEEDS_RESPONSE,
+            flags=Plugin.NEEDS_RESPONSE,
         )
         self.tag = tag
         self.attributes = hy_dict_to_python(attributes)
@@ -372,7 +407,7 @@ class Json(Plugin):
         super().__init__(
             name=name,
             function=self.extract_json_field,
-            flags=self.NEEDS_RESPONSE,
+            flags=Plugin.NEEDS_RESPONSE,
         )
         self.extract = extract
 
@@ -459,29 +494,9 @@ class Variable(Plugin):
         """
         super().__init__(
             name=name,
-            function=self.extract_variable,
-            flags=self.NEEDS_USERDATA,
+            function=lambda: self.value,
+            flags=Plugin.NEEDS_USERDATA,
         )
-
-    def extract_variable(self, data: Dict[str, str] = None) -> Optional[str]:
-        """Extracts the variable value.
-
-        Given a dictionary with the predefined variables, return the
-        value of the with the same name as the "name" attribute from
-        this Plugin.
-
-        Args:
-          data:
-            A dictionary with the predefined variables.
-
-        Returns:
-          A string with the value of the variable found. None if no such
-          variable has been defined.
-
-        """
-        if data and self.name in data:
-            self.value = data[self.name]
-        return self.value
 
 
 class Command(Plugin):
@@ -594,16 +609,27 @@ class Cookie(Plugin):
 
         """
         if not function:
-            super().__init__(
-                name=name,
-                function=self.extract_cookie,
-                value=value,
-                flags=flags,
-            )
-        else:
-            super().__init__(name, function)
+            if flags & Plugin.NEEDS_RESPONSE:
+                super().__init__(
+                    name=name,
+                    function=self.extract_from_response,
+                    value=value,
+                    flags=flags,
+                )
+            else:
+                super().__init__(
+                    name=name,
+                    function=lambda: self.value,
+                    value=value,
+                    flags=flags,
+                )
 
-    def extract_cookie(
+        else:
+            super().__init__(
+                name=name, function=function, value=value, flags=flags
+            )
+
+    def extract_from_response(
         self, response: requests.models.Response
     ) -> Optional[str]:
         """Returns the cookie with the specified name from the response."""
@@ -671,16 +697,28 @@ class Header(Plugin):
         """
 
         if not function:
-            super().__init__(
-                name=name,
-                function=lambda: self.value,
-                value=value,
-                flags=flags,
-            )
-        else:
-            super().__init__(name=name, function=function, flags=flags)
+            if flags & Plugin.NEEDS_RESPONSE:
+                super().__init__(
+                    name=name,
+                    function=self.extract_from_response,
+                    value=value,
+                    flags=flags,
+                )
 
-    def extract_header(
+            else:
+                super().__init__(
+                    name=name,
+                    function=lambda: self.value,
+                    value=value,
+                    flags=flags,
+                )
+
+        else:
+            super().__init__(
+                name=name, function=function, value=value, flags=flags
+            )
+
+    def extract_from_response(
         self, response: requests.models.Response
     ) -> Optional[str]:
         """Returns the header with the specified name from the response."""
@@ -798,7 +836,7 @@ class Alter(Plugin):
             value=plugin.value,
             # Get plugin's value from userdata since it has
             # already been extracted from the original plugin.
-            flags=self.NEEDS_USERDATA,
+            flags=Plugin.NEEDS_USERDATA,
             function=self.process_value,
         )
 

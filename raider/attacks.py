@@ -19,7 +19,7 @@
 import logging
 import sys
 from copy import deepcopy
-from typing import Callable, List, Optional
+from typing import Callable, Iterator, Optional
 
 from raider.authentication import Authentication
 from raider.config import Config
@@ -28,22 +28,14 @@ from raider.plugins import Plugin
 from raider.user import User
 
 
-# pylint: disable=too-few-public-methods
 class Fuzz:
     """Fuzz an input."""
-
-    # Fuzzing flags
-
-    # Fuzzing is done on a Flow that affects the authentication process.
-    # Setting this will make raider consider NextStage operations and move
-    # between stages until reaching this Flow again.
-    IS_AUTHENTICATION = 0x01
 
     def __init__(
         self,
         flow: Flow,
         fuzzing_point: str,
-        fuzzing_function: Callable[[Optional[str]], List[str]],
+        fuzzing_generator: Callable[[Optional[str]], Iterator[str]],
         flags: int = 0,
     ) -> None:
         """Initialize the Fuzz object.
@@ -62,24 +54,18 @@ class Fuzz:
           fuzzing_point:
             The name given to the :class:`Plugin
             <raider.plugins.Plugin>` which should be fuzzed.
-          fuzzing_function:
-            A callable function, which will generate the strings that
-            will be used for fuzzing. The function should accept one
-            argument. This will be the value of the plugin before
-            fuzzing. It can be considered when building the fuzzing
-            list.
-          flags:
-            An integer with the flags that affect the fuzzing behaviour.
-            For now only IS_AUTHENTICATION is supported. Setting this
-            flag will make Raider check for NextStage operations after
-            each fuzzing request, and redo the authentication process
-            until reaching this Flow again.
+          fuzzing_generator:
+            A function which returns a Python generator, that will
+            create the strings that will be used for fuzzing. The
+            function should accept one argument. This will be the value
+            of the plugin before fuzzing. It can be considered when
+            building the fuzzing list, or ignored.
 
         """
 
         self.flow = flow
         self.fuzzing_point = fuzzing_point
-        self.fuzzing_function = fuzzing_function
+        self.fuzzing_generator = fuzzing_generator
         self.flags = flags
 
     def get_fuzzing_input(self, flow: Flow) -> Plugin:
@@ -124,15 +110,15 @@ class Fuzz:
         """
         flow = deepcopy(self.flow)
         fuzzing_plugin = self.get_fuzzing_input(flow)
+        flow.get_plugin_values(user)
 
         # Reset plugin flags because it doesn't need userdata nor
         # the HTTP response anymore when fuzzing
         fuzzing_plugin.flags = 0
 
-        elements = self.fuzzing_function(fuzzing_plugin.value)
-
-        for item in elements:
-            fuzzing_plugin.function = lambda item=item: item
+        for item in self.fuzzing_generator(fuzzing_plugin.value):
+            fuzzing_plugin.value = item
+            fuzzing_plugin.function = fuzzing_plugin.return_value
             flow.execute(user, config)
             flow.run_operations()
 
@@ -176,10 +162,11 @@ class Fuzz:
         # the HTTP response anymore when fuzzing
         fuzzing_plugin.flags = 0
 
-        elements = self.fuzzing_function(fuzzing_plugin.value)
+        elements = self.fuzzing_generator(fuzzing_plugin.value)
 
         for item in elements:
-            fuzzing_plugin.function = lambda item=item: item
+            fuzzing_plugin.value = item
+            fuzzing_plugin.function = fuzzing_plugin.return_value
             flow.execute(user, config)
             next_stage = flow.run_operations()
             if next_stage:
@@ -196,8 +183,3 @@ class Fuzz:
                             ),
                             flow.name,
                         )
-
-    @property
-    def is_authentication(self) -> bool:
-        """Returns True if the IS_AUTHENTICATION flag is set."""
-        return bool(self.flags & Fuzz.IS_AUTHENTICATION)

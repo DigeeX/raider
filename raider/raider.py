@@ -18,11 +18,12 @@
 
 import logging
 import sys
-from typing import Any, Callable, Optional
+from typing import Callable, Generator, Optional
 
 from raider.application import Application
 from raider.attacks import Fuzz
 from raider.authentication import Authentication
+from raider.plugins import Plugin
 
 
 class Raider:
@@ -46,7 +47,11 @@ class Raider:
 
     """
 
-    def __init__(self, project: Optional[str] = None) -> None:
+    # Raider flags
+    # Session was loaded and the information is already in userdata
+    SESSION_LOADED = 0x01
+
+    def __init__(self, project: Optional[str] = None, flags: int = 0) -> None:
         """Initializes the Raider object.
 
         Initializes the main entry point for Raider. If the name of the
@@ -56,6 +61,11 @@ class Raider:
         Args:
           project:
             A string with the name of the project.
+          flags:
+            An integer with the flags. Only SESSION_LOADED is supported
+            now. It indicates the authentication was not performed from
+            the start, but loaded from a previously saved session file,
+            which means the plugins should get their value from userdata.
 
         """
         self.application = Application(project)
@@ -63,6 +73,8 @@ class Raider:
         self.user = self.application.active_user
         if hasattr(self.application, "functions"):
             self.functions = self.application.functions
+
+        self.flags = flags
 
     def authenticate(self, username: str = None) -> None:
         """Authenticates in the chosen application.
@@ -77,6 +89,15 @@ class Raider:
 
         """
         self.application.authenticate(username)
+
+    def load_session(self) -> None:
+        """Loads saved session from ``_userdata.hy``."""
+        self.application.load_session_file()
+        self.flags = self.flags | self.SESSION_LOADED
+
+    def save_session(self) -> None:
+        """Saves session to ``_userdata.hy``."""
+        self.application.write_session_file()
 
     def run_function(self, function: str) -> None:
         """Runs a function in the chosen application.
@@ -93,13 +114,19 @@ class Raider:
         if not hasattr(self, "functions"):
             logging.critical("No functions defined. Cannot continue.")
             sys.exit()
+
+        if self.session_loaded:
+            self.fix_function_plugins(function)
+
         self.functions.run(function, self.user, self.config)
 
     def fuzz_function(
         self,
         function_name: str,
         fuzzing_point: str,
-        fuzzing_function: Callable[..., Any],
+        fuzzing_generator: Callable[
+            [Optional[str]], Generator[str, None, None]
+        ],
     ) -> None:
         """Fuzz a function with an authenticated user.
 
@@ -115,17 +142,19 @@ class Raider:
             The name given to the :class:`Plugin
             <raider.plugins.Plugin>` inside :class:`Request
             <raider.request.Request>` which will be fuzzed.
-          fuzzing_function:
-            A callable function, that will be used to generate the
-            strings that will be used for fuzzing. It should accept one
-            argument, which will the value of the plugin before
-            fuzzing. It can be used to build the list of strings to be
-            used for the attack.
+          fuzzing_generator:
+            A function which returns a Python generator, that will be
+            used to create he strings that will be used for fuzzing. It
+            should accept one argument, which will the value of the
+            plugin before fuzzing. It can be used to build the list of
+            strings to be used for the attack.
 
         """
         flow = self.functions.get_function_by_name(function_name)
         if flow:
-            Fuzz(flow, fuzzing_point, fuzzing_function).attack_function(
+            if self.session_loaded:
+                self.fix_function_plugins(function_name)
+            Fuzz(flow, fuzzing_point, fuzzing_generator).attack_function(
                 self.user, self.config
             )
         else:
@@ -133,16 +162,13 @@ class Raider:
                 "Function %s not defined, cannot fuzz!", function_name
             )
 
-    @property
-    def authentication(self) -> Authentication:
-        """Returns the Authentication object"""
-        return self.application.authentication
-
     def fuzz_authentication(
         self,
         flow_name: str,
         fuzzing_point: str,
-        fuzzing_function: Callable[..., Any],
+        fuzzing_generator: Callable[
+            [Optional[str]], Generator[str, None, None]
+        ],
     ) -> None:
         """Fuzz an authentication step.
 
@@ -162,12 +188,12 @@ class Raider:
             The name given to the :class:`Plugin
             <raider.plugins.Plugin>` inside :class:`Request
             <raider.request.Request>` which will be fuzzed.
-          fuzzing_function:
-            A callable function, that will be used to generate the
-            strings that will be used for fuzzing. It should accept one
-            argument, which will the value of the plugin before
-            fuzzing. It can be used to build the list of strings to be
-            used for the attack.
+          fuzzing_generator:
+            A function which returns a Python generator, that will be
+            used to create he strings that will be used for fuzzing. It
+            should accept one argument, which will the value of the
+            plugin before fuzzing. It can be used to build the list of
+            strings to be used for the attack.
 
         """
         flow = self.authentication.get_stage_by_name(flow_name)
@@ -175,10 +201,42 @@ class Raider:
             Fuzz(
                 flow=flow,
                 fuzzing_point=fuzzing_point,
-                fuzzing_function=fuzzing_function,
-                flags=Fuzz.IS_AUTHENTICATION,
+                fuzzing_generator=fuzzing_generator,
             ).attack_authentication(
                 self.authentication, self.user, self.config
             )
         else:
             logging.critical("Stage %s not defined, cannot fuzz!", flow_name)
+
+    def fix_function_plugins(self, function: str) -> None:
+        """Given a function name, prepare its Flow to be fuzzed.
+
+        For each plugin acting as an input for the defined function,
+        change its flags and function so it uses the previously
+        extracted data instead of extracting it again.
+
+        """
+        flow = self.functions.get_function_by_name(function)
+        if not flow:
+            logging.critical(
+                "Function %s not found. Cannot continue.", function
+            )
+            sys.exit()
+
+        inputs = flow.request.list_inputs()
+
+        if inputs:
+            for plugin in inputs.values():
+                # Reset plugin flags, and get the values from userdata
+                plugin.flags = Plugin.NEEDS_USERDATA
+                plugin.function = plugin.extract_from_userdata
+
+    @property
+    def authentication(self) -> Authentication:
+        """Returns the Authentication object"""
+        return self.application.authentication
+
+    @property
+    def session_loaded(self) -> bool:
+        """Returns True if the SESSION_LOADED flag is set."""
+        return bool(self.flags & self.SESSION_LOADED)

@@ -17,15 +17,12 @@
 """
 
 import logging
-import os
-
-import hy
 
 from raider.authentication import Authentication
 from raider.config import Config
 from raider.functions import Functions
 from raider.user import UserStore
-from raider.utils import create_hy_expression, get_project_file
+from raider.utils import create_hy_expression, eval_file, get_project_file
 
 
 class Application:
@@ -122,7 +119,6 @@ class Application:
         Plugins.
 
         """
-        self.load_session_file()
         filename = get_project_file(self.project, "_userdata.hy")
         value = ""
         cookies = {}
@@ -146,25 +142,27 @@ class Application:
         """Loads session data.
 
         If session data was saved with write_session_file() this
-        function can load this data.
+        function will load this data into existing :class:`User
+        <raider.user.User>` objects.
 
         """
         filename = get_project_file(self.project, "_userdata.hy")
-        logging.debug("Loading session file %s", filename)
-        if not os.path.exists(filename):
-            logging.critical("Configuration file doesn't exist")
-        else:
-            with open(filename) as sess_file:
-                try:
-                    while True:
-                        expr = hy.read(sess_file)
-                        if expr:
-                            logging.debug(
-                                "expr = %s", str(expr).replace("\n", " ")
-                            )
-                            hy.eval(expr)
-                except EOFError:
-                    logging.debug("Finished processing %s", filename)
+        output = eval_file(filename)
+        cookies = output.get("_cookies")
+        headers = output.get("_headers")
+        data = output.get("_data")
+
+        if cookies:
+            for username in cookies:
+                self.users[username].set_cookies_from_dict(cookies[username])
+
+        if headers:
+            for username in headers:
+                self.users[username].set_headers_from_dict(headers[username])
+
+        if data:
+            for username in data:
+                self.users[username].set_data_from_dict(data[username])
 
     def write_project_file(self) -> None:
         """Writes the project settings.

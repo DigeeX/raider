@@ -134,6 +134,19 @@ class Flow:
             for output in self.outputs:
                 output.extract_value(self.response)
 
+    def get_plugin_values(self, user: User) -> None:
+        """Given a user, get the plugins' values from it.
+
+        Args:
+          user:
+            A :class:`User <raider.user.User>` object with the userdata.
+
+        """
+        flow_inputs = self.request.list_inputs()
+        if flow_inputs:
+            for plugin in flow_inputs.values():
+                plugin.get_value(user.to_dict())
+
     def run_operations(self) -> Optional[str]:
         """Runs the defined :class:`operations <raider.operations.Operation>`.
 

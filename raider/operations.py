@@ -238,7 +238,7 @@ class Http(Operation):
             function=self.match_status_code,
             action=action,
             otherwise=otherwise,
-            flags=self.IS_CONDITIONAL | self.NEEDS_RESPONSE,
+            flags=Operation.IS_CONDITIONAL | Operation.NEEDS_RESPONSE,
         )
 
     def match_status_code(self, response: requests.models.Response) -> bool:
@@ -301,7 +301,7 @@ class Grep(Operation):
             function=self.match_response,
             action=action,
             otherwise=otherwise,
-            flags=self.IS_CONDITIONAL | self.NEEDS_RESPONSE,
+            flags=Operation.IS_CONDITIONAL | Operation.NEEDS_RESPONSE,
         )
 
     def match_response(self, response: requests.models.Response) -> bool:
