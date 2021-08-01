@@ -1,6 +1,6 @@
 [tool.poetry]
     name = "raider"
-    version = "0.2.0-alpha.0"
+    version = "0.2.0"
     description = "Web authentication testing framework"
     authors = ["Daniel Neagaru <daniel@digeex.de>"]
     packages = [
@@ -20,19 +20,20 @@
     ]
     keywords = ["authentication", "security", "raider", "digeex", "hy"]
     classifiers = [
-      "Development Status :: 2 - Pre-Alpha",
+      "Development Status :: 3 - Alpha",
       "Environment :: Console",
       "Intended Audience :: Developers",
       "Intended Audience :: System Administrators",
-      "Topic :: Software Development :: Testing",
       "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
       "Natural Language :: English",
-      "Operating System :: OS Independent",
+      "Operating System :: POSIX :: Linux",
       "Programming Language :: Lisp",
-      "Programming Language :: Python :: 3.9",
       "Programming Language :: Python :: 3.8",
+      "Programming Language :: Python :: 3.9",
       "Topic :: Internet :: WWW/HTTP",
       "Topic :: Security",
+      "Topic :: Software Development :: Libraries :: Python Modules",
+      "Topic :: Software Development :: Testing",
     ]
 
 # [tool.poetry.scripts]
@@ -72,6 +73,7 @@
         | \.tox
         | dist
 	| docs
+	| scripts
       )/
     )
     '''
@@ -88,6 +90,7 @@
     ignore-patterns = '''
          \.git
 	 |conf.py
+	 |scripts/*
     '''
 
 [tool.pylint.message_control]
@@ -106,6 +109,7 @@
     check_untyped_defs = true
     no_implicit_reexport = true
     disallow_untyped_defs = true
+    exclude = "scripts"
     overrides = [
 
     # TODO
