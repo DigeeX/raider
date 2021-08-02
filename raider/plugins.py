@@ -403,7 +403,13 @@ class Json(Plugin):
 
     """
 
-    def __init__(self, name: str, extract: str) -> None:
+    def __init__(
+        self,
+        name: str,
+        extract: str,
+        function: Callable[[str], Optional[str]] = None,
+        flags: int = Plugin.NEEDS_RESPONSE,
+    ) -> None:
         """Initializes the Json Plugin.
 
         Creates the Json Plugin and extracts the specified field.
@@ -414,16 +420,28 @@ class Json(Plugin):
           extract:
             A string with the location of the JSON field to extract.
         """
-        super().__init__(
-            name=name,
-            function=self.extract_json_field,
-            flags=Plugin.NEEDS_RESPONSE,
-        )
+        if not function:
+            super().__init__(
+                name=name,
+                function=self.extract_json_from_response,
+                flags=flags,
+            )
+        else:
+            super().__init__(
+                name=name,
+                function=function,
+                flags=flags,
+            )
+
         self.extract = extract
 
-    def extract_json_field(
+    def extract_json_from_response(
         self, response: requests.models.Response
     ) -> Optional[str]:
+        """Extracts the json field from a HTTP response."""
+        return self.extract_json_field(response.text)
+
+    def extract_json_field(self, text: str) -> Optional[str]:
         """Extracts the JSON field from the text.
 
         Given the JSON body as a string, extract the field and store it
@@ -438,7 +456,7 @@ class Json(Plugin):
           found None will be returned.
 
         """
-        data = json.loads(response.text)
+        data = json.loads(text)
 
         json_filter = parse_json_filter(self.extract)
         is_valid = True
@@ -478,6 +496,18 @@ class Json(Plugin):
             self.value = None
 
         return self.value
+
+    @classmethod
+    def from_plugin(cls, plugin: Plugin, name: str, extract: str) -> "Json":
+        """Extracts the JSON field from another plugin's value."""
+        json_plugin = cls(
+            name=name,
+            extract=extract,
+            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
+        )
+        json_plugin.plugin = plugin
+        json_plugin.function = json_plugin.extract_json_field
+        return json_plugin
 
     def __str__(self) -> str:
         """Returns a string representation of the Plugin."""
@@ -650,7 +680,7 @@ class Cookie(Plugin):
         return str({self.name: self.value})
 
     @classmethod
-    def from_plugin(cls, name: str, plugin: Plugin) -> "Cookie":
+    def from_plugin(cls, plugin: Plugin, name: str) -> "Cookie":
         """Creates a Cookie from a Plugin.
 
         Given another :class:`plugin <raider.plugins.Plugin>`, and a
@@ -668,7 +698,7 @@ class Cookie(Plugin):
         """
         cookie = cls(
             name=name,
-            value=None,
+            value=plugin.value,
             function=lambda: plugin.value if plugin.value else None,
             flags=0,
         )
@@ -786,7 +816,7 @@ class Header(Plugin):
         return header
 
     @classmethod
-    def from_plugin(cls, name: str, plugin: Plugin) -> "Header":
+    def from_plugin(cls, plugin: Plugin, name: str) -> "Header":
         """Creates a Header from a Plugin.
 
         Given another :class:`plugin <raider.plugins.Plugin>`, and a
