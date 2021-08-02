@@ -60,6 +60,7 @@ class Plugin:
     # Plugin flags
     NEEDS_USERDATA = 0x01
     NEEDS_RESPONSE = 0x02
+    DEPENDS_ON_OTHER_PLUGINS = 0x04
 
     def __init__(
         self,
@@ -91,6 +92,7 @@ class Plugin:
 
         """
         self.name = name
+        self.plugin: Optional["Plugin"] = None
         self.value: Optional[str] = value
         self.flags = flags
 
@@ -101,7 +103,29 @@ class Plugin:
         else:
             self.function = function
 
-    def extract_value(
+    def get_value(
+        self,
+        userdata: Dict[str, str],
+    ) -> Optional[str]:
+        """Gets the value from the Plugin.
+
+        Depending on the Plugin's flags, extract and return its value.
+
+        Args:
+          userdata:
+            A dictionary with the user specific data.
+        """
+        if not self.needs_response:
+            if self.needs_userdata:
+                self.value = self.function(userdata)
+            elif self.depends_on_other_plugins:
+                if self.plugin:
+                    self.value = self.function(self.plugin.value)
+            else:
+                self.value = self.function()
+        return self.value
+
+    def extract_value_from_response(
         self,
         response: Optional[requests.models.Response],
     ) -> None:
@@ -116,35 +140,16 @@ class Plugin:
             An requests.models.Response object with the HTTP response.
 
         """
-        if self.needs_response:
-            output = self.function(response)
-            if output:
-                self.value = output
-                logging.debug(
-                    "Found ouput %s = %s",
-                    self.name,
-                    self.value,
-                )
-            else:
-                logging.warning("Couldn't extract output: %s", str(self.name))
-
-    def get_value(
-        self,
-        userdata: Dict[str, str],
-    ) -> Optional[str]:
-        """Gets the value from the Plugin.
-
-        Depending on the Plugin's flags, extract and return its value.
-
-        Args:
-          userdata:
-            A dictionary with the user specific data.
-        """
-        if self.needs_userdata:
-            self.value = self.function(userdata)
-        elif not self.needs_response:
-            self.value = self.function()
-        return self.value
+        output = self.function(response)
+        if output:
+            self.value = output
+            logging.debug(
+                "Found ouput %s = %s",
+                self.name,
+                self.value,
+            )
+        else:
+            logging.warning("Couldn't extract output: %s", str(self.name))
 
     def extract_from_userdata(
         self, data: Dict[str, str] = None
@@ -184,6 +189,11 @@ class Plugin:
     def needs_response(self) -> bool:
         """Returns True if the NEEDS_RESPONSE flag is set."""
         return bool(self.flags & self.NEEDS_RESPONSE)
+
+    @property
+    def depends_on_other_plugins(self) -> bool:
+        """Returns True if the DEPENDS_ON_OTHER_PLUGINS flag is set."""
+        return bool(self.flags & self.DEPENDS_ON_OTHER_PLUGINS)
 
 
 class Regex(Plugin):
@@ -830,33 +840,30 @@ class Alter(Plugin):
           alter_function:
             The Function with instructions on how to alter the value.
         """
+        self.plugin = plugin
         self.alter_function = alter_function
         super().__init__(
             name=plugin.name,
             value=plugin.value,
-            # Get plugin's value from userdata since it has
-            # already been extracted from the original plugin.
-            flags=Plugin.NEEDS_USERDATA,
+            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
             function=self.process_value,
         )
 
-    def process_value(self, data: Dict[str, str] = None) -> Optional[str]:
+    def process_value(self, value: str) -> Optional[str]:
         """Process the original plugin's value.
 
-        Get the value of the original's plugin from userdata, and give
-        it to ``alter_function``. Return the processed value and store
-        it in self.value.
+        Gives the original plugin's value to ``alter_function``. Return
+        the processed value and store it in self.value.
 
         Args:
-          data:
-            A dictionary with the userdata where the original plugin's
-            value should be found.
+          value:
+            The value of the original plugin.
 
         Returns:
           A string with the processed value.
+
         """
-        if data and self.name in data:
-            self.value = self.alter_function(data[self.name])
+        self.value = self.alter_function(value)
 
         return self.value
 
