@@ -119,7 +119,6 @@ class Plugin:
             if self.needs_userdata:
                 self.value = self.function(userdata)
             elif self.depends_on_other_plugins:
-                breakpoint()
                 if self.plugin:
                     self.value = self.function(self.plugin.value)
             else:
