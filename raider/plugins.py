@@ -534,7 +534,7 @@ class Variable(Plugin):
         """
         super().__init__(
             name=name,
-            function=lambda: self.value,
+            function=lambda data: data[self.name],
             flags=Plugin.NEEDS_USERDATA,
         )
 
