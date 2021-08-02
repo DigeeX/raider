@@ -19,6 +19,7 @@
 
 import logging
 import sys
+import urllib
 from typing import Any, Dict, List, Optional, Union
 from urllib import parse
 
@@ -286,9 +287,15 @@ class Request:
         logging.debug("Data: %s", str(data))
 
         if self.method == "GET":
+            # Encode special characters. This will replace "+" signs with "%20"
+            # in URLs. For some reason mypy doesn't like this, so typing will
+            # be ignored for this line.
+            params = urllib.parse.urlencode(
+                data, quote_via=urllib.parse.quote
+            )  # type: ignore
             req = requests.get(
                 self.url,
-                params=data,
+                params=params,
                 headers=headers,
                 cookies=cookies,
                 proxies=proxies,
