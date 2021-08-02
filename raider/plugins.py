@@ -96,7 +96,7 @@ class Plugin:
 
         self.function: Callable[..., Optional[str]]
 
-        if flags & Plugin.NEEDS_USERDATA:
+        if (flags & Plugin.NEEDS_USERDATA) and not function:
             self.function = self.extract_from_userdata
         else:
             self.function = function
