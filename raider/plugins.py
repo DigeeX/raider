@@ -119,6 +119,7 @@ class Plugin:
             if self.needs_userdata:
                 self.value = self.function(userdata)
             elif self.depends_on_other_plugins:
+                breakpoint()
                 if self.plugin:
                     self.value = self.function(self.plugin.value)
             else:
@@ -840,14 +841,14 @@ class Alter(Plugin):
           alter_function:
             The Function with instructions on how to alter the value.
         """
-        self.plugin = plugin
-        self.alter_function = alter_function
         super().__init__(
             name=plugin.name,
             value=plugin.value,
             flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
             function=self.process_value,
         )
+        self.plugin = plugin
+        self.alter_function = alter_function
 
     def process_value(self, value: str) -> Optional[str]:
         """Process the original plugin's value.
