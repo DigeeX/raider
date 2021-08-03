@@ -20,6 +20,7 @@
 import logging
 import sys
 import urllib
+from copy import deepcopy
 from typing import Any, Dict, List, Optional, Union
 from urllib import parse
 
@@ -335,3 +336,75 @@ class Request:
         logging.critical("Method %s not allowed", self.method)
         sys.exit()
         return None
+
+
+class Template(Request):
+    """Template class to hold requests.
+
+    It will initiate itself with a :class:`Request
+    <raider.request.Request>` parent, and when called will return a
+    copy of itself with the modified parameters.
+
+    """
+
+    def __init__(
+        self,
+        method: str,
+        url: Optional[Union[str, Plugin]] = None,
+        path: Optional[Union[str, Plugin]] = None,
+        cookies: Optional[List[Cookie]] = None,
+        headers: Optional[List[Header]] = None,
+        data: Optional[Union[Dict[Any, Any], PostBody]] = None,
+    ) -> None:
+        """Initializes the template object."""
+        super().__init__(
+            method=method,
+            url=url,
+            path=path,
+            cookies=cookies,
+            headers=headers,
+            data=data,
+        )
+
+    def __call__(
+        self,
+        url: Optional[Union[str, Plugin]] = None,
+        path: Optional[Union[str, Plugin]] = None,
+        cookies: Optional[List[Cookie]] = None,
+        headers: Optional[List[Header]] = None,
+        data: Optional[Union[Dict[Any, Any], PostBody]] = None,
+    ) -> "Template":
+        """Allow the object to be called.
+
+        Accepts the same arguments as the :class:`Request
+        <raider.request.Request>` class. When called, will return a copy
+        of itself with the modified parameters.
+
+        """
+        if bool(url) & bool(path):
+            logging.critical(
+                "One and only one of :path and :url parameters allowed"
+            )
+            sys.exit()
+
+        template = deepcopy(self)
+
+        if url:
+            template.url = url
+        if path:
+            template.path = path
+
+        if cookies:
+            for cookie in cookies:
+                template.cookies.set(cookie)
+
+        if headers:
+            for header in headers:
+                template.headers.set(header)
+        if data:
+            if isinstance(data, PostBody):
+                template.data.update(data.to_dict())
+            else:
+                template.data.update(data)
+
+        return template
