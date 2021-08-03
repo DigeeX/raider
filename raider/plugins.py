@@ -915,9 +915,10 @@ class Alter(Plugin):
 class Combine(Plugin):
     """Plugin to combine the values of other plugins."""
 
-    def __init__(self, name: str, *args: Union[str, Plugin]):
+    def __init__(self, *args: Union[str, Plugin]):
         """Initialize Combine object."""
         self.args = args
+        name = str(sum(hash(item) for item in args))
         super().__init__(name=name, flags=0, function=self.concatenate_values)
 
     def concatenate_values(self) -> str:
