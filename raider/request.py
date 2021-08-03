@@ -162,26 +162,46 @@ class Request:
 
     def list_inputs(self) -> Optional[Dict[str, Plugin]]:
         """Returns a list of request's inputs."""
+
+        def get_children_plugins(plugin: Plugin) -> Dict[str, Plugin]:
+            """Returns the children plugins.
+
+            If a plugin has the flag DEPENDS_ON_OTHER_PLUGINS set,
+            return a dictionary with each plugin associated to its name.
+
+            """
+            output = {}
+            if plugin.depends_on_other_plugins:
+                for item in plugin.plugins:
+                    output.update({item.name: item})
+            return output
+
         inputs = {}
 
         if isinstance(self.url, Plugin):
             inputs.update({self.url.name: self.url})
+            inputs.update(get_children_plugins(self.url))
         if isinstance(self.path, Plugin):
             inputs.update({self.path.name: self.path})
+            inputs.update(get_children_plugins(self.path))
 
         for name in self.cookies:
             cookie = self.cookies[name]
             inputs.update({name: cookie})
+            inputs.update(get_children_plugins(cookie))
 
         for name in self.headers:
             header = self.headers[name]
             inputs.update({name: header})
+            inputs.update(get_children_plugins(header))
 
         for key, value in self.data.items():
             if isinstance(key, Plugin):
                 inputs.update({key.name: key})
+                inputs.update(get_children_plugins(key))
             if isinstance(value, Plugin):
                 inputs.update({value.name: value})
+                inputs.update(get_children_plugins(value))
 
         return inputs
 

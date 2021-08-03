@@ -21,7 +21,7 @@ import logging
 import os
 import re
 from base64 import b64encode
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 
 import hy
 import requests
@@ -92,7 +92,7 @@ class Plugin:
 
         """
         self.name = name
-        self.plugin: Optional["Plugin"] = None
+        self.plugins: List["Plugin"] = []
         self.value: Optional[str] = value
         self.flags = flags
 
@@ -118,9 +118,6 @@ class Plugin:
         if not self.needs_response:
             if self.needs_userdata:
                 self.value = self.function(userdata)
-            elif self.depends_on_other_plugins:
-                if self.plugin:
-                    self.value = self.function(self.plugin.value)
             else:
                 self.value = self.function()
         return self.value
@@ -505,7 +502,7 @@ class Json(Plugin):
             extract=extract,
             flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
         )
-        json_plugin.plugin = plugin
+        json_plugin.plugins = [plugin]
         json_plugin.function = json_plugin.extract_json_field
         return json_plugin
 
@@ -857,7 +854,9 @@ class Alter(Plugin):
     """
 
     def __init__(
-        self, plugin: Plugin, alter_function: Callable[[str], Optional[str]]
+        self,
+        plugin: Plugin,
+        alter_function: Callable[[str], Optional[str]],
     ) -> None:
         """Initializes the Alter Plugin.
 
@@ -876,24 +875,21 @@ class Alter(Plugin):
             flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
             function=self.process_value,
         )
-        self.plugin = plugin
+        self.plugins = [plugin]
         self.alter_function = alter_function
 
-    def process_value(self, value: str) -> Optional[str]:
+    def process_value(self) -> Optional[str]:
         """Process the original plugin's value.
 
         Gives the original plugin's value to ``alter_function``. Return
         the processed value and store it in self.value.
 
-        Args:
-          value:
-            The value of the original plugin.
-
         Returns:
           A string with the processed value.
 
         """
-        self.value = self.alter_function(value)
+        if self.plugins[0].value:
+            self.value = self.alter_function(self.plugins[0].value)
 
         return self.value
 
@@ -919,13 +915,21 @@ class Combine(Plugin):
         """Initialize Combine object."""
         self.args = args
         name = str(sum(hash(item) for item in args))
-        super().__init__(name=name, flags=0, function=self.concatenate_values)
+        super().__init__(
+            name=name,
+            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
+            function=self.concatenate_values,
+        )
+        self.plugins = []
+        for item in args:
+            if isinstance(item, Plugin):
+                self.plugins.append(item)
 
     def concatenate_values(self) -> str:
         """Concatenate the provided values.
 
         This function will concatenate the arguments values. Accepts
-        both strings and plugins
+        both strings and plugins.
 
         """
         combined = ""
@@ -935,3 +939,15 @@ class Combine(Plugin):
             elif item.value:
                 combined += item.value
         return combined
+
+
+class Empty(Plugin):
+    """Empty plugin to use for fuzzing new data."""
+
+    def __init__(self, name: str):
+        """Initialize Empty plugin."""
+        super().__init__(
+            name=name,
+            flags=0,
+            function=self.return_value,
+        )

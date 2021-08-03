@@ -134,8 +134,8 @@ class Flow:
             for output in self.outputs:
                 if output.needs_response:
                     output.extract_value_from_response(self.response)
-                elif output.plugin:
-                    output.value = output.function(output.plugin.value)
+                elif output.plugins:
+                    output.value = output.function()
 
     def get_plugin_values(self, user: User) -> None:
         """Given a user, get the plugins' values from it.

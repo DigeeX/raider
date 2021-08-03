@@ -143,6 +143,7 @@ def import_raider_objects() -> Dict[str, Any]:
             "Plugin "
             "Alter "
             "Combine "
+            "Empty "
         ),
         "flow": "Flow",
         "request": "Request PostBody Template",
