@@ -24,7 +24,7 @@ from typing import Any, Callable, List, Optional, Union
 
 import requests
 
-from raider.plugins import Html, Json, Plugin, Regex, Variable
+from raider.plugins import Plugin
 
 
 def execute_actions(
@@ -460,7 +460,7 @@ class Print(Operation):
 
     def __init__(
         self,
-        *args: Union[str, Variable, Regex, Html, Json],
+        *args: Union[str, Plugin],
         flags: int = 0,
         function: Callable[..., Any] = None,
     ):

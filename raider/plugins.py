@@ -21,7 +21,7 @@ import logging
 import os
 import re
 from base64 import b64encode
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, Union
 
 import hy
 import requests
@@ -910,3 +910,27 @@ class Alter(Plugin):
         alter = cls(plugin=plugin, alter_function=lambda value: value + string)
 
         return alter
+
+
+class Combine(Plugin):
+    """Plugin to combine the values of other plugins."""
+
+    def __init__(self, name: str, *args: Union[str, Plugin]):
+        """Initialize Combine object."""
+        self.args = args
+        super().__init__(name=name, flags=0, function=self.concatenate_values)
+
+    def concatenate_values(self) -> str:
+        """Concatenate the provided values.
+
+        This function will concatenate the arguments values. Accepts
+        both strings and plugins
+
+        """
+        combined = ""
+        for item in self.args:
+            if isinstance(item, str):
+                combined += item
+            elif item.value:
+                combined += item.value
+        return combined
