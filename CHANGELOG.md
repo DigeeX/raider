@@ -1,6 +1,13 @@
 ## Release history
 
-### 0.2.0 - alpha (2021-08-01)
+### 0.2.1 - alpha2 (2021-08-03)
+
+* Improved the fuzzing module.
+* Added request templates.
+* Added Combine and Empty plugins.
+* Fixed many bugs.
+
+### 0.2.0 - alpha1 (2021-08-01)
 
 * Added new operations and plugins.
 * Improved existing operations and plugins.
