@@ -19,23 +19,25 @@
 import logging
 import sys
 from copy import deepcopy
-from typing import Callable, Iterator, Optional
+from functools import partial
+from typing import Callable, List, Optional
 
-from raider.authentication import Authentication
-from raider.config import Config
+from raider.application import Application
 from raider.flow import Flow
 from raider.plugins import Plugin
-from raider.user import User
 
 
 class Fuzz:
     """Fuzz an input."""
 
+    # Fuzzing flags
+    IS_AUTHENTICATION = 0x01
+
     def __init__(
         self,
+        application: Application,
         flow: Flow,
         fuzzing_point: str,
-        fuzzing_generator: Callable[[Optional[str]], Iterator[str]],
         flags: int = 0,
     ) -> None:
         """Initialize the Fuzz object.
@@ -48,6 +50,9 @@ class Fuzz:
         of the plugin.
 
         Args:
+          application:
+            An :class:`Application <raider.application.Application>`
+            object.
           flow:
             A :class:`Flow <raider.flow.Flow>` object which needs to be
             fuzzed.
@@ -63,10 +68,69 @@ class Fuzz:
 
         """
 
+        self.application = application
         self.flow = flow
         self.fuzzing_point = fuzzing_point
-        self.fuzzing_generator = fuzzing_generator
         self.flags = flags
+
+        self.generator: Optional[Callable[..., List[str]]] = None
+        self.processor: Optional[Callable[[str], str]] = None
+
+    def run(self) -> None:
+        """Runs the fuzzer."""
+        if self.is_authentication:
+            self.attack_authentication()
+        else:
+            self.attack_function()
+
+    def set_input_file(
+        self, filename: str, prepend: bool = False, append: bool = False
+    ) -> None:
+        """Sets the input file for the fuzzer.
+
+        Uses the input file to generate fuzzing strings, and sets the
+        generator function to return those values.
+
+        """
+
+        def fuzzing_generator(
+            value: str, filename: str, prepend: bool, append: bool
+        ) -> List[str]:
+            """Generate a list of strings to use for fuzzing.
+
+            Args:
+              value:
+                The original value of the field.
+              filename:
+                The filename with the inputs.
+              prepend:
+                A boolean flag meaning the original value will be
+                prepended with the fuzzing string.
+              append:
+                A boolean flag meaning the original value will be
+                appended with the fuzzing string.
+
+            Returns:
+              A list of final strings to be fuzzed.
+            """
+            fuzzstrings = []
+            with open(filename) as contents:
+                for item in contents.readlines():
+                    if prepend:
+                        fuzzstrings.append(item.strip() + value)
+                    elif append:
+                        fuzzstrings.append(value + item.strip())
+                    else:
+                        fuzzstrings.append(item.strip())
+
+            return fuzzstrings
+
+        self.generator = partial(
+            fuzzing_generator,
+            filename=filename,
+            prepend=prepend,
+            append=append,
+        )
 
     def get_fuzzing_input(self, flow: Flow) -> Plugin:
         """Returns the Plugin associated with the fuzzing input.
@@ -92,7 +156,7 @@ class Fuzz:
 
         return fuzzing_plugin
 
-    def attack_function(self, user: User, config: Config) -> None:
+    def attack_function(self) -> None:
         """Attacks a flow defined in ``_functions``.
 
         Fuzz blindly the Flow object. It doesn't take into account the
@@ -108,6 +172,8 @@ class Fuzz:
             **Raider** configuration.
 
         """
+        user = self.application.active_user
+        config = self.application.config
         flow = deepcopy(self.flow)
         fuzzing_plugin = self.get_fuzzing_input(flow)
         flow.get_plugin_values(user)
@@ -116,15 +182,19 @@ class Fuzz:
         # the HTTP response anymore when fuzzing
         fuzzing_plugin.flags = 0
 
-        for item in self.fuzzing_generator(fuzzing_plugin.value):
+        if not self.generator:
+            logging.critical(
+                "Cannot run fuzzing without configuring the generator."
+            )
+            sys.exit()
+
+        for item in self.generator(fuzzing_plugin.value):
             fuzzing_plugin.value = item
             fuzzing_plugin.function = fuzzing_plugin.return_value
             flow.execute(user, config)
             flow.run_operations()
 
-    def attack_authentication(
-        self, authentication: Authentication, user: User, config: Config
-    ) -> None:
+    def attack_authentication(self) -> None:
         """Attacks a Flow defined in ``_authentication``.
 
         Unlike ``attack_function``, this will take into account the
@@ -139,19 +209,11 @@ class Fuzz:
         encountered, it will follow the instruction and move to this
         stage, then continue fuzzing.
 
-        Args:
-          authentication:
-            An :class:`Authentication
-            <raider.authentication.Authentication>` object with the
-            finite state machine definitions.
-          user:
-            A :class:`User <raider.user.User>` object with the user
-            specific information.
-          config:
-            A :class:`Config <raider.config.Config>` object with global
-            **Raider** configuration.
-
         """
+        authentication = self.application.authentication
+        user = self.application.active_user
+        config = self.application.config
+
         while authentication.current_stage_name != self.flow.name:
             authentication.run_current_stage(user, config)
 
@@ -162,7 +224,13 @@ class Fuzz:
         # the HTTP response anymore when fuzzing
         fuzzing_plugin.flags = 0
 
-        elements = self.fuzzing_generator(fuzzing_plugin.value)
+        if not self.generator:
+            logging.critical(
+                "Cannot run fuzzing without configuring the generator."
+            )
+            sys.exit()
+
+        elements = self.generator(fuzzing_plugin.value)
 
         for item in elements:
             fuzzing_plugin.value = item
@@ -183,3 +251,8 @@ class Fuzz:
                             ),
                             flow.name,
                         )
+
+    @property
+    def is_authentication(self) -> bool:
+        """Returns True if the IS_AUTHENTICATION flag is set."""
+        return bool(self.flags & self.IS_AUTHENTICATION)
