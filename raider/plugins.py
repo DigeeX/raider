@@ -495,14 +495,16 @@ class Json(Plugin):
         return self.value
 
     @classmethod
-    def from_plugin(cls, plugin: Plugin, name: str, extract: str) -> "Json":
+    def from_plugin(
+        cls, parent_plugin: Plugin, name: str, extract: str
+    ) -> "Json":
         """Extracts the JSON field from another plugin's value."""
         json_plugin = cls(
             name=name,
             extract=extract,
             flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
         )
-        json_plugin.plugins = [plugin]
+        json_plugin.plugins = [parent_plugin]
         json_plugin.function = json_plugin.extract_json_field
         return json_plugin
 
@@ -677,7 +679,7 @@ class Cookie(Plugin):
         return str({self.name: self.value})
 
     @classmethod
-    def from_plugin(cls, plugin: Plugin, name: str) -> "Cookie":
+    def from_plugin(cls, parent_plugin: Plugin, name: str) -> "Cookie":
         """Creates a Cookie from a Plugin.
 
         Given another :class:`plugin <raider.plugins.Plugin>`, and a
@@ -695,8 +697,8 @@ class Cookie(Plugin):
         """
         cookie = cls(
             name=name,
-            value=plugin.value,
-            function=lambda: plugin.value if plugin.value else None,
+            value=parent_plugin.value,
+            function=lambda: parent_plugin.value,
             flags=0,
         )
         return cookie
@@ -813,7 +815,7 @@ class Header(Plugin):
         return header
 
     @classmethod
-    def from_plugin(cls, plugin: Plugin, name: str) -> "Header":
+    def from_plugin(cls, parent_plugin: Plugin, name: str) -> "Header":
         """Creates a Header from a Plugin.
 
         Given another :class:`plugin <raider.plugins.Plugin>`, and a
@@ -832,7 +834,7 @@ class Header(Plugin):
         header = cls(
             name=name,
             value=None,
-            function=lambda: plugin.value if plugin.value else None,
+            function=lambda: parent_plugin.value,
             flags=0,
         )
         return header
@@ -855,7 +857,7 @@ class Alter(Plugin):
 
     def __init__(
         self,
-        plugin: Plugin,
+        parent_plugin: Plugin,
         alter_function: Callable[[str], Optional[str]],
     ) -> None:
         """Initializes the Alter Plugin.
@@ -870,12 +872,12 @@ class Alter(Plugin):
             The Function with instructions on how to alter the value.
         """
         super().__init__(
-            name=plugin.name,
-            value=plugin.value,
+            name=parent_plugin.name,
+            value=parent_plugin.value,
             flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
             function=self.process_value,
         )
-        self.plugins = [plugin]
+        self.plugins = [parent_plugin]
         self.alter_function = alter_function
 
     def process_value(self) -> Optional[str]:
@@ -894,16 +896,22 @@ class Alter(Plugin):
         return self.value
 
     @classmethod
-    def prepend(cls, plugin: Plugin, string: str) -> "Alter":
+    def prepend(cls, parent_plugin: Plugin, string: str) -> "Alter":
         """Prepend a string to plugin's value."""
-        alter = cls(plugin=plugin, alter_function=lambda value: string + value)
+        alter = cls(
+            parent_plugin=parent_plugin,
+            alter_function=lambda value: string + value,
+        )
 
         return alter
 
     @classmethod
-    def append(cls, plugin: Plugin, string: str) -> "Alter":
+    def append(cls, parent_plugin: Plugin, string: str) -> "Alter":
         """Append a string after the plugin's value"""
-        alter = cls(plugin=plugin, alter_function=lambda value: value + string)
+        alter = cls(
+            parent_plugin=parent_plugin,
+            alter_function=lambda value: value + string,
+        )
 
         return alter
 

@@ -111,6 +111,10 @@ class Flow:
         Given the user in context and the global Raider configuration,
         sends the HTTP request and extracts the defined outputs.
 
+        Iterates through the defined outputs in the Flow object, and
+        extracts the data from the HTTP response, saving it in the
+        respective :class:`Plugin <raider.plugins.Plugin>` object.
+
         Args:
           user:
             An object containing all the user specific data relevant for
@@ -120,22 +124,13 @@ class Flow:
 
         """
         self.response = self.request.send(user, config)
-        self.get_outputs()
-
-    def get_outputs(self) -> None:
-        """Extract the outputs from the HTTP response.
-
-        Iterates through the defined outputs in the Flow object, and
-        extracts the data from the HTTP response, saving it in the
-        respective :class:`Plugin <raider.plugins.Plugin>` object.
-
-        """
         if self.outputs:
             for output in self.outputs:
                 if output.needs_response:
                     output.extract_value_from_response(self.response)
-                elif output.plugins:
-                    output.value = output.function()
+                elif output.depends_on_other_plugins:
+                    for item in output.plugins:
+                        item.get_value(user.to_dict())
 
     def get_plugin_values(self, user: User) -> None:
         """Given a user, get the plugins' values from it.
