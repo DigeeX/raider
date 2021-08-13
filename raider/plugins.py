@@ -65,7 +65,7 @@ class Plugin:
     def __init__(
         self,
         name: str,
-        function: Callable[..., Optional[str]],
+        function: Optional[Callable[..., Optional[str]]] = None,
         flags: int = 0,
         value: Optional[str] = None,
     ) -> None:
@@ -100,6 +100,8 @@ class Plugin:
 
         if (flags & Plugin.NEEDS_USERDATA) and not function:
             self.function = self.extract_from_userdata
+        elif not function:
+            self.function = self.return_value
         else:
             self.function = function
 
@@ -118,6 +120,10 @@ class Plugin:
         if not self.needs_response:
             if self.needs_userdata:
                 self.value = self.function(userdata)
+            elif self.depends_on_other_plugins:
+                for item in self.plugins:
+                    item.get_value(userdata)
+                self.value = self.function()
             else:
                 self.value = self.function()
         return self.value
@@ -438,6 +444,12 @@ class Json(Plugin):
         """Extracts the json field from a HTTP response."""
         return self.extract_json_field(response.text)
 
+    def extract_json_from_plugin(self) -> Optional[str]:
+        """Extracts the json field from a plugin."""
+        if self.plugins[0].value:
+            return self.extract_json_field(self.plugins[0].value)
+        return None
+
     def extract_json_field(self, text: str) -> Optional[str]:
         """Extracts the JSON field from the text.
 
@@ -505,7 +517,7 @@ class Json(Plugin):
             flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
         )
         json_plugin.plugins = [parent_plugin]
-        json_plugin.function = json_plugin.extract_json_field
+        json_plugin.function = json_plugin.extract_json_from_plugin
         return json_plugin
 
     def __str__(self) -> str:
@@ -658,7 +670,6 @@ class Cookie(Plugin):
             else:
                 super().__init__(
                     name=name,
-                    function=lambda: self.value,
                     value=value,
                     flags=flags,
                 )
@@ -698,7 +709,6 @@ class Cookie(Plugin):
         cookie = cls(
             name=name,
             value=parent_plugin.value,
-            function=lambda: parent_plugin.value,
             flags=0,
         )
         return cookie
@@ -747,7 +757,6 @@ class Header(Plugin):
             else:
                 super().__init__(
                     name=name,
-                    function=lambda: self.value,
                     value=value,
                     flags=flags,
                 )
@@ -833,10 +842,11 @@ class Header(Plugin):
         """
         header = cls(
             name=name,
-            value=None,
-            function=lambda: parent_plugin.value,
-            flags=0,
+            value=parent_plugin.value,
+            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
         )
+        header.plugins = [parent_plugin]
+        header.function = lambda: header.plugins[0].value
         return header
 
 
@@ -957,5 +967,4 @@ class Empty(Plugin):
         super().__init__(
             name=name,
             flags=0,
-            function=self.return_value,
         )

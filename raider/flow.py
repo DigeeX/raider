@@ -131,6 +131,7 @@ class Flow:
                 elif output.depends_on_other_plugins:
                     for item in output.plugins:
                         item.get_value(user.to_dict())
+                    output.get_value(user.to_dict())
 
     def get_plugin_values(self, user: User) -> None:
         """Given a user, get the plugins' values from it.

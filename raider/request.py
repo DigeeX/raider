@@ -205,6 +205,9 @@ class Request:
 
         return inputs
 
+    # pylint: disable=W0511
+    # TODO: Will redesign this function later.
+    # pylint: disable=R0912
     def process_inputs(
         self, user: User, config: Config
     ) -> Dict[str, Dict[str, str]]:
@@ -246,17 +249,20 @@ class Request:
 
         for key in self.cookies:
             value = self.cookies[key].get_value(userdata)
-            cookies.update({key: value})
+            if value:
+                cookies.update({key: value})
 
         for key in self.headers:
             value = self.headers[key].get_value(userdata)
-            headers.update({key: value})
+            if value:
+                headers.update({key: value})
 
         for key in list(httpdata):
             value = httpdata[key]
             if isinstance(value, Plugin):
                 new_value = value.get_value(userdata)
-                httpdata.update({key: new_value})
+                if new_value:
+                    httpdata.update({key: new_value})
 
             if isinstance(key, Plugin):
                 new_value = httpdata.pop(key)
@@ -388,6 +394,7 @@ class Template(Request):
 
     def __call__(
         self,
+        method: Optional[str] = None,
         url: Optional[Union[str, Plugin]] = None,
         path: Optional[Union[str, Plugin]] = None,
         cookies: Optional[List[Cookie]] = None,
@@ -409,18 +416,21 @@ class Template(Request):
 
         template = deepcopy(self)
 
+        if method:
+            template.method = method
+
         if url:
             template.url = url
+
         if path:
             template.path = path
 
         if cookies:
-            for cookie in cookies:
-                template.cookies.set(cookie)
+            template.cookies.merge(CookieStore(cookies))
 
         if headers:
-            for header in headers:
-                template.headers.set(header)
+            template.headers.merge(HeaderStore(headers))
+
         if data:
             if isinstance(data, PostBody):
                 template.data.update(data.to_dict())

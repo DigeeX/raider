@@ -139,6 +139,11 @@ class HeaderStore(DataStore):
         """
         super().update({header.name.lower(): header.value})
 
+    def merge(self, headerstore: "HeaderStore") -> None:
+        """Merge HeaderStore object with another one."""
+        for item in headerstore:
+            self._store[item] = headerstore[item]
+
     @classmethod
     def from_dict(cls, data: Optional[Dict[str, str]]) -> "HeaderStore":
         """Creates a HeaderStore object from a dictionary.
@@ -201,6 +206,11 @@ class CookieStore(DataStore):
 
         """
         super().update({cookie.name: cookie.value})
+
+    def merge(self, cookiestore: "CookieStore") -> None:
+        """Merge CookieStore object with another one."""
+        for item in cookiestore:
+            self._store[item] = cookiestore[item]
 
     @classmethod
     def from_dict(cls, data: Optional[Dict[str, str]]) -> "CookieStore":
