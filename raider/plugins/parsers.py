@@ -16,28 +16,10 @@
 """Plugins used to parse data.
 """
 
-from typing import Callable, Optional, Union
+from typing import Optional, Union
 from urllib.parse import parse_qs, urlsplit
 
-from raider.plugins import Plugin
-
-
-class Parser(Plugin):
-    """Plugins that parse other plugins."""
-
-    def __init__(
-        self,
-        name: str,
-        function: Callable[[], Optional[str]],
-        value: str = None,
-    ) -> None:
-        """Initializes the Parser plugin."""
-        super().__init__(
-            name=name,
-            value=value,
-            function=function,
-            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
-        )
+from raider.plugins.common import Parser, Plugin
 
 
 class UrlParser(Parser):

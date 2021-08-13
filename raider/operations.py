@@ -24,7 +24,7 @@ from typing import Any, Callable, List, Optional, Union
 
 import requests
 
-from raider.plugins import Plugin
+from raider.plugins.common import Plugin
 
 
 def execute_actions(

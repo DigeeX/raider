@@ -23,7 +23,7 @@ import requests
 
 from raider.config import Config
 from raider.operations import Operation
-from raider.plugins import Plugin
+from raider.plugins.common import Plugin
 from raider.request import Request
 from raider.user import User
 

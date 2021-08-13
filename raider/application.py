@@ -83,7 +83,7 @@ class Application:
         output = self.config.load_project(project)
         self.users = UserStore(output["_users"])
         active_user = output.get("_active_user")
-        if active_user:
+        if active_user and active_user in self.users:
             self.active_user = self.users[active_user]
         else:
             self.active_user = self.users.active

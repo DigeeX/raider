@@ -28,7 +28,8 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 
 from raider.config import Config
-from raider.plugins import Cookie, Header, Plugin
+from raider.plugins.basic import Cookie, Header
+from raider.plugins.common import Plugin
 from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
 

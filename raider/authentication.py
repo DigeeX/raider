@@ -22,7 +22,7 @@ from typing import List, Optional, Union
 
 from raider.config import Config
 from raider.flow import Flow
-from raider.plugins import Cookie, Header, Html, Json, Regex
+from raider.plugins.basic import Cookie, Header, Html, Json, Regex
 from raider.user import User
 
 

@@ -24,7 +24,7 @@ from typing import Callable, List, Optional
 
 from raider.application import Application
 from raider.flow import Flow
-from raider.plugins import Plugin
+from raider.plugins.common import Plugin
 
 
 class Fuzz:

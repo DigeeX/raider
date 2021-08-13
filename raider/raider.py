@@ -24,7 +24,7 @@ from raider.application import Application
 from raider.attacks import Fuzz
 from raider.authentication import Authentication
 from raider.config import Config
-from raider.plugins import Plugin
+from raider.plugins.common import Plugin
 from raider.user import User
 
 

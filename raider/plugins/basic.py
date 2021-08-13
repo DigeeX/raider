@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-"""Plugins used as inputs/outputs in Flows.
+"""Basic plugins.
 """
 
 import json
@@ -21,182 +20,14 @@ import logging
 import os
 import re
 from base64 import b64encode
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, Optional
 
 import hy
 import requests
 from bs4 import BeautifulSoup
 
+from raider.plugins.common import Plugin
 from raider.utils import hy_dict_to_python, match_tag, parse_json_filter
-
-
-class Plugin:
-    """Parent class for all plugins.
-
-    Each Plugin class inherits from here. "get_value" function should
-    be called when extracting the value from the plugin, which will then
-    be stored in the "value" attribute.
-
-    Attributes:
-      name:
-        A string used as an identifier for the Plugin.
-      function:
-        A function which will be called to extract the "value" of the
-        Plugin when used as an input in a Flow. The function should set
-        self.value and also return it.
-      value:
-        A string containing the Plugin's output value to be used as
-        input in the HTTP request.
-      flags:
-        An integer containing the flags that define the Plugin's
-        behaviour. For now only NEEDS_USERDATA and NEEDS_RESPONSE is
-        supported. If NEEDS_USERDATA is set, the plugin will get its
-        value from the user's data, which will be sent to the function
-        defined here. If NEEDS_RESPONSE is set, the Plugin will extract
-        its value from the HTTP response instead.
-
-    """
-
-    # Plugin flags
-    NEEDS_USERDATA = 0x01
-    NEEDS_RESPONSE = 0x02
-    DEPENDS_ON_OTHER_PLUGINS = 0x04
-
-    def __init__(
-        self,
-        name: str,
-        function: Optional[Callable[..., Optional[str]]] = None,
-        flags: int = 0,
-        value: Optional[str] = None,
-    ) -> None:
-        """Initializes a Plugin object.
-
-        Creates a Plugin object, holding a "function" defining how to
-        extract the "value".
-
-        Args:
-          name:
-            A string with the unique identifier of the Plugin.
-          function:
-            A Callable function that will be used to extract the
-            Plugin's value.
-          value:
-            A string with the extracted value from the Plugin.
-          flags:
-            An integer containing the flags that define the Plugin's
-            behaviour. For now only NEEDS_USERDATA and NEEDS_RESPONSE is
-            supported. If NEEDS_USERDATA is set, the plugin will get its
-            value from the user's data, which will be sent to the function
-            defined here. If NEEDS_RESPONSE is set, the Plugin will extract
-            its value from the HTTP response instead.
-
-        """
-        self.name = name
-        self.plugins: List["Plugin"] = []
-        self.value: Optional[str] = value
-        self.flags = flags
-
-        self.function: Callable[..., Optional[str]]
-
-        if (flags & Plugin.NEEDS_USERDATA) and not function:
-            self.function = self.extract_from_userdata
-        elif not function:
-            self.function = self.return_value
-        else:
-            self.function = function
-
-    def get_value(
-        self,
-        userdata: Dict[str, str],
-    ) -> Optional[str]:
-        """Gets the value from the Plugin.
-
-        Depending on the Plugin's flags, extract and return its value.
-
-        Args:
-          userdata:
-            A dictionary with the user specific data.
-        """
-        if not self.needs_response:
-            if self.needs_userdata:
-                self.value = self.function(userdata)
-            elif self.depends_on_other_plugins:
-                for item in self.plugins:
-                    item.get_value(userdata)
-                self.value = self.function()
-            else:
-                self.value = self.function()
-        return self.value
-
-    def extract_value_from_response(
-        self,
-        response: Optional[requests.models.Response],
-    ) -> None:
-        """Extracts the value of the Plugin from the HTTP response.
-
-        If NEEDS_RESPONSE flag is set, the Plugin will extract its value
-        upon receiving the HTTP response, and store it inside the "value"
-        attribute.
-
-        Args:
-          response:
-            An requests.models.Response object with the HTTP response.
-
-        """
-        output = self.function(response)
-        if output:
-            self.value = output
-            logging.debug(
-                "Found ouput %s = %s",
-                self.name,
-                self.value,
-            )
-        else:
-            logging.warning("Couldn't extract output: %s", str(self.name))
-
-    def extract_from_userdata(
-        self, data: Dict[str, str] = None
-    ) -> Optional[str]:
-        """Extracts the plugin value from userdata.
-
-        Given a dictionary with the userdata, return its value with the
-        same name as the "name" attribute from this Plugin.
-
-        Args:
-          data:
-            A dictionary with user specific data.
-
-        Returns:
-          A string with the value of the variable found. None if no such
-          variable has been defined.
-
-        """
-        if data and self.name in data:
-            self.value = data[self.name]
-        return self.value
-
-    def return_value(self) -> Optional[str]:
-        """Just return plugin's value.
-
-        This is used when needing a function just to return the value.
-
-        """
-        return self.value
-
-    @property
-    def needs_userdata(self) -> bool:
-        """Returns True if the NEEDS_USERDATA flag is set."""
-        return bool(self.flags & self.NEEDS_USERDATA)
-
-    @property
-    def needs_response(self) -> bool:
-        """Returns True if the NEEDS_RESPONSE flag is set."""
-        return bool(self.flags & self.NEEDS_RESPONSE)
-
-    @property
-    def depends_on_other_plugins(self) -> bool:
-        """Returns True if the DEPENDS_ON_OTHER_PLUGINS flag is set."""
-        return bool(self.flags & self.DEPENDS_ON_OTHER_PLUGINS)
 
 
 class Regex(Plugin):
@@ -502,7 +333,7 @@ class Json(Plugin):
             self.value = str(temp)
             logging.debug("Json filter %s: %s", self.name, str(self.value))
         else:
-            self.value = None
+            return None
 
         return self.value
 
@@ -848,123 +679,3 @@ class Header(Plugin):
         header.plugins = [parent_plugin]
         header.function = lambda: header.plugins[0].value
         return header
-
-
-class Alter(Plugin):
-    """Plugin used to alter other plugin's value.
-
-    If the value extracted from other plugins cannot be used in it's raw
-    form and needs to be somehow processed, Alter plugin can be used to
-    do that. Initialize it with the original plugin and a function which
-    will process the string and return the modified value.
-
-    Attributes:
-      alter_function:
-        A function which will be given the plugin's value. It should
-        return a string with the processed value.
-
-    """
-
-    def __init__(
-        self,
-        parent_plugin: Plugin,
-        alter_function: Callable[[str], Optional[str]],
-    ) -> None:
-        """Initializes the Alter Plugin.
-
-        Given the original plugin, and a function to alter the data,
-        initialize the object, and get the modified value.
-
-        Args:
-          plugin:
-            The original Plugin where the value is to be found.
-          alter_function:
-            The Function with instructions on how to alter the value.
-        """
-        super().__init__(
-            name=parent_plugin.name,
-            value=parent_plugin.value,
-            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
-            function=self.process_value,
-        )
-        self.plugins = [parent_plugin]
-        self.alter_function = alter_function
-
-    def process_value(self) -> Optional[str]:
-        """Process the original plugin's value.
-
-        Gives the original plugin's value to ``alter_function``. Return
-        the processed value and store it in self.value.
-
-        Returns:
-          A string with the processed value.
-
-        """
-        if self.plugins[0].value:
-            self.value = self.alter_function(self.plugins[0].value)
-
-        return self.value
-
-    @classmethod
-    def prepend(cls, parent_plugin: Plugin, string: str) -> "Alter":
-        """Prepend a string to plugin's value."""
-        alter = cls(
-            parent_plugin=parent_plugin,
-            alter_function=lambda value: string + value,
-        )
-
-        return alter
-
-    @classmethod
-    def append(cls, parent_plugin: Plugin, string: str) -> "Alter":
-        """Append a string after the plugin's value"""
-        alter = cls(
-            parent_plugin=parent_plugin,
-            alter_function=lambda value: value + string,
-        )
-
-        return alter
-
-
-class Combine(Plugin):
-    """Plugin to combine the values of other plugins."""
-
-    def __init__(self, *args: Union[str, Plugin]):
-        """Initialize Combine object."""
-        self.args = args
-        name = str(sum(hash(item) for item in args))
-        super().__init__(
-            name=name,
-            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
-            function=self.concatenate_values,
-        )
-        self.plugins = []
-        for item in args:
-            if isinstance(item, Plugin):
-                self.plugins.append(item)
-
-    def concatenate_values(self) -> str:
-        """Concatenate the provided values.
-
-        This function will concatenate the arguments values. Accepts
-        both strings and plugins.
-
-        """
-        combined = ""
-        for item in self.args:
-            if isinstance(item, str):
-                combined += item
-            elif item.value:
-                combined += item.value
-        return combined
-
-
-class Empty(Plugin):
-    """Empty plugin to use for fuzzing new data."""
-
-    def __init__(self, name: str):
-        """Initialize Empty plugin."""
-        super().__init__(
-            name=name,
-            flags=0,
-        )
