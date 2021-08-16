@@ -1,6 +1,15 @@
 Welcome to Raider's documentation!
 ==================================
 
+.. note::
+   Since this started getting some traffic, I have to mention, this
+   documentation is still work in progress. Many things are not
+   finished, stuff is missing, other stuff is not working as expected,
+   and so on...  In the near future I'll start a user forum where you
+   can ask questions. Meanwhile, read the source code to understand
+   better how Raider works and open Github issues if you find some
+   mistakes.
+
 
 **Raider** is a framework designed to test :term:`authentication` for
 web applications. While web proxies like `ZAProxy
