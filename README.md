@@ -89,3 +89,5 @@ those in mind:
 
 
 # The Documentation is available on [Read the Docs](https://raider.readthedocs.io/en/latest/).
+
+# Come talk to us in the [community forum](https://community.digeex.de/).
