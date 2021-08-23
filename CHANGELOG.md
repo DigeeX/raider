@@ -1,5 +1,12 @@
 ## Release history
 
+### 0.2.2 - alpha3 (2021-08-23)
+
+* Split plugins into common, basic, modifiers and parsers.
+* Add Combine modifier.
+* Add UrlParser plugin.
+* Update documentation with new plugin structure.
+
 ### 0.2.1 - alpha2 (2021-08-03)
 
 * Improved the fuzzing module.

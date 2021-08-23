@@ -1,6 +1,16 @@
 Welcome to Raider's documentation!
 ==================================
 
+.. note::
+   This documentation and the entire Raider framework is still work in
+   progress. Many things are not finished, stuff is missing, other stuff
+   is not working as expected, and so on...  Meanwhile, `read the source
+   code <https://github.com/DigeeX/raider>`_ to understand better how
+   Raider works, `open Github issues
+   <https://github.com/DigeeX/raider/issues>`_ if you find some
+   mistakes, or come `talk to us in the community forum
+   <https://community.digeex.de/>`_.
+
 
 **Raider** is a framework designed to test :term:`authentication` for
 web applications. While web proxies like `ZAProxy
@@ -87,7 +97,7 @@ User guide
 
    user/install
    user/architecture
-   user/tutorial
+   user/tutorials
    user/definitions
    user/faq
 

@@ -21,7 +21,8 @@ from typing import Dict, List
 
 import hy
 
-from raider.plugins import Cookie, Header, Plugin
+from raider.plugins.basic import Cookie, Header
+from raider.plugins.common import Plugin
 from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.utils import hy_dict_to_python
 

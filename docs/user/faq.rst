@@ -24,8 +24,9 @@ files for each new project. Those files contain information describing
 the authentication process. **Raider** evaluates them, and gives you
 back a Python object to interact with the application.
 
-Read the :ref:`Architecture <architecture>` and :ref:`Tutorial
-<tutorial>` pages for more information and examples.
+Read the :ref:`Architecture <architecture>` and `Tutorials
+<https://community.digeex.de/c/tutorials/5>`_ for more information and
+examples.
 
 .. _faq_eval:
 
