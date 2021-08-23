@@ -97,7 +97,7 @@ User guide
 
    user/install
    user/architecture
-   user/tutorial
+   user/tutorials
    user/definitions
    user/faq
 

@@ -1,5 +1,5 @@
 .. _plugins:
-.. module:: raider.plugins
+.. module:: raider.plugins.common
 
 Plugins
 =======
@@ -11,10 +11,34 @@ between :ref:`Flows <flows>`. Below there's a list of predefined
 Plugins. The users are also encouraged to write their own plugins.
 
 
+Common
+------
+
+Plugin
+++++++
+
+.. autoclass:: Plugin
+
+Parser
+++++++
+
+.. autoclass:: Parser
+
+Empty
++++++
+
+.. autoclass:: Empty
+
+
+.. module:: raider.plugins.basic
+
+Basic
+-----
+
 .. _plugin_variable:
 
 Variable
---------
+++++++++
 
 Use this when the value of the plugin should be extracted from the
 user data. At the moment only ``username`` and ``password`` are
@@ -33,7 +57,7 @@ Example:
 .. _plugin_prompt:
 
 Prompt
-------
+++++++
 
 Prompt plugin should be used when the information is not known in
 advance, for example when receiving the SMS code.
@@ -49,27 +73,10 @@ Example:
 
 .. _plugin_command:
 
-Command
--------
-
-Use Command plugin if you want to extract information using a shell
-command.
-
-Example:
-
-.. code-block:: hylang
-
-   (setv mfa_code (Command
-                   :name "otp"
-		   :command "pass otp personal/app1"))
-
-.. autoclass:: Command
-   :members:	       
-
 .. _plugin_cookie:      
 
 Cookie
-------
+++++++
 
 Use Cookie plugin to extract and set new cookies:
 
@@ -86,7 +93,7 @@ Example:
 .. _plugin_header:      
 
 Header
-------
+++++++
 
 Use Header plugin to extract and set new headers. It also allows
 easier setup for basic and bearer authentication using the provided
@@ -112,10 +119,29 @@ Example:
 .. autoclass:: Header
    :members:	       
 
+
+Command
++++++++
+
+Use Command plugin if you want to extract information using a shell
+command.
+
+Example:
+
+.. code-block:: hylang
+
+   (setv mfa_code (Command
+                   :name "otp"
+		   :command "pass otp personal/app1"))
+
+.. autoclass:: Command
+   :members:	       
+
+
 .. _plugin_regex:
 
 Regex
------
++++++
 
 Use Regex plugin if the data you want extracted can be easily
 identified with a regular expression. The string matched in between
@@ -138,7 +164,7 @@ Example:
 .. _plugin_html:      
 
 Html
-----
+++++
 
 Use the Html plugin when the data you want can be easily extracted by
 parsing HTML tags. Create a new plugin by giving it a name, the tag
@@ -168,19 +194,45 @@ Example:
 .. _plugin_json:
       
 Json
-----
+++++
 
 .. autoclass:: Json
    :members:	       
 
+.. module:: raider.plugins.modifiers
+
+
+Modifiers
+---------
+
+Alter
++++++
+
+.. autoclass:: Alter
+   :members:	       
+
+Combine
++++++++
+
+.. autoclass:: Combine
+   :members:	       
+
+
+      
+.. module:: raider.plugins.parsers
+
+Parsers
+-------
+
+UrlParser
++++++++++
+
+.. autoclass:: UrlParser
+   :members:	       
+      
+
+
 .. _plugin_api:
-
-
-Plugin API
-----------
-
-.. autoclass:: Plugin
-
 
 Writing custom plugins
 ----------------------
@@ -240,3 +292,6 @@ And we can create a new variable that will use this class:
 
 Now whenever we use the ``mfa_code`` in our requests, its value will
 be extracted from the password store.
+
+
+      

@@ -87,7 +87,7 @@ Definitions
     A piece of code that can be used to generate inputs for outgoing
     HTTP :term:`Requests <Request>`, and/or extract outputs from
     incoming term:`Responses <Response>`. All plugins inherit from
-    :class:`Plugin <raider.plugins.Plugin>` class.
+    :class:`Plugin <raider.plugins.common.Plugin>` class.
 
     When used inside a :term:`Request <Request>`, Plugins acts as input
     and replace themselves with the actual value.
