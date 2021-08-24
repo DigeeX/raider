@@ -53,6 +53,7 @@ class Plugin:
     NEEDS_USERDATA = 0x01
     NEEDS_RESPONSE = 0x02
     DEPENDS_ON_OTHER_PLUGINS = 0x04
+    NAME_NOT_KNOWN_IN_ADVANCE = 0x08
 
     def __init__(
         self,
@@ -89,9 +90,10 @@ class Plugin:
         self.flags = flags
 
         self.function: Callable[..., Optional[str]]
+        self.name_function: Optional[Callable[..., Optional[str]]] = None
 
         if (flags & Plugin.NEEDS_USERDATA) and not function:
-            self.function = self.extract_from_userdata
+            self.function = self.extract_value_from_userdata
         elif not function:
             self.function = self.return_value
         else:
@@ -146,7 +148,31 @@ class Plugin:
         else:
             logging.warning("Couldn't extract output: %s", str(self.name))
 
-    def extract_from_userdata(
+    def extract_name_from_response(
+        self,
+        response: Optional[requests.models.Response],
+    ) -> None:
+        """Extracts the name of the Plugin from the HTTP response.
+
+        If NAME_NOT_KNOWN_IN_ADVANCE flag is set, the Plugin will set
+        its name after receiving the HTTP response, and store it inside
+        the "name" attribute.
+
+        Args:
+          response:
+            An requests.models.Response object with the HTTP response.
+
+        """
+        if callable(self.name_function):
+            # pylint can't figure out name_function is callable
+            # pylint: disable=E1102
+            output = self.name_function(response)
+        if output:
+            self.name = output
+        else:
+            logging.warning("Couldn't extract name: %s", str(self.name))
+
+    def extract_value_from_userdata(
         self, data: Dict[str, str] = None
     ) -> Optional[str]:
         """Extracts the plugin value from userdata.
@@ -189,6 +215,11 @@ class Plugin:
     def depends_on_other_plugins(self) -> bool:
         """Returns True if the DEPENDS_ON_OTHER_PLUGINS flag is set."""
         return bool(self.flags & self.DEPENDS_ON_OTHER_PLUGINS)
+
+    @property
+    def name_not_known_in_advance(self) -> bool:
+        """Returns True if the NAME_NOT_KNOWN_IN_ADVANCE flag is set."""
+        return bool(self.flags & self.NAME_NOT_KNOWN_IN_ADVANCE)
 
 
 class Parser(Plugin):

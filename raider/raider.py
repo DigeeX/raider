@@ -194,7 +194,7 @@ class Raider:
             for plugin in inputs.values():
                 # Reset plugin flags, and get the values from userdata
                 plugin.flags = Plugin.NEEDS_USERDATA
-                plugin.function = plugin.extract_from_userdata
+                plugin.function = plugin.extract_value_from_userdata
 
     @property
     def authentication(self) -> Authentication:

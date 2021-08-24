@@ -20,6 +20,7 @@ import logging
 import os
 import re
 from base64 import b64encode
+from functools import partial
 from typing import Callable, Dict, Optional
 
 import hy
@@ -521,6 +522,40 @@ class Cookie(Plugin):
         return str({self.name: self.value})
 
     @classmethod
+    def regex(cls, regex: str) -> "Cookie":
+        """Extract the cookie using regular expressions."""
+
+        def extract_cookie_value_regex(
+            response: requests.models.Response,
+            regex: str,
+        ) -> Optional["str"]:
+            """Find the cookie value matching the given regex."""
+            for name, value in response.cookies.items():
+                if re.search(regex, name):
+                    return value
+            return None
+
+        def extract_cookie_name_regex(
+            response: requests.models.Response,
+            regex: str,
+        ) -> Optional["str"]:
+            """Find the cookie name matching the given regex."""
+            for name in response.cookies.keys():
+                if re.search(regex, name):
+                    return name
+            return None
+
+        cookie = cls(
+            name=regex,
+            function=partial(extract_cookie_value_regex, regex=regex),
+            flags=Plugin.NEEDS_RESPONSE | Plugin.NAME_NOT_KNOWN_IN_ADVANCE,
+        )
+
+        cookie.name_function = partial(extract_cookie_name_regex, regex=regex)
+
+        return cookie
+
+    @classmethod
     def from_plugin(cls, parent_plugin: Plugin, name: str) -> "Cookie":
         """Creates a Cookie from a Plugin.
 
@@ -540,7 +575,7 @@ class Cookie(Plugin):
         cookie = cls(
             name=name,
             value=parent_plugin.value,
-            flags=0,
+            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
         )
         return cookie
 
@@ -606,6 +641,40 @@ class Header(Plugin):
     def __str__(self) -> str:
         """Returns a string representation of the Plugin."""
         return str({self.name: self.value})
+
+    @classmethod
+    def regex(cls, regex: str) -> "Header":
+        """Extract the header using regular expressions."""
+
+        def extract_header_value_regex(
+            response: requests.models.Response,
+            regex: str,
+        ) -> Optional["str"]:
+            """Find the header value matching the given regex."""
+            for name, value in response.headers.items():
+                if re.search(regex, name):
+                    return value
+            return None
+
+        def extract_header_name_regex(
+            response: requests.models.Response,
+            regex: str,
+        ) -> Optional["str"]:
+            """Find the header name matching the given regex."""
+            for name in response.headers.keys():
+                if re.search(regex, name):
+                    return name
+            return None
+
+        header = cls(
+            name=regex,
+            function=partial(extract_header_value_regex, regex=regex),
+            flags=Plugin.NEEDS_RESPONSE | Plugin.NAME_NOT_KNOWN_IN_ADVANCE,
+        )
+
+        header.name_function = partial(extract_header_name_regex, regex=regex)
+
+        return header
 
     @classmethod
     def basicauth(cls, username: str, password: str) -> "Header":
