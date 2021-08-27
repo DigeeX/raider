@@ -17,7 +17,7 @@ authentication systems.
 Raider is still a work in progress. Bugs and missing features are to
 be expected. If you find something that doesn't work as expected, open
 a Github issue and let us know. You can also [join the community
-forum](https://community.digeex.de/) and start asking questions there.
+forum](https://community.raiderauth.com/) and start asking questions there.
 
 
 # Features

@@ -249,14 +249,20 @@ class Request:
         headers.update({"user-agent": config.user_agent})
 
         for key in self.cookies:
+            name = self.cookies[key].name
+            if self.cookies[key].name_not_known_in_advance:
+                cookies.pop(key)
             value = self.cookies[key].get_value(userdata)
             if value:
-                cookies.update({key: value})
+                cookies.update({name: value})
 
         for key in self.headers:
+            name = self.headers[key].name
+            if self.headers[key].name_not_known_in_advance:
+                headers.pop(key)
             value = self.headers[key].get_value(userdata)
             if value:
-                headers.update({key: value})
+                headers.update({name: value})
 
         for key in list(httpdata):
             value = httpdata[key]

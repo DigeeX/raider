@@ -9,7 +9,7 @@ Welcome to Raider's documentation!
    Raider works, `open Github issues
    <https://github.com/DigeeX/raider/issues>`_ if you find some
    mistakes, or come `talk to us in the community forum
-   <https://community.digeex.de/>`_.
+   <https://community.raiderauth.com/>`_.
 
 
 **Raider** is a framework designed to test :term:`authentication` for

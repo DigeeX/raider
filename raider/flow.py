@@ -128,6 +128,8 @@ class Flow:
             for output in self.outputs:
                 if output.needs_response:
                     output.extract_value_from_response(self.response)
+                    if output.name_not_known_in_advance:
+                        output.extract_name_from_response(self.response)
                 elif output.depends_on_other_plugins:
                     for item in output.plugins:
                         item.get_value(user.to_dict())
