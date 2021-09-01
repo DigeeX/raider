@@ -1,3 +1,5 @@
+![Raider logo](./ext/logo.png)
+
 # What is this
 
 This is a framework designed to test authentication for web
@@ -88,6 +90,6 @@ those in mind:
 
 
 
-# The Documentation is available on [Read the Docs](https://raider.readthedocs.io/en/latest/).
+# The Documentation is available on [Read the Docs](https://docs.raiderauth.com/en/latest/).
 
-# Come talk to us in the [community forum](https://community.digeex.de/).
+# Come talk to us in the [community forum](https://community.raiderauth.com/).

@@ -12,6 +12,8 @@ Welcome to Raider's documentation!
    <https://community.raiderauth.com/>`_.
 
 
+.. image:: ../ext/logo.png
+
 **Raider** is a framework designed to test :term:`authentication` for
 web applications. While web proxies like `ZAProxy
 <https://www.zaproxy.org/>`_ and `Burpsuite
